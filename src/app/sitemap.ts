@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
 
+export const dynamic = 'force-dynamic'; // Force dynamic rendering for Turso database
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const sections = ['#home', '#services', '#visas', '#opportunities', '#gallery', '#payments', '#contact'];
   const now = new Date();
