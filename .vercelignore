@@ -1,0 +1,11 @@
+# Don't ignore database
+!db/
+!db/custom.db
+!prisma/db/
+!prisma/db/custom.db
+
+# Ignore development files
+.env.local
+.env.development
+node_modules
+.next
