@@ -26,7 +26,7 @@ export async function GET() {
     });
 
     // Check if tables already exist
-    const tables = await client.execute('SELECT name FROM sqlite_master WHERE type="table"');
+    const tables = await client.execute("SELECT name FROM sqlite_master WHERE type='table'");
     const tableNames = tables.rows.map((r: any) => r.name);
     
     if (tableNames.length > 5) {
