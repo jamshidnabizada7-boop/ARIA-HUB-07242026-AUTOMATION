@@ -40,18 +40,32 @@ export async function GET() {
       console.log(`📥 Processing source: ${source.name}`);
       
       try {
+        // Create source handle for scraper
+        const sourceHandle = {
+          id: source.id as string,
+          name: source.name as string,
+          type: source.type as string,
+          baseUrl: source.baseUrl as string,
+          config: {
+            maxPages: 3,
+            detailFetch: true,
+            crawlDelayMs: 1500,
+            timeoutMs: 30000,
+          }
+        };
+
         let scraper;
         if (source.scraperKey === 'wazifaha') {
-          scraper = new WazifahaScraper();
+          scraper = new WazifahaScraper(sourceHandle);
         } else if (source.scraperKey === 'scholarshipsAf') {
-          scraper = new ScholarshipsAfScraper();
+          scraper = new ScholarshipsAfScraper(sourceHandle);
         } else {
           console.log(`⚠️ Unknown scraper: ${source.scraperKey}`);
           continue;
         }
 
         // Scrape listings
-        const listings = await scraper.scrape({ maxPages: 2 });
+        const listings = await scraper.scrapeAll();
         console.log(`📋 Found ${listings.length} listings from ${source.name}`);
 
         // Get existing opportunity URLs to avoid duplicates
