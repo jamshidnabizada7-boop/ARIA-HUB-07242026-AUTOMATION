@@ -2,21 +2,18 @@
  * Image download + optimization for imported opportunities.
  *
  * Downloads a remote image, optimizes it with sharp (resize + webp), and
- * stores it under public/uploads/imports/<sourceKey>/<slug>.webp.
- * Returns a web-root-relative path so it works exactly like the existing
- * image URL fields (e.g. Opportunity.image).
+ * uploads it to Vercel Blob storage.
+ * Returns the Vercel Blob URL so it works exactly like the existing
+ * image URL fields.
  *
  * On any failure, falls back to the original remote URL (hybrid mode).
  * On no image, returns a placeholder path.
  */
 
 import sharp from 'sharp';
-import * as fs from 'fs';
-import * as path from 'path';
 import { slugify } from './utils';
+import { put } from '@vercel/blob';
 
-const UPLOADS_ROOT = path.join(process.cwd(), 'public', 'uploads', 'imports');
-const WEB_PREFIX = '/uploads/imports';
 const PLACEHOLDER = '/images/placeholder-opportunity.png';
 
 /** Size presets (max width; height auto-scaled to preserve aspect ratio). */
@@ -26,9 +23,9 @@ const SIZES = {
 } as const;
 
 export interface ImageResult {
-  /** Web-root-relative path (/uploads/imports/...) or remote fallback URL. */
+  /** Web-root-relative path or Blob URL or remote fallback URL. */
   path: string;
-  /** True if the image was downloaded locally, false if remote fallback. */
+  /** True if the image was downloaded locally/to blob, false if remote fallback. */
   local: boolean;
 }
 
@@ -55,8 +52,7 @@ export async function downloadLogo(
 }
 
 /**
- * Core download + optimize logic. Idempotent: skips re-download if the file
- * already exists.
+ * Core download + optimize logic. 
  */
 async function downloadAndOptimize(
   url: string | null | undefined,
@@ -71,19 +67,7 @@ async function downloadAndOptimize(
   const trimmedUrl = url.trim();
   const cleanSlug = slugify(slug) || 'image';
   const subdir = kind === 'logo' ? 'logos' : 'featured';
-  const dir = path.join(UPLOADS_ROOT, sourceKey, subdir);
-  const filename = `${cleanSlug}.webp`;
-  const fullPath = path.join(dir, filename);
-  const webPath = `${WEB_PREFIX}/${sourceKey}/${subdir}/${filename}`;
-
-  // Idempotent: skip if already downloaded
-  try {
-    if (fs.existsSync(fullPath)) {
-      return { path: webPath, local: true };
-    }
-  } catch {
-    // ignore stat errors
-  }
+  const filename = `${sourceKey}/${subdir}/${cleanSlug}-${Date.now()}.webp`;
 
   try {
     // Download
@@ -99,17 +83,20 @@ async function downloadAndOptimize(
     const buffer = Buffer.from(await res.arrayBuffer());
     if (buffer.length < 100) throw new Error('image too small (possibly an error page)');
 
-    // Ensure directory exists
-    fs.mkdirSync(dir, { recursive: true });
-
     // Optimize with sharp
     const maxWidth = SIZES[kind as 'featured' | 'logo'] || SIZES.featured;
-    await sharp(buffer)
+    const processedBuffer = await sharp(buffer)
       .resize({ width: maxWidth, withoutEnlargement: true })
       .webp({ quality: 82 })
-      .toFile(fullPath);
+      .toBuffer();
 
-    return { path: webPath, local: true };
+    // Upload to Vercel Blob
+    const blob = await put(filename, processedBuffer, {
+      access: 'public',
+      contentType: 'image/webp',
+    });
+
+    return { path: blob.url, local: true };
   } catch (e) {
     console.error(`[images] download failed for ${trimmedUrl}:`, e);
     // Fallback to remote URL (hybrid mode)
