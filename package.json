@@ -15,7 +15,7 @@
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "validate:translations": "npx tsx scripts/validate-translations.ts",
-    "postinstall": "rm -rf node_modules/.prisma && prisma generate"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
