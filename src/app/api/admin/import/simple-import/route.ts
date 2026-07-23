@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@libsql/client';
-import { WazifahaJobsScraper } from '@/lib/import/scrapers/wazifaha';
+import { WazifahaScraper } from '@/lib/import/scrapers/wazifaha';
 import { ScholarshipsAfScraper } from '@/lib/import/scrapers/scholarships-af';
 
 /**
@@ -42,7 +42,7 @@ export async function GET() {
       try {
         let scraper;
         if (source.scraperKey === 'wazifaha') {
-          scraper = new WazifahaJobsScraper();
+          scraper = new WazifahaScraper();
         } else if (source.scraperKey === 'scholarshipsAf') {
           scraper = new ScholarshipsAfScraper();
         } else {
