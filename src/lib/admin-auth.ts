@@ -54,13 +54,46 @@ async function sign(data: string): Promise<string> {
 }
 
 export async function getCurrentAdmin() {
-  const store = await cookies();
-  const token = store.get(SESSION_COOKIE)?.value;
-  if (!token) return null;
-  const session = await verifySession(token);
-  if (!session) return null;
-  const user = await db.adminUser.findUnique({ where: { email: session.email } });
-  return user;
+  try {
+    const store = await cookies();
+    const token = store.get(SESSION_COOKIE)?.value;
+    if (!token) return null;
+    const session = await verifySession(token);
+    if (!session) return null;
+    
+    // Use direct Turso client instead of Prisma
+    const tursoUrl = process.env.TURSO_DATABASE_URL;
+    const tursoToken = process.env.TURSO_AUTH_TOKEN;
+    
+    if (!tursoUrl || !tursoToken) {
+      console.error('Turso credentials not configured');
+      return null;
+    }
+    
+    const { createClient } = await import('@libsql/client');
+    const client = createClient({
+      url: tursoUrl,
+      authToken: tursoToken,
+    });
+    
+    const result = await client.execute({
+      sql: 'SELECT id, email, name, role FROM AdminUser WHERE email = ?',
+      args: [session.email]
+    });
+    
+    if (result.rows.length === 0) return null;
+    
+    const user = result.rows[0];
+    return {
+      id: user.id as string,
+      email: user.email as string,
+      name: user.name as string,
+      role: user.role as string,
+    };
+  } catch (error) {
+    console.error('getCurrentAdmin error:', error);
+    return null;
+  }
 }
 
 export async function setSessionCookie(email: string) {
