@@ -74,7 +74,10 @@ export async function getCurrentAdmin() {
       name: user.name,
       role: user.role,
     };
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.message?.includes('DYNAMIC_SERVER_USAGE') || error?.digest === 'DYNAMIC_SERVER_USAGE') {
+      throw error;
+    }
     console.error('getCurrentAdmin error:', error);
     return null;
   }
