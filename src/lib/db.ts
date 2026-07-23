@@ -26,6 +26,12 @@ function createPrismaClient() {
       log: ['error', 'warn'],
     })
   } else {
+    // Fallback: if DATABASE_URL is set and looks like Turso, throw error
+    const dbUrl = process.env.DATABASE_URL
+    if (dbUrl && dbUrl.startsWith('libsql://')) {
+      throw new Error('TURSO_DATABASE_URL and TURSO_AUTH_TOKEN must be set when using Turso database')
+    }
+    
     // Use local SQLite
     console.log('📁 Using local SQLite database')
     return new PrismaClient({
