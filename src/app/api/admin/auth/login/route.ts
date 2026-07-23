@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { verifyPassword, setSessionCookie, dummyVerify, rateLimit, logAction, getClientIp } from '@/lib/admin-auth';
+import { createClient } from '@libsql/client';
+import bcrypt from 'bcryptjs';
+import { setSessionCookie, rateLimit, getClientIp } from '@/lib/admin-auth';
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,21 +26,53 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    const user = await db.adminUser.findUnique({ where: { email } });
+    // Use direct Turso client to avoid Prisma caching issues
+    const tursoUrl = process.env.TURSO_DATABASE_URL;
+    const tursoToken = process.env.TURSO_AUTH_TOKEN;
 
-    // Timing normalization: always run a bcrypt compare so response time doesn't
-    // reveal whether the email exists (user enumeration).
-    const ok = user ? await verifyPassword(password, user.password) : (await dummyVerify(), false);
+    if (!tursoUrl || !tursoToken) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
+    }
 
-    if (!user || !ok) {
-      await logAction({ action: 'login_failed', entity: 'adminUser', details: email, req });
+    const client = createClient({
+      url: tursoUrl,
+      authToken: tursoToken,
+    });
+
+    // Query the user
+    const result = await client.execute({
+      sql: 'SELECT id, email, password, name, role FROM AdminUser WHERE email = ?',
+      args: [email]
+    });
+
+    if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    await db.adminUser.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+    const user = result.rows[0];
+    const passwordMatch = await bcrypt.compare(password, user.password as string);
+
+    if (!passwordMatch) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+
+    // Update last login
+    await client.execute({
+      sql: 'UPDATE AdminUser SET lastLoginAt = ? WHERE id = ?',
+      args: [new Date().toISOString(), user.id]
+    });
+
     await setSessionCookie(email);
-    await logAction({ userId: user.id, action: 'login_success', entity: 'adminUser', entityId: user.id, req });
-    return NextResponse.json({ success: true, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
+    
+    return NextResponse.json({ 
+      success: true, 
+      user: { 
+        id: user.id, 
+        email: user.email, 
+        name: user.name, 
+        role: user.role 
+      } 
+    });
   } catch (error: any) {
     console.error('Login error:', error);
     return NextResponse.json({ 
