@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@libsql/client';
 import bcrypt from 'bcryptjs';
 import { setSessionCookie, rateLimit, getClientIp } from '@/lib/admin-auth';
+import { db } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,41 +26,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    // Use direct Turso client to avoid Prisma caching issues
-    const tursoUrl = process.env.TURSO_DATABASE_URL;
-    const tursoToken = process.env.TURSO_AUTH_TOKEN;
-
-    if (!tursoUrl || !tursoToken) {
-      return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
-    }
-
-    const client = createClient({
-      url: tursoUrl,
-      authToken: tursoToken,
+    // Query user via db abstraction (works for both local SQLite and Turso)
+    const user = await db.adminUser.findUnique({
+      where: { email },
     });
 
-    // Query the user
-    const result = await client.execute({
-      sql: 'SELECT id, email, password, name, role FROM AdminUser WHERE email = ?',
-      args: [email]
-    });
-
-    if (result.rows.length === 0) {
+    if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const user = result.rows[0];
-    const passwordMatch = await bcrypt.compare(password, user.password as string);
+    const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     // Update last login
-    await client.execute({
-      sql: 'UPDATE AdminUser SET lastLoginAt = ? WHERE id = ?',
-      args: [new Date().toISOString(), user.id]
-    });
+    await db.adminUser.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() },
+    }).catch(() => {});
 
     await setSessionCookie(email);
     

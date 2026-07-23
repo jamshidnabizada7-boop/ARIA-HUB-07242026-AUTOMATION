@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { createClient } from '@libsql/client'
+import path from 'path'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -33,8 +34,18 @@ function createPrismaClient() {
     }
     
     // Use local SQLite
-    console.log('📁 Using local SQLite database')
+    let url = process.env.DATABASE_URL || 'file:./db/custom.db'
+    if (url.startsWith('file:')) {
+      const filePath = url.slice(5)
+      if (!path.isAbsolute(filePath)) {
+        const normalized = filePath.startsWith('./') ? filePath.slice(2) : filePath
+        const resolved = path.resolve(process.cwd(), normalized)
+        url = `file:${resolved.replace(/\\/g, '/')}`
+      }
+    }
+    console.log('📁 Using local SQLite database:', url)
     return new PrismaClient({
+      datasources: { db: { url } },
       log: ['error', 'warn'],
     })
   }
