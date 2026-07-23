@@ -41,12 +41,16 @@ export async function GET() {
 
     // Create all tables in order (respecting foreign keys)
     const migrations = [
-      // Admin table
-      `CREATE TABLE IF NOT EXISTS "Admin" (
+      // AdminUser table (matches Prisma schema)
+      `CREATE TABLE IF NOT EXISTS "AdminUser" (
         "id" TEXT NOT NULL PRIMARY KEY,
         "email" TEXT NOT NULL UNIQUE,
         "password" TEXT NOT NULL,
-        "fullName" TEXT NOT NULL,
+        "name" TEXT NOT NULL,
+        "role" TEXT NOT NULL DEFAULT 'admin',
+        "avatar" TEXT,
+        "twoFactorEnabled" INTEGER NOT NULL DEFAULT 0,
+        "lastLoginAt" DATETIME,
         "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
       )`,
@@ -175,8 +179,8 @@ export async function GET() {
     // Seed admin user
     const hashedPassword = await bcrypt.hash('admin123', 10);
     await client.execute({
-      sql: `INSERT INTO Admin (id, email, password, fullName) VALUES (?, ?, ?, ?)`,
-      args: ['admin-1', 'admin@ariahub.com', hashedPassword, 'ARIA HUB Administrator']
+      sql: `INSERT INTO AdminUser (id, email, password, name, role) VALUES (?, ?, ?, ?, ?)`,
+      args: ['admin-1', 'admin@ariahub.com', hashedPassword, 'ARIA HUB Administrator', 'admin']
     });
 
     // Seed site settings
