@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     // Update last login
     await db.adminUser.update({
       where: { id: user.id },
-      data: { lastLogin: new Date() },
+      data: { lastLoginAt: new Date() },
     }).catch(() => {});
 
     await setSessionCookie(email);
