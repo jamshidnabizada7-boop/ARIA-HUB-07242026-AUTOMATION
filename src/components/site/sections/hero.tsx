@@ -88,39 +88,27 @@ export function Hero({ counters }: { counters: Counter[] }) {
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-12 lg:px-8">
         {/* Left: copy */}
         <div className="lg:col-span-7">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+          <div
             className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary backdrop-blur-sm"
           >
             <Sparkles className="h-3.5 w-3.5" />
             {t('hero.badge')}
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
+          <h1
             className="mt-6 text-balance text-4xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
           >
             {t('hero.title')}{' '}
             <span className="text-gradient">{t('hero.titleHighlight')}</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+          <p
             className="mt-6 max-w-xl text-pretty text-base text-muted-foreground sm:text-lg"
           >
             {t('hero.subtitle')}
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
+          <div
             className="mt-8 flex flex-wrap items-center gap-3"
           >
             <MagneticButton
@@ -137,13 +125,10 @@ export function Hero({ counters }: { counters: Counter[] }) {
               <Play className="h-4 w-4 fill-current" />
               {t('hero.ctaSecondary')}
             </MagneticButton>
-          </motion.div>
+          </div>
 
           {/* Trust row */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
+          <div
             className="mt-10 flex flex-wrap items-center gap-6"
           >
             <div className="flex items-center gap-1.5">
@@ -156,14 +141,11 @@ export function Hero({ counters }: { counters: Counter[] }) {
               <span className="inline-flex items-center gap-1.5"><Shield className="h-4 w-4 text-primary" /> {t('hero.bankSecurity')}</span>
               <span className="inline-flex items-center gap-1.5"><Zap className="h-4 w-4 text-chart-2" /> {t('hero.fastProcessing')}</span>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Right: visual with parallax */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+        <div
           className="relative lg:col-span-5"
         >
           <div className="relative mx-auto aspect-square max-w-md">
@@ -207,7 +189,7 @@ export function Hero({ counters }: { counters: Counter[] }) {
             </motion.div>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Scroll indicator */}
