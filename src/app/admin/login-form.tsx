@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 
 export function LoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState('admin@ariahub.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -54,9 +54,6 @@ export function LoginForm() {
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
         <span className="ms-2">Sign In</span>
       </Button>
-      <div className="rounded-lg bg-accent/50 px-3 py-2 text-center text-xs text-muted-foreground">
-        Demo credentials pre-filled — just click Sign In
-      </div>
     </form>
   );
 }
