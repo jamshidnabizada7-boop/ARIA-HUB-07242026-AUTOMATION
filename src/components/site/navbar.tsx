@@ -15,6 +15,7 @@ import { useT } from '@/hooks/use-t';
 import type { MenuItem, Language } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { SearchDialog } from './search-dialog';
+import Image from 'next/image';
 import { getLocalizedContent } from '@/lib/i18n-content';
 
 function LogoMark({ src }: { src: string | null | undefined }) {
@@ -26,7 +27,7 @@ function LogoMark({ src }: { src: string | null | undefined }) {
       </div>
     );
   }
-  return <img src={src} alt="Logo" onError={() => setErr(true)} className="h-9 w-9 rounded-xl object-cover" />;
+  return <Image src={src} alt="Logo" width={36} height={36} onError={() => setErr(true)} className="h-9 w-9 rounded-xl object-cover" />;
 }
 
 interface NavbarProps {

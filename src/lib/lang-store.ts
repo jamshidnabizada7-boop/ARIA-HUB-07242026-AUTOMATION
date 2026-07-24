@@ -30,6 +30,6 @@ export const useLangStore = create<LangState>()(
         if (lang) set({ code, dir: lang.direction as 'ltr' | 'rtl' });
       },
     }),
-    { name: 'aria-lang' }
+    { name: 'aria-lang', skipHydration: true }
   )
 );

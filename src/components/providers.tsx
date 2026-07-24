@@ -7,6 +7,10 @@ import { useLangStore } from '@/lib/lang-store';
 function LangSync() {
   const { code, dir } = useLangStore();
   useEffect(() => {
+    // Rehydrate from localStorage after mount (skipHydration prevents SSR mismatch)
+    useLangStore.persist.rehydrate();
+  }, []);
+  useEffect(() => {
     const html = document.documentElement;
     html.lang = code;
     html.dir = dir;
