@@ -159,6 +159,7 @@ export function Hero({ counters }: { counters: Counter[] }) {
                   src="/images/hero/hero-globe.png"
                   alt="Global network"
                   priority={true}
+                  fetchPriority="high"
                   className="h-full w-full"
                   imgClassName="h-full w-full object-cover"
                   gradient="from-primary/30 via-chart-2/20 to-chart-3/20"
