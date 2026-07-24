@@ -6,7 +6,7 @@ async function main() {
   // ── Languages ──────────────────────────────────────────────
   const langs = [
     { code: 'en', name: 'English', nativeName: 'English', direction: 'ltr', isDefault: false, order: 1, flag: '🇬🇧' },
-    { code: 'fa', name: 'Dari', nativeName: 'دری', direction: 'rtl', isDefault: true, order: 0, flag: '🇦🇫' },
+    { code: 'fa', name: 'Persian', nativeName: 'فارسی', direction: 'rtl', isDefault: true, order: 0, flag: '🇦🇫' },
     { code: 'ps', name: 'Pashto', nativeName: 'پښتو', direction: 'rtl', isDefault: false, order: 2, flag: '🇦🇫' },
   ];
   for (const l of langs) {

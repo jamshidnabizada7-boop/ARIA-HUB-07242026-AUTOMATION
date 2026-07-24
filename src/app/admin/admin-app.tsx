@@ -7,7 +7,7 @@ import {
   Building2, BarChart3, HelpCircle, Image, CreditCard, Share2, Link2,
   Building, MapPin, ListChecks, Tag, Users, GitCompare, Megaphone,
   Menu as MenuIcon, Settings, LogOut, Plus, Pencil, Trash2, X, Search,
-  TrendingUp, Mail, UserPlus, Eye, Loader2, Globe, Layers, Download,
+  TrendingUp, Mail, UserPlus, Eye, Loader2, Globe, Layers, Download, KeyRound,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,8 +63,10 @@ const NAV = [
 export function AdminApp({ admin }: { admin: AdminUser }) {
   const [active, setActive] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [pwDialog, setPwDialog] = useState(false);
   const router = useRouter();
   const t = useT();
+  const { toast } = useToast();
 
   const logout = async () => {
     await fetch('/api/admin/auth/logout', { method: 'POST' });
@@ -110,10 +112,16 @@ export function AdminApp({ admin }: { admin: AdminUser }) {
               <p className="truncate text-[10px] text-muted-foreground">{admin.email}</p>
             </div>
           </div>
+          <Button onClick={() => setPwDialog(true)} variant="outline" size="sm" className="mb-1.5 w-full justify-start gap-2 text-xs">
+            <KeyRound className="h-3.5 w-3.5" /> Change Password
+          </Button>
           <Button onClick={logout} variant="outline" size="sm" className="w-full justify-start gap-2 text-xs">
             <LogOut className="h-3.5 w-3.5" /> {t('admin.button.signOut')}
           </Button>
         </div>
+
+        {/* Change Password Dialog */}
+        <ChangePasswordDialog open={pwDialog} onClose={() => setPwDialog(false)} toast={toast} />
       </aside>
 
       {/* Overlay for mobile */}
@@ -850,5 +858,97 @@ function SettingsPanel() {
         {t('admin.settings.saveSettings')}
       </Button>
     </form>
+  );
+}
+
+// ─── Change Password Dialog ─────────────────────────────────────
+function ChangePasswordDialog({ open, onClose, toast }: { open: boolean; onClose: () => void; toast: (opts: any) => void }) {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleClose = () => {
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    onClose();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      toast({ title: 'New passwords do not match', variant: 'destructive' });
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast({ title: 'New password must be at least 6 characters', variant: 'destructive' });
+      return;
+    }
+    setSaving(true);
+    try {
+      const res = await fetch('/api/admin/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to change password');
+      toast({ title: 'Password changed successfully!' });
+      handleClose();
+    } catch (e: any) {
+      toast({ title: e.message || 'Failed to change password', variant: 'destructive' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <KeyRound className="h-4 w-4" /> Change Password
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label className="mb-1.5 block text-sm font-medium">Current Password</Label>
+            <Input
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <Label className="mb-1.5 block text-sm font-medium">New Password</Label>
+            <Input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              minLength={6}
+            />
+          </div>
+          <div>
+            <Label className="mb-1.5 block text-sm font-medium">Confirm New Password</Label>
+            <Input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
+            <Button type="submit" disabled={saving} className="bg-gradient-to-r from-primary to-chart-2">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              Change Password
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
