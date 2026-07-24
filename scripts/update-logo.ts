@@ -5,9 +5,9 @@ async function main() {
     const result = await db.siteSetting.update({
       where: { id: 'singleton' },
       data: {
-        logoUrl: '/images/logo-mark.png',
-        logoDarkUrl: '/images/logo-mark.png',
-        faviconUrl: '/images/logo-mark.png',
+        logoUrl: '/images/logo-mark.webp',
+        logoDarkUrl: '/images/logo-mark.webp',
+        faviconUrl: '/images/logo-mark.webp',
       },
     });
     
