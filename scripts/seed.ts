@@ -63,14 +63,14 @@ async function main() {
   // ── Menu items (nested) ────────────────────────────────────
   await db.menuItem.deleteMany({});
   const menus = [
-    { label: 'Home', url: '#home', order: 0 },
-    { label: 'Services', url: '#services', order: 1 },
-    { label: 'Visas', url: '#visas', order: 2 },
-    { label: 'Opportunities', url: '#opportunities', order: 3 },
-    { label: 'Promote', url: '#promote', order: 4 },
-    { label: 'Gallery', url: '#gallery', order: 5 },
-    { label: 'Payments', url: '#payments', order: 6 },
-    { label: 'Contact', url: '#contact', order: 7 },
+    { label: 'Home', url: '#home', order: 0, labelI18n: { en: 'Home', fa: 'خانه', ps: 'کور' } },
+    { label: 'Services', url: '#services', order: 1, labelI18n: { en: 'Services', fa: 'خدمات', ps: 'خدمات' } },
+    { label: 'Visas', url: '#visas', order: 2, labelI18n: { en: 'Visas', fa: 'ویزهها', ps: 'ویزې' } },
+    { label: 'Opportunities', url: '#opportunities', order: 3, labelI18n: { en: 'Opportunities', fa: 'فرصتها', ps: 'فرصتونه' } },
+    { label: 'Promote', url: '#promote', order: 4, labelI18n: { en: 'Promote', fa: 'تبلیغات', ps: 'اعلانات' } },
+    { label: 'Gallery', url: '#gallery', order: 5, labelI18n: { en: 'Gallery', fa: 'گالری', ps: 'ګالري' } },
+    { label: 'Payments', url: '#payments', order: 6, labelI18n: { en: 'Payments', fa: 'پرداختها', ps: 'تادیات' } },
+    { label: 'Contact', url: '#contact', order: 7, labelI18n: { en: 'Contact', fa: 'تماس', ps: 'اړیکه' } },
   ];
   for (const m of menus) {
     await db.menuItem.create({ data: m });
@@ -78,20 +78,30 @@ async function main() {
   // Add a sample nested dropdown under Services
   const servicesMenu = await db.menuItem.findFirst({ where: { label: 'Services' } });
   if (servicesMenu) {
-    await db.menuItem.create({ data: { label: 'Business Setup', url: '#services', parentId: servicesMenu.id, order: 0 } });
-    await db.menuItem.create({ data: { label: 'Legal Services', url: '#services', parentId: servicesMenu.id, order: 1 } });
-    await db.menuItem.create({ data: { label: 'Travel & Visa', url: '#services', parentId: servicesMenu.id, order: 2 } });
-    const nested = await db.menuItem.create({ data: { label: 'Translation', url: '#services', parentId: servicesMenu.id, order: 3 } });
-    await db.menuItem.create({ data: { label: 'Document Translation', url: '#services', parentId: nested.id, order: 0 } });
-    await db.menuItem.create({ data: { label: 'Interpretation', url: '#services', parentId: nested.id, order: 1 } });
+    await db.menuItem.create({ data: { label: 'Business Setup', url: '#services', parentId: servicesMenu.id, order: 0, labelI18n: { en: 'Business Setup', fa: 'راه‌اندازی کسب‌وکار', ps: 'د سوداګرۍ جوړول' } } });
+    await db.menuItem.create({ data: { label: 'Legal Services', url: '#services', parentId: servicesMenu.id, order: 1, labelI18n: { en: 'Legal Services', fa: 'خدمات حقوقی', ps: 'قانوني خدمات' } } });
+    await db.menuItem.create({ data: { label: 'Travel & Visa', url: '#services', parentId: servicesMenu.id, order: 2, labelI18n: { en: 'Travel & Visa', fa: 'سفر و ویزا', ps: 'سفر او ویزه' } } });
+    const nested = await db.menuItem.create({ data: { label: 'Translation', url: '#services', parentId: servicesMenu.id, order: 3, labelI18n: { en: 'Translation', fa: 'ترجمه', ps: 'ژباړه' } } });
+    await db.menuItem.create({ data: { label: 'Document Translation', url: '#services', parentId: nested.id, order: 0, labelI18n: { en: 'Document Translation', fa: 'ترجمه اسناد', ps: 'د اسنادو ژباړه' } } });
+    await db.menuItem.create({ data: { label: 'Interpretation', url: '#services', parentId: nested.id, order: 1, labelI18n: { en: 'Interpretation', fa: 'ترجمه شفاهی', ps: 'شفاهي ژباړه' } } });
   }
   // Opportunities dropdown
   const oppMenu = await db.menuItem.findFirst({ where: { label: 'Opportunities' } });
   if (oppMenu) {
-    const labels = ['Jobs', 'Scholarships', 'Internships', 'Competitions', 'Conferences', 'Volunteer', 'Exchange Programs', 'Training'];
-    labels.forEach((label, i) => {
-      db.menuItem.create({ data: { label, url: '#opportunities', parentId: oppMenu.id, order: i } });
-    });
+    const opps: { label: string; fa: string; ps: string }[] = [
+      { label: 'Jobs', fa: 'کارها', ps: 'دندې' },
+      { label: 'Scholarships', fa: 'بورسیه‌ها', ps: 'بورسونه' },
+      { label: 'Internships', fa: 'کارآموزی', ps: 'انټرنشپ' },
+      { label: 'Competitions', fa: 'مسابقات', ps: 'سیالۍ' },
+      { label: 'Conferences', fa: 'کنفرانس‌ها', ps: 'کنفرانسونه' },
+      { label: 'Volunteer', fa: 'رضاکارانه', ps: 'رضاکار' },
+      { label: 'Exchange Programs', fa: 'برنامه‌های تبادلاتی', ps: 'د تبادلې پروګرامونه' },
+      { label: 'Training', fa: 'آموزش', ps: 'روزنه' }
+    ];
+    for (let i = 0; i < opps.length; i++) {
+      const { label, fa, ps } = opps[i];
+      await db.menuItem.create({ data: { label, url: '#opportunities', parentId: oppMenu.id, order: i, labelI18n: { en: label, fa, ps } } });
+    }
   }
 
   // ── Service categories ─────────────────────────────────────
