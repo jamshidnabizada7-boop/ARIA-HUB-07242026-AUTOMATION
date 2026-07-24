@@ -60,6 +60,7 @@ export function Hero({ counters }: { counters: Counter[] }) {
         <SmartImage
           src="/images/hero/hero-bg.png"
           alt=""
+          priority={true}
           className="absolute inset-0 h-full w-full opacity-60 dark:opacity-80"
           imgClassName="h-full w-full object-cover"
           gradient="from-primary/40 via-chart-2/30 to-background"
@@ -175,6 +176,7 @@ export function Hero({ counters }: { counters: Counter[] }) {
                 <SmartImage
                   src="/images/hero/hero-globe.png"
                   alt="Global network"
+                  priority={true}
                   className="h-full w-full"
                   imgClassName="h-full w-full object-cover"
                   gradient="from-primary/30 via-chart-2/20 to-chart-3/20"

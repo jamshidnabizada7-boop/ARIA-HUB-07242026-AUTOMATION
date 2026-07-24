@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface SmartImageProps {
@@ -9,10 +10,11 @@ interface SmartImageProps {
   className?: string;
   imgClassName?: string;
   gradient?: string;
+  priority?: boolean;
 }
 
 // Renders an image with a premium gradient fallback while loading or on error.
-export function SmartImage({ src, alt, className, imgClassName, gradient = 'from-primary/30 via-chart-2/20 to-chart-3/20' }: SmartImageProps) {
+export function SmartImage({ src, alt, className, imgClassName, gradient = 'from-primary/30 via-chart-2/20 to-chart-3/20', priority = false }: SmartImageProps) {
   const [error, setError] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
@@ -21,15 +23,17 @@ export function SmartImage({ src, alt, className, imgClassName, gradient = 'from
       {/* Decorative pattern overlay for fallback */}
       <div className="absolute inset-0 bg-grid opacity-20" />
       {!error && src && (
-        <img
+        <Image
           src={src}
           alt={alt}
-          loading="lazy"
+          fill
+          priority={priority}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           onError={() => setError(true)}
           onLoad={() => setLoaded(true)}
           className={cn(
-            'h-full w-full object-cover transition-opacity duration-500',
-            loaded ? 'opacity-100' : 'opacity-0',
+            'object-cover transition-opacity duration-500',
+            (loaded || priority) ? 'opacity-100' : 'opacity-0',
             imgClassName
           )}
         />

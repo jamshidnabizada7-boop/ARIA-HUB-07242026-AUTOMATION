@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
 
-export const dynamic = 'force-dynamic'; // Force dynamic rendering for Turso database
+export const revalidate = 86400; // Cache sitemap for 24 hours
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
