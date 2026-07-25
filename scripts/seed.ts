@@ -16,7 +16,12 @@ async function main() {
   // ── Site settings ──────────────────────────────────────────
   await db.siteSetting.upsert({
     where: { id: 'singleton' },
-    update: {},
+    update: {
+      email: 'info@myariahub.com',
+      phone: '+93 72 891 5695',
+      address: 'Sediqyar Square, Opposit of Balkh Medical Faculty, Mazar-e-Sharif, Afghanistan',
+      timezone: 'Asia/Kabul',
+    },
     create: {
       id: 'singleton',
       siteName: 'ARIA HUB',
@@ -28,11 +33,11 @@ async function main() {
       primaryColor: '#0A66C2',
       secondaryColor: '#0EA5E9',
       accentColor: '#22D3EE',
-      email: 'contact@ariahub.com',
-      phone: '+93 70 000 0000',
-      address: 'Shahr-e-Naw, Kabul, Afghanistan',
+      email: 'info@myariahub.com',
+      phone: '+93 72 891 5695',
+      address: 'Sediqyar Square, Opposit of Balkh Medical Faculty, Mazar-e-Sharif, Afghanistan',
       currency: 'USD',
-      timezone: 'Asia/Karachi',
+      timezone: 'Asia/Kabul',
       socialPosition: 'right',
       mapEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3304.4!2d69.1!3d34.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzTCsDMwJzAwLjAiTiA2OcKwMDYnMDAuMCJF!5e0!3m2!1sen!2s!4v0',
     },

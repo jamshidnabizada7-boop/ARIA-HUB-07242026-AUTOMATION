@@ -46,10 +46,15 @@ async function run() {
       'Premium business, visa, and global opportunity services — your gateway to the world.',
       '/images/logo-mark.png', '/images/logo-mark.png', '/images/logo-mark.png',
       '#0A66C2', '#0EA5E9', '#22D3EE',
-      'contact@ariahub.com', '+93 70 000 0000', 'Shahr-e-Naw, Kabul, Afghanistan',
-      'USD', 'Asia/Karachi', 'right', now(), now()
+      'info@myariahub.com', '+93 72 891 5695', 'Sediqyar Square, Opposit of Balkh Medical Faculty, Mazar-e-Sharif, Afghanistan',
+      'USD', 'Asia/Kabul', 'right', now(), now()
     )
-    ON CONFLICT (id) DO NOTHING`;
+    ON CONFLICT (id) DO UPDATE SET 
+      email = EXCLUDED.email, 
+      phone = EXCLUDED.phone, 
+      address = EXCLUDED.address, 
+      timezone = EXCLUDED.timezone,
+      "updatedAt" = now()`;
 
   // ── Sections
   console.log('→ Sections...');
