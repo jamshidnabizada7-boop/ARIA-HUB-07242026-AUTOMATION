@@ -154,6 +154,45 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
   );
 }
 
+const FormattedContent = ({ content }: { content: string }) => {
+  if (!content) return null;
+  
+  if (/<(p|ul|ol|li|br|div|h[1-6])[>\s]/i.test(content)) {
+    return <div className="text-sm leading-relaxed text-foreground/80 space-y-4 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: content }} />;
+  }
+
+  const cleanLine = (l: string) => l.replace(/^\s*#+\s+/, '').replace(/\*\*(.*?)\*\*/g, '$1').trim();
+  const lines = content.split('\n').map(l => l.trim()).filter(Boolean);
+  
+  if (lines.length === 1) {
+    return <p className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">{cleanLine(lines[0])}</p>;
+  }
+
+  return (
+    <ul className="space-y-2 text-sm leading-relaxed text-foreground/80">
+      {lines.map((rawLine, i) => {
+        let line = cleanLine(rawLine);
+        const isHeading = rawLine.startsWith('#') || line.endsWith(':');
+        
+        if (line.startsWith('- ') || line.startsWith('* ')) {
+          line = line.substring(2).trim();
+        }
+
+        if (isHeading) {
+          return <li key={i} className="mt-4 font-semibold text-foreground list-none">{line}</li>;
+        }
+        
+        return (
+          <li key={i} className="flex items-start gap-2">
+            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+            <span className="flex-1 whitespace-pre-wrap">{line}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
 function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k: string) => string }) {
   const lang = useLangStore((s) => s.code);
   const isRtl = lang === 'fa' || lang === 'ps';
@@ -257,35 +296,35 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
         {description && (
           <div className="mt-5">
             <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-muted-foreground">{t('opportunities.overview') || 'Overview'}</h3>
-            <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: description }} />
+            <FormattedContent content={description} />
           </div>
         )}
 
         {requirements && (
           <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />{t('opportunities.requirements') || 'Requirements'}</h3>
-            <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: requirements }} />
+            <FormattedContent content={requirements} />
           </div>
         )}
 
         {responsibilities && (
           <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />{t('opportunities.responsibilities') || 'Responsibilities'}</h3>
-            <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: responsibilities }} />
+            <FormattedContent content={responsibilities} />
           </div>
         )}
 
         {eligibility && (
           <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />{t('opportunities.eligibility') || 'Eligibility'}</h3>
-            <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: eligibility }} />
+            <FormattedContent content={eligibility} />
           </div>
         )}
 
         {benefits && (
           <div className="mt-4 rounded-xl border border-border/60 bg-accent/20 p-4">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><Award className="h-4 w-4 text-chart-4" />{t('opportunities.benefits') || 'Benefits'}</h3>
-            <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: benefits }} />
+            <FormattedContent content={benefits} />
           </div>
         )}
 
