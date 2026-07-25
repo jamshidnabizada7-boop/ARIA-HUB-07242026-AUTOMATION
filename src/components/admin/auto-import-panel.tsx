@@ -96,6 +96,21 @@ export function AutoImportPanel() {
     }
   };
 
+  const retranslateOld = async () => {
+    setRunning(true);
+    try {
+      const res = await fetch('/api/admin/import/retranslate-all?take=50', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      toast({ title: 'Retranslation', description: data.message });
+      fetchData();
+    } catch (e: any) {
+      toast({ title: t('status.error'), description: e.message, variant: 'destructive' });
+    } finally {
+      setRunning(false);
+    }
+  };
+
   const toggleSource = async (id: string, field: 'enabled' | 'autoPublish', value: boolean) => {
     try {
       await fetch(`/api/admin/import/sources/${id}/toggle`, {
@@ -131,6 +146,9 @@ export function AutoImportPanel() {
           </Button>
           <Button variant="outline" onClick={retryFailed} disabled={running}>
             <RefreshCw className="h-4 w-4 mr-1" /> {t('import.retryFailed')}
+          </Button>
+          <Button variant="outline" onClick={retranslateOld} disabled={running}>
+            <RefreshCw className="h-4 w-4 mr-1" /> Fix Translations (50 jobs)
           </Button>
         </div>
       </div>
