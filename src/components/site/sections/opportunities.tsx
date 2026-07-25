@@ -93,33 +93,34 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
   const description = getLocalizedContent(opportunity.description, opportunity.descriptionI18n as any, lang);
   
   const deadline = opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null;
+  const plainDescription = description ? description.replace(/<[^>]*>?/gm, '') : '';
+
   return (
-    <Card className="group relative flex h-full flex-col overflow-hidden border-border/60 p-0 shadow-premium transition-all duration-500 hover:-translate-y-1.5 hover:shadow-float">
-      <button onClick={onOpen} className="block w-full text-left">
-        <div className="relative aspect-[16/9] overflow-hidden">
-          <SmartImage
-            src={opportunity.image}
-            alt={title}
-            className="absolute inset-0 h-full w-full"
-            imgClassName="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-            gradient="from-primary/30 via-chart-2/20 to-chart-3/20"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-          {opportunity.category && (
-            <span className="absolute left-3 top-3 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground backdrop-blur-sm">
-              {opportunity.category.name}
-            </span>
-          )}
-          {opportunity.featured && (
-            <span className="absolute right-3 top-3 rounded-full bg-chart-4 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-black">
-              Featured
-            </span>
-          )}
-        </div>
-      </button>
+    <button onClick={onOpen} className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border/60 bg-card text-left transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+      <div className="relative aspect-[4/3] w-full overflow-hidden">
+        <SmartImage
+          src={opportunity.image}
+          alt={title}
+          className="absolute inset-0 h-full w-full"
+          imgClassName="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+          gradient="from-primary/30 via-chart-2/20 to-chart-3/20"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+        {opportunity.category && (
+          <span className="absolute left-3 top-3 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground backdrop-blur-sm">
+            {opportunity.category.name}
+          </span>
+        )}
+        {opportunity.featured && (
+          <span className="absolute right-3 top-3 rounded-full bg-chart-4 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-black">
+            Featured
+          </span>
+        )}
+      </div>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="line-clamp-2 text-base font-bold leading-snug">{title}</h3>
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+        <h3 className="line-clamp-2 text-base font-bold leading-tight transition-colors group-hover:text-primary">{title}</h3>
+        <p className="mt-2 flex-1 text-sm text-muted-foreground line-clamp-2">{plainDescription}</p>
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[11px] font-medium text-muted-foreground">
           {opportunity.organization && (
             <span className="inline-flex items-center gap-1"><Building2 className="h-3.5 w-3.5" />{opportunity.organization}</span>
           )}
@@ -205,7 +206,9 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
               <p className="truncate text-xs font-bold text-primary">Visit ↗</p>
             </a>
           )}
-          {opportunity.extractedData && typeof opportunity.extractedData === 'object' && Object.entries(opportunity.extractedData).map(([key, val]) => (
+          {opportunity.extractedData && typeof opportunity.extractedData === 'object' && Object.entries(opportunity.extractedData)
+            .filter(([key]) => !['Organization', 'Category', 'Location', 'Closing Date', 'Employment Type', 'Job Type', 'Education', 'Experience', 'Salary'].includes(key))
+            .map(([key, val]) => (
             val ? <MetaItem key={key} icon={Info} label={key.replace(/([A-Z])/g, ' $1').trim()} value={String(val)} /> : null
           ))}
         </div>
@@ -213,21 +216,21 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
         {description && (
           <div className="mt-5">
             <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-muted-foreground">Overview</h3>
-            <p className="text-sm leading-relaxed text-foreground/80">{description}</p>
+            <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: description }} />
           </div>
         )}
 
         {eligibility && (
           <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />Eligibility</h3>
-            <p className="text-sm leading-relaxed text-foreground/80">{eligibility}</p>
+            <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: eligibility }} />
           </div>
         )}
 
         {benefits && (
           <div className="mt-4 rounded-xl border border-border/60 bg-accent/20 p-4">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><Award className="h-4 w-4 text-chart-4" />Benefits</h3>
-            <p className="text-sm leading-relaxed text-foreground/80">{benefits}</p>
+            <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: benefits }} />
           </div>
         )}
 
