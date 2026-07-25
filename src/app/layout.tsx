@@ -19,7 +19,6 @@ const geistMono = Geist_Mono({
 const vazirmatn = Vazirmatn({
   variable: "--font-vazirmatn",
   subsets: ["arabic"],
-  weight: ["400", "500", "600", "700", "900"],
   display: "swap",
   preload: true,
 });
