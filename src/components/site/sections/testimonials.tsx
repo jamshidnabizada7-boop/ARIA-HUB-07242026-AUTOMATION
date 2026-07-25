@@ -126,12 +126,14 @@ export function TestimonialsSection({ testimonials }: { testimonials: Testimonia
                 <button
                   key={i}
                   onClick={() => setActive(i)}
-                  className={cn(
-                    'h-2 rounded-full transition-all',
-                    i === active ? 'w-8 bg-primary' : 'w-2 bg-border hover:bg-foreground/30'
-                  )}
+                  className="flex h-8 w-8 items-center justify-center"
                   aria-label={`Go to testimonial ${i + 1}`}
-                />
+                >
+                  <span className={cn(
+                    'h-2 rounded-full transition-all block',
+                    i === active ? 'w-8 bg-primary' : 'w-2 bg-border hover:bg-foreground/30'
+                  )} />
+                </button>
               ))}
             </div>
             <button

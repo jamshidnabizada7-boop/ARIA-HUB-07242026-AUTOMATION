@@ -62,7 +62,7 @@ export function SearchDialog({ open, onOpenChange }: { open: boolean; onOpenChan
             className="h-14 border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
           />
           {q && (
-            <button onClick={() => setQ('')} className="rounded-lg p-1 text-muted-foreground hover:bg-accent">
+            <button onClick={() => setQ('')} aria-label="Clear search" className="rounded-lg p-1 text-muted-foreground hover:bg-accent">
               <X className="h-4 w-4" />
             </button>
           )}

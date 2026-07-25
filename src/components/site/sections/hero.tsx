@@ -58,7 +58,7 @@ export function Hero({ counters }: { counters: Counter[] }) {
       {/* Background layers */}
       <div className="absolute inset-0 -z-10">
         <SmartImage
-          src="/images/hero/hero-bg.png"
+          src="/images/hero/hero-bg.webp"
           alt=""
           priority={true}
           className="absolute inset-0 h-full w-full opacity-60 dark:opacity-80"
@@ -156,7 +156,7 @@ export function Hero({ counters }: { counters: Counter[] }) {
               <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-primary/30 to-chart-2/30 blur-2xl" />
               <div className="glass-card relative h-full overflow-hidden rounded-[2.5rem] shadow-premium">
                 <SmartImage
-                  src="/images/hero/hero-globe.png"
+                  src="/images/hero/hero-globe.webp"
                   alt="Global network"
                   priority={true}
                   fetchPriority="high"

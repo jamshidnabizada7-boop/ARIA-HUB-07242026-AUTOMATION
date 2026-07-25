@@ -84,8 +84,9 @@ export function ContactSection({
                   <Field label={t('contact.subject')} name="subject" />
                 </div>
                 <div>
-                  <Label className="mb-1.5 block text-sm font-medium">{t('contact.department')}</Label>
+                  <Label htmlFor="contact-department" className="mb-1.5 block text-sm font-medium">{t('contact.department')}</Label>
                   <select
+                    id="contact-department"
                     name="department"
                     className="flex h-11 w-full rounded-xl border border-input bg-background px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
@@ -96,8 +97,8 @@ export function ContactSection({
                   </select>
                 </div>
                 <div>
-                  <Label className="mb-1.5 block text-sm font-medium">{t('contact.message')}</Label>
-                  <Textarea name="message" required rows={5} className="resize-none" />
+                  <Label htmlFor="contact-message" className="mb-1.5 block text-sm font-medium">{t('contact.message')}</Label>
+                  <Textarea id="contact-message" name="message" required rows={5} className="resize-none" />
                 </div>
                 <Button
                   type="submit"
@@ -160,10 +161,11 @@ export function ContactSection({
 }
 
 function Field({ label, name, type = 'text', required }: { label: string; name: string; type?: string; required?: boolean }) {
+  const id = `contact-${name}`;
   return (
     <div>
-      <Label className="mb-1.5 block text-sm font-medium">{label}{required && <span className="text-destructive"> *</span>}</Label>
-      <Input name={name} type={type} required={required} />
+      <Label htmlFor={id} className="mb-1.5 block text-sm font-medium">{label}{required && <span className="text-destructive"> *</span>}</Label>
+      <Input id={id} name={name} type={type} required={required} />
     </div>
   );
 }
