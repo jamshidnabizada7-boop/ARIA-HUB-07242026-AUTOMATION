@@ -86,10 +86,20 @@ export async function runAIPipeline(
     { key: 'benefits', value: listing.benefits },
     { key: 'responsibilities', value: listing.responsibilities },
     { key: 'requirements', value: listing.requirements || listing.requiredDocuments },
+    { key: 'jobType', value: listing.jobType },
+    { key: 'salary', value: listing.salary },
+    { key: 'educationReq', value: listing.educationReq },
+    { key: 'experience', value: listing.experience },
   ];
   const sectionI18n: Record<string, Record<string, string>> = {};
   for (const s of sectionFields) {
     if (s.value) sectionI18n[s.key] = { en: s.value };
+  }
+
+  // Handle extractedData translations
+  const extractedDataI18n: Record<string, Record<string, string>> = {};
+  if (listing.extractedData && typeof listing.extractedData === 'object') {
+    extractedDataI18n.en = { ...listing.extractedData };
   }
 
   // Translate to fa + ps
@@ -109,6 +119,17 @@ export async function runAIPipeline(
       for (const s of sectionFields) {
         if (s.value && sectionI18n[s.key]) {
           sectionI18n[s.key][lang] = await provider.translate(s.value, originalLang, lang);
+        }
+      }
+      // Extracted Data
+      if (listing.extractedData && typeof listing.extractedData === 'object') {
+        extractedDataI18n[lang] = {};
+        for (const [key, val] of Object.entries(listing.extractedData)) {
+          if (val && typeof val === 'string') {
+            extractedDataI18n[lang][key] = await provider.translate(val, originalLang, lang);
+          } else {
+            extractedDataI18n[lang][key] = val; // keep as-is if not string
+          }
         }
       }
       // SEO for this language
@@ -143,6 +164,11 @@ export async function runAIPipeline(
       data[s.key] = s.value;
       data[`${s.key}I18n`] = sectionI18n[s.key];
     }
+  }
+
+  if (Object.keys(extractedDataI18n).length > 0) {
+    data.extractedData = listing.extractedData;
+    data.extractedDataI18n = extractedDataI18n;
   }
 
   // SEO (base = English)

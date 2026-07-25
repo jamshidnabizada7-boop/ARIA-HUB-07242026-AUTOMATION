@@ -112,9 +112,13 @@ export interface Opportunity {
   aiSummary?: string | null;
   aiSummaryI18n?: Record<string, string> | null;
   jobType?: string | null;
+  jobTypeI18n?: Record<string, string> | null;
   salary?: string | null;
+  salaryI18n?: Record<string, string> | null;
   educationReq?: string | null;
+  educationReqI18n?: Record<string, string> | null;
   experience?: string | null;
+  experienceI18n?: Record<string, string> | null;
   responsibilities?: string | null;
   responsibilitiesI18n?: Record<string, string> | null;
   requirements?: string | null;
@@ -139,6 +143,7 @@ export interface Opportunity {
   seoTitle?: string | null;
   seoDescription?: string | null;
   extractedData?: Record<string, any> | null;
+  extractedDataI18n?: Record<string, any> | null;
 }
 
 // ── Automated import sources ──

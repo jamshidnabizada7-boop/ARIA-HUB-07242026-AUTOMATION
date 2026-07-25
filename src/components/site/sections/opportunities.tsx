@@ -157,11 +157,23 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
 function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k: string) => string }) {
   const lang = useLangStore((s) => s.code);
   
-  // Get localized content
   const title = getLocalizedContent(opportunity.title, opportunity.titleI18n as any, lang);
   const description = getLocalizedContent(opportunity.description, opportunity.descriptionI18n as any, lang);
   const eligibility = getLocalizedContent(opportunity.eligibility, opportunity.eligibilityI18n as any, lang);
   const benefits = getLocalizedContent(opportunity.benefits, opportunity.benefitsI18n as any, lang);
+  
+  const jobType = getLocalizedContent(opportunity.jobType, opportunity.jobTypeI18n as any, lang);
+  const salary = getLocalizedContent(opportunity.salary, opportunity.salaryI18n as any, lang);
+  const educationReq = getLocalizedContent(opportunity.educationReq, opportunity.educationReqI18n as any, lang);
+  const experience = getLocalizedContent(opportunity.experience, opportunity.experienceI18n as any, lang);
+  
+  const getExtractedDataValue = (key: string, defaultVal: any) => {
+    if (lang === 'en') return defaultVal;
+    if (opportunity.extractedDataI18n && (opportunity.extractedDataI18n as any)[lang] && (opportunity.extractedDataI18n as any)[lang][key]) {
+      return (opportunity.extractedDataI18n as any)[lang][key];
+    }
+    return defaultVal;
+  };
   
   const deadline = opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : null;
   return (
@@ -189,17 +201,17 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
           {deadline && (
             <MetaItem icon={CalendarDays} label={t('opportunities.deadline')} value={deadline} />
           )}
-          {opportunity.jobType && (
-            <MetaItem icon={Briefcase} label="Job Type" value={opportunity.jobType} />
+          {jobType && (
+            <MetaItem icon={Briefcase} label="Job Type" value={jobType} />
           )}
-          {opportunity.salary && (
-            <MetaItem icon={DollarSign} label="Salary" value={opportunity.salary} />
+          {salary && (
+            <MetaItem icon={DollarSign} label="Salary" value={salary} />
           )}
-          {opportunity.educationReq && (
-            <MetaItem icon={GraduationCap} label="Education" value={opportunity.educationReq} />
+          {educationReq && (
+            <MetaItem icon={GraduationCap} label="Education" value={educationReq} />
           )}
-          {opportunity.experience && (
-            <MetaItem icon={Clock} label="Experience" value={opportunity.experience} />
+          {experience && (
+            <MetaItem icon={Clock} label="Experience" value={experience} />
           )}
           {opportunity.website && (
             <a href={opportunity.website} target="_blank" rel="noopener noreferrer" className="flex flex-col rounded-xl border border-border/60 bg-accent/30 p-3 transition-colors hover:border-primary/40">
@@ -210,9 +222,11 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
           )}
           {opportunity.extractedData && typeof opportunity.extractedData === 'object' && Object.entries(opportunity.extractedData)
             .filter(([key]) => !['Organization', 'Category', 'Location', 'Closing Date', 'Employment Type', 'Job Type', 'Education', 'Experience', 'Salary'].includes(key))
-            .map(([key, val]) => (
-            val ? <MetaItem key={key} icon={Info} label={key.replace(/([A-Z])/g, ' $1').trim()} value={String(val)} /> : null
-          ))}
+            .map(([key, val]) => {
+              if (!val) return null;
+              const localizedVal = getExtractedDataValue(key, val);
+              return <MetaItem key={key} icon={Info} label={key.replace(/([A-Z])/g, ' $1').trim()} value={String(localizedVal)} />;
+            })}
         </div>
 
         {description && (

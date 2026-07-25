@@ -41,6 +41,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     sourceLanguage: opp.language || 'en',
     imageUrl: opp.image,
     logoUrl: opp.logoUrl,
+    extractedData: opp.extractedData as any,
   };
 
   const categories = await db.opportunityCategory.findMany({ select: { id: true, slug: true, name: true } });
