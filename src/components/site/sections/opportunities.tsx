@@ -96,27 +96,29 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
   const plainDescription = description ? description.replace(/<[^>]*>?/gm, '') : '';
 
   return (
-    <button onClick={onOpen} className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border/60 bg-card text-left transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
-      <div className="relative aspect-[4/3] w-full overflow-hidden">
-        <SmartImage
-          src={opportunity.image}
-          alt={title}
-          className="absolute inset-0 h-full w-full"
-          imgClassName="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-          gradient="from-primary/30 via-chart-2/20 to-chart-3/20"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-        {opportunity.category && (
-          <span className="absolute left-3 top-3 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground backdrop-blur-sm">
-            {opportunity.category.name}
-          </span>
-        )}
-        {opportunity.featured && (
-          <span className="absolute right-3 top-3 rounded-full bg-chart-4 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-black">
-            Featured
-          </span>
-        )}
-      </div>
+    <Card className="group relative flex h-full flex-col overflow-hidden border-border/60 p-0 shadow-premium transition-all duration-500 hover:-translate-y-1.5 hover:shadow-float">
+      <button onClick={onOpen} className="block w-full text-left">
+        <div className="relative aspect-[16/9] overflow-hidden">
+          <SmartImage
+            src={opportunity.image}
+            alt={title}
+            className="absolute inset-0 h-full w-full"
+            imgClassName="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            gradient="from-primary/30 via-chart-2/20 to-chart-3/20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+          {opportunity.category && (
+            <span className="absolute left-3 top-3 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground backdrop-blur-sm">
+              {opportunity.category.name}
+            </span>
+          )}
+          {opportunity.featured && (
+            <span className="absolute right-3 top-3 rounded-full bg-chart-4 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-black">
+              Featured
+            </span>
+          )}
+        </div>
+      </button>
       <div className="flex flex-1 flex-col p-5">
         <h3 className="line-clamp-2 text-base font-bold leading-tight transition-colors group-hover:text-primary">{title}</h3>
         <p className="mt-2 flex-1 text-sm text-muted-foreground line-clamp-2">{plainDescription}</p>
