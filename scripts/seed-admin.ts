@@ -8,7 +8,7 @@ async function main() {
 
   await db.adminUser.upsert({
     where: { email },
-    update: { password: hash },
+    update: {}, // Don't overwrite the password if the user already exists
     create: {
       email,
       name: 'Super Admin',

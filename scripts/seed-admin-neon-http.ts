@@ -28,7 +28,7 @@ async function run() {
   await sql`
     INSERT INTO "AdminUser" (id, email, password, name, role, "createdAt", "updatedAt")
     VALUES (${id}, ${email}, ${hash}, 'Super Admin', 'super_admin', now(), now())
-    ON CONFLICT (email) DO UPDATE SET password = ${hash}, "updatedAt" = now()
+    ON CONFLICT (email) DO NOTHING
   `;
 
   console.log('✅ Admin user created:');
