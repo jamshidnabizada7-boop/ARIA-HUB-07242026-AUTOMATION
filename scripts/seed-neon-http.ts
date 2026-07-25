@@ -223,13 +223,13 @@ async function run() {
   console.log('→ Social links...');
   await sql`DELETE FROM "SocialLink"`;
   const socials = [
-    ['whatsapp','WhatsApp','https://wa.me/937000000000','MessageCircle','#25D366',0],
-    ['phone','Call Us','tel:+937000000000','Phone','#0A66C2',1],
-    ['email','Email','mailto:contact@ariahub.com','Mail','#EA4335',2],
-    ['facebook','Facebook','https://facebook.com','Facebook','#1877F2',3],
-    ['instagram','Instagram','https://instagram.com','Instagram','#E4405F',4],
-    ['telegram','Telegram','https://telegram.org','Send','#0088CC',5],
-    ['linkedin','LinkedIn','https://linkedin.com','Linkedin','#0A66C2',6],
+    ['whatsapp','WhatsApp','https://wa.me/93700876806','MessageCircle','#25D366',0],
+    ['phone','Call Us','tel:+93728915695','Phone','#0A66C2',1],
+    ['email','Email','mailto:info@myariahub.com','Mail','#EA4335',2],
+    ['facebook','Facebook','https://www.facebook.com/profile.php?id=61573687093269','Facebook','#1877F2',3],
+    ['instagram','Instagram','https://www.instagram.com/ahmad___jamshid?igsh=YnpqbGFtbXRrdzcw&utm_source=qr','Instagram','#E4405F',4],
+    ['telegram','Telegram','https://t.me/93728915695','Send','#0088CC',5],
+    ['linkedin','LinkedIn','https://www.linkedin.com/in/ahmad-jamshid-nabizada-075988374/','Linkedin','#0A66C2',6],
     ['youtube','YouTube','https://youtube.com','Youtube','#FF0000',7],
   ];
   for (const [platform, label, url, icon, color, order] of socials) {
@@ -255,9 +255,9 @@ async function run() {
   console.log('→ Branches...');
   await sql`DELETE FROM "Branch"`;
   const branches = [
-    ['Kabul HQ','Shahr-e-Naw, Kabul, Afghanistan','+93 70 000 0000','kabul@ariahub.com','Sat-Thu: 8:00 AM - 6:00 PM',true,0],
-    ['Dubai Office','Business Bay, Dubai, UAE','+971 4 000 0000','dubai@ariahub.com','Mon-Sat: 9:00 AM - 7:00 PM',false,1],
-    ['Islamabad Office','F-7 Markaz, Islamabad, Pakistan','+92 51 000 0000','isb@ariahub.com','Mon-Sat: 9:00 AM - 7:00 PM',false,2],
+    ['Mazar-e-Sharif HQ','Sediqyar Square, Opposit of Balkh Medical Faculty, Mazar-e-Sharif, Afghanistan','+93 72 891 5695','info@myariahub.com','Sat-Thu: 8:00 AM - 6:00 PM',true,0],
+    ['Support Team','Online / Remote','+93 70 087 6806','support@myariahub.com','24/7',false,1],
+    ['Management','Online / Remote','+93 72 891 5695','jamshidnabizada7@gmail.com','Mon-Sat: 9:00 AM - 7:00 PM',false,2],
   ];
   for (const [name, address, phone, email, hours, isMain, order] of branches) {
     await sql`INSERT INTO "Branch" (id, name, address, phone, email, hours, "isMain", "order", "createdAt", "updatedAt")

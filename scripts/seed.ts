@@ -260,13 +260,13 @@ async function main() {
   // ── Social links ───────────────────────────────────────────
   await db.socialLink.deleteMany({});
   const socials = [
-    { platform: 'whatsapp', label: 'WhatsApp', url: 'https://wa.me/937000000000', icon: 'MessageCircle', color: '#25D366', order: 0 },
-    { platform: 'phone', label: 'Call Us', url: 'tel:+937000000000', icon: 'Phone', color: '#0A66C2', order: 1 },
-    { platform: 'email', label: 'Email', url: 'mailto:contact@ariahub.com', icon: 'Mail', color: '#EA4335', order: 2 },
-    { platform: 'facebook', label: 'Facebook', url: 'https://facebook.com', icon: 'Facebook', color: '#1877F2', order: 3 },
-    { platform: 'instagram', label: 'Instagram', url: 'https://instagram.com', icon: 'Instagram', color: '#E4405F', order: 4 },
-    { platform: 'telegram', label: 'Telegram', url: 'https://telegram.org', icon: 'Send', color: '#0088CC', order: 5 },
-    { platform: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com', icon: 'Linkedin', color: '#0A66C2', order: 6 },
+    { platform: 'whatsapp', label: 'WhatsApp', url: 'https://wa.me/93700876806', icon: 'MessageCircle', color: '#25D366', order: 0 },
+    { platform: 'phone', label: 'Call Us', url: 'tel:+93728915695', icon: 'Phone', color: '#0A66C2', order: 1 },
+    { platform: 'email', label: 'Email', url: 'mailto:info@myariahub.com', icon: 'Mail', color: '#EA4335', order: 2 },
+    { platform: 'facebook', label: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61573687093269', icon: 'Facebook', color: '#1877F2', order: 3 },
+    { platform: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/ahmad___jamshid?igsh=YnpqbGFtbXRrdzcw&utm_source=qr', icon: 'Instagram', color: '#E4405F', order: 4 },
+    { platform: 'telegram', label: 'Telegram', url: 'https://t.me/93728915695', icon: 'Send', color: '#0088CC', order: 5 },
+    { platform: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/ahmad-jamshid-nabizada-075988374/', icon: 'Linkedin', color: '#0A66C2', order: 6 },
     { platform: 'youtube', label: 'YouTube', url: 'https://youtube.com', icon: 'Youtube', color: '#FF0000', order: 7 },
   ];
   for (const s of socials) {
@@ -301,9 +301,9 @@ async function main() {
   // ── Branches ───────────────────────────────────────────────
   await db.branch.deleteMany({});
   const branches = [
-    { name: 'Kabul HQ', address: 'Shahr-e-Naw, Kabul, Afghanistan', phone: '+93 70 000 0000', email: 'kabul@ariahub.com', hours: 'Sat-Thu: 8:00 AM - 6:00 PM', isMain: true, order: 0 },
-    { name: 'Dubai Office', address: 'Business Bay, Dubai, UAE', phone: '+971 4 000 0000', email: 'dubai@ariahub.com', hours: 'Mon-Sat: 9:00 AM - 7:00 PM', order: 1 },
-    { name: 'Islamabad Office', address: 'F-7 Markaz, Islamabad, Pakistan', phone: '+92 51 000 0000', email: 'isb@ariahub.com', hours: 'Mon-Sat: 9:00 AM - 7:00 PM', order: 2 },
+    { name: 'Mazar-e-Sharif HQ', address: 'Sediqyar Square, Opposit of Balkh Medical Faculty, Mazar-e-Sharif, Afghanistan', phone: '+93 72 891 5695', email: 'info@myariahub.com', hours: 'Sat-Thu: 8:00 AM - 6:00 PM', isMain: true, order: 0 },
+    { name: 'Support Team', address: 'Online / Remote', phone: '+93 70 087 6806', email: 'support@myariahub.com', hours: '24/7', order: 1 },
+    { name: 'Management', address: 'Online / Remote', phone: '+93 72 891 5695', email: 'jamshidnabizada7@gmail.com', hours: 'Mon-Sat: 9:00 AM - 7:00 PM', order: 2 },
   ];
   for (const b of branches) {
     await db.branch.create({ data: b });
