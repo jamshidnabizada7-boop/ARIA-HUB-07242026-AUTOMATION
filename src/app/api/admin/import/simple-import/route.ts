@@ -1,34 +1,21 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@libsql/client';
+import { db } from '@/lib/db';
 import { WazifahaScraper } from '@/lib/import/scrapers/wazifaha';
 import { ScholarshipsAfScraper } from '@/lib/import/scrapers/scholarships-af';
 
-/**
- * Simple import endpoint that bypasses Prisma entirely
- * Uses direct Turso client for all database operations
- */
 export async function GET() {
   try {
-    const tursoUrl = process.env.TURSO_DATABASE_URL;
-    const tursoToken = process.env.TURSO_AUTH_TOKEN;
+    console.log('🚀 Starting Prisma-based simple import...');
 
-    if (!tursoUrl || !tursoToken) {
-      return NextResponse.json({
-        success: false,
-        error: 'Database not configured',
-      }, { status: 500 });
-    }
-
-    console.log('🚀 Starting simple import...');
-    const client = createClient({ url: tursoUrl, authToken: tursoToken });
-
-    // Get import sources
-    const sources = await client.execute('SELECT * FROM ImportSource WHERE enabled = 1');
+    // Get import sources from Prisma
+    const sources = await db.importSource.findMany({
+      where: { enabled: true }
+    });
     
-    if (sources.rows.length === 0) {
+    if (sources.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'No import sources found. Did you run the migrate endpoint?',
+        error: 'No import sources found. Did you run the seed?',
       }, { status: 404 });
     }
 
@@ -36,16 +23,16 @@ export async function GET() {
     const results: any[] = [];
 
     // Process each source
-    for (const source of sources.rows) {
+    for (const source of sources) {
       console.log(`📥 Processing source: ${source.name}`);
       
       try {
         // Create source handle for scraper
         const sourceHandle = {
-          id: source.id as string,
-          name: source.name as string,
-          type: source.type as string,
-          baseUrl: source.baseUrl as string,
+          id: source.id,
+          name: source.name,
+          type: source.type,
+          baseUrl: source.baseUrl,
           config: {
             maxPages: 3,
             detailFetch: true,
@@ -68,17 +55,8 @@ export async function GET() {
         const listings = await scraper.scrapeAll();
         console.log(`📋 Found ${listings.length} listings from ${source.name}`);
 
-        // Get existing opportunity URLs to avoid duplicates
-        const existing = await client.execute('SELECT sourceUrl FROM Opportunity WHERE sourceUrl IS NOT NULL');
-        const existingUrls = new Set(existing.rows.map((r: any) => r.url));
-
         let imported = 0;
         for (const listing of listings) {
-          if (existingUrls.has(listing.url)) {
-            console.log(`⏭️ Skipping duplicate: ${listing.title}`);
-            continue;
-          }
-
           // Create slug from title
           const slug = listing.title
             .toLowerCase()
@@ -86,33 +64,65 @@ export async function GET() {
             .replace(/\s+/g, '-')
             .substring(0, 100) + '-' + Date.now();
 
-          // Insert opportunity
-          await client.execute({
-            sql: `INSERT INTO Opportunity (
-              id, title, slug, description, content, type, status, featured,
-              featuredImage, deadline, location, salary, organizationName,
-              applyUrl, sourceUrl, importedAt, createdAt, updatedAt
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            args: [
-              `opp-${Date.now()}-${imported}`,
-              listing.title,
+          // Upsert using Prisma
+          // We use originalUrl or sourceUrl as the unique identifier logic
+          const existing = await db.opportunity.findFirst({
+            where: {
+              OR: [
+                { originalUrl: listing.originalUrl || listing.sourceUrl },
+                { sourceUrl: listing.sourceUrl }
+              ]
+            }
+          });
+
+          if (existing) {
+            console.log(`⏭️ Skipping/Updating duplicate: ${listing.title}`);
+            await db.opportunity.update({
+              where: { id: existing.id },
+              data: {
+                title: listing.title,
+                description: listing.description || listing.title,
+                organization: listing.organization,
+                location: listing.location,
+                country: listing.country,
+                salary: listing.salary,
+                experience: listing.experience,
+                educationReq: listing.educationReq,
+                deadline: listing.deadline,
+                image: listing.imageUrl || listing.logoUrl,
+                applyUrl: listing.applyUrl || listing.originalUrl,
+                jobType: listing.jobType || source.type || 'job',
+                extractedData: listing.extractedData || {},
+                lastChecked: new Date(),
+              }
+            });
+            continue;
+          }
+
+          // Insert new opportunity
+          await db.opportunity.create({
+            data: {
+              title: listing.title,
               slug,
-              listing.description || listing.title,
-              listing.description || listing.title,
-              source.type || 'job',
-              'published',
-              0,
-              listing.image || null,
-              listing.deadline || null,
-              listing.location || null,
-              listing.salary || null,
-              listing.organization || null,
-              listing.applyUrl || listing.url,
-              listing.url,
-              new Date().toISOString(),
-              new Date().toISOString(),
-              new Date().toISOString(),
-            ]
+              description: listing.description || listing.title,
+              status: source.autoPublish ? 'published' : 'draft',
+              organization: listing.organization,
+              location: listing.location,
+              country: listing.country,
+              salary: listing.salary,
+              experience: listing.experience,
+              educationReq: listing.educationReq,
+              deadline: listing.deadline,
+              image: listing.imageUrl || listing.logoUrl,
+              applyUrl: listing.applyUrl || listing.originalUrl,
+              sourceUrl: listing.sourceUrl,
+              originalUrl: listing.originalUrl || listing.sourceUrl,
+              sourceName: source.name,
+              jobType: listing.jobType || source.type || 'job',
+              extractedData: listing.extractedData || {},
+              importedAt: new Date(),
+              lastChecked: new Date(),
+            }
           });
 
           imported++;

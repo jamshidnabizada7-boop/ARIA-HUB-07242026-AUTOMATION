@@ -39,6 +39,8 @@ export interface RawListing {
   // Provenance
   sourceName: string;
   sourceLanguage?: string | null;   // e.g. 'en'
+  // Extracted extra fields
+  extractedData?: Record<string, any>;
 }
 
 /** Result of fetching one page of listings. */

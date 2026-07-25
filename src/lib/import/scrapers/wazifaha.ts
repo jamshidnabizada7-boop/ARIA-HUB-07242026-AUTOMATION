@@ -102,6 +102,9 @@ export class WazifahaScraper extends BaseScraper {
       listing.educationReq = gridValues.Education || null;
       listing.category = gridValues.Category || null;
       listing.jobType = gridValues['Employment Type'] || listing.jobType;
+      
+      // Store ALL extracted fields for future reference (Nationality, Vacancy Number, Gender, City, etc.)
+      listing.extractedData = { ...gridValues };
 
       // Apply link
       const applyHref = $('a[href*="/jobs/apply/"]').first().attr('href');
