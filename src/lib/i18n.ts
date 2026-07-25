@@ -509,7 +509,7 @@ export const translations: Record<string, Record<string, string>> = {
     'hero.badge': 'مورد اعتماد در ۵۰+ کشور',
     'hero.title': 'دروازه شما به',
     'hero.titleHighlight': 'فرصت‌های جهانی',
-    'hero.subtitle': 'خدمات پریمیوم تجاری، ویزا و فرصت‌ها — با دقت طراحی شده تا جاه‌طلبی‌های شما را به جهان عرضه کند.',
+    'hero.subtitle': 'فرصت‌های شغلی، بورسیه‌ها و خدمات حرفه‌ای؛ همه در یک پلتفرم با اطلاعات به‌روز، قابل اعتماد و دسترسی آسان.',
     'hero.ctaPrimary': 'کاوش خدمات',
     'hero.ctaSecondary': 'رزرو مشاوره',
     'hero.stat1': 'سال تجربه',
