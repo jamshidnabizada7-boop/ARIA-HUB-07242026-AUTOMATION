@@ -322,13 +322,20 @@ export async function DELETE(req: NextRequest) {
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const model = req.nextUrl.searchParams.get('model');
-  const id = req.nextUrl.searchParams.get('id');
-  if (!model || !MODELS[model] || !id) return NextResponse.json({ error: 'Invalid params' }, { status: 400 });
+  const idParam = req.nextUrl.searchParams.get('id');
+  if (!model || !MODELS[model] || !idParam) return NextResponse.json({ error: 'Invalid params' }, { status: 400 });
   const { delegate } = MODELS[model];
 
+  const ids = idParam.split(',');
+
   try {
-    await delegate.delete({ where: { id } });
-    await logAction({ userId: admin.id, action: 'delete', entity: model, entityId: id, req });
+    if (ids.length > 1) {
+      await delegate.deleteMany({ where: { id: { in: ids } } });
+      await logAction({ userId: admin.id, action: 'delete_many', entity: model, entityId: 'bulk', req });
+    } else {
+      await delegate.delete({ where: { id: ids[0] } });
+      await logAction({ userId: admin.id, action: 'delete', entity: model, entityId: ids[0], req });
+    }
     return NextResponse.json({ success: true });
   } catch (e: any) {
     return handleError(e);

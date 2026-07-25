@@ -270,9 +270,10 @@ function CrudTable({ model }: { model: string }) {
   const [showForm, setShowForm] = useState(false);
   const { toast } = useToast();
   const [reloadKey, setReloadKey] = useState(0);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Reset search when switching models so stale filters don't carry over.
-  useEffect(() => { setSearch(''); }, [model]);
+  useEffect(() => { setSearch(''); setSelectedIds([]); }, [model]);
 
   useEffect(() => {
     let cancelled = false;
@@ -306,6 +307,13 @@ function CrudTable({ model }: { model: string }) {
     else toast({ title: t('admin.toast.failedDelete'), variant: 'destructive' });
   };
 
+  const handleBulkDelete = async () => {
+    if (!confirm(t('admin.confirm.delete') + ` (${selectedIds.length})`)) return;
+    const res = await fetch(`/api/admin/crud?model=${model}&id=${selectedIds.join(',')}`, { method: 'DELETE' });
+    if (res.ok) { toast({ title: t('admin.toast.deleted') }); setSelectedIds([]); reload(); }
+    else toast({ title: t('admin.toast.failedDelete'), variant: 'destructive' });
+  };
+
   const filtered = items.filter((item) =>
     !search || JSON.stringify(item).toLowerCase().includes(search.toLowerCase())
   );
@@ -325,9 +333,16 @@ function CrudTable({ model }: { model: string }) {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`${t('admin.button.search')} ${label}...`} className="w-64 ps-9" />
         </div>
-        <Button onClick={() => { setEditing(null); setShowForm(true); }} className="gap-2 rounded-xl bg-gradient-to-r from-primary to-chart-2">
-          <Plus className="h-4 w-4" /> {t('admin.button.addNew')}
-        </Button>
+        <div className="flex gap-2">
+          {selectedIds.length > 0 && (
+            <Button variant="destructive" onClick={handleBulkDelete} className="gap-2 rounded-xl">
+              <Trash2 className="h-4 w-4" /> {t('admin.button.delete')} ({selectedIds.length})
+            </Button>
+          )}
+          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="gap-2 rounded-xl bg-gradient-to-r from-primary to-chart-2">
+            <Plus className="h-4 w-4" /> {t('admin.button.addNew')}
+          </Button>
+        </div>
       </div>
       {!loading && total > 0 && (
         <p className="text-xs text-muted-foreground">{t('admin.table.showing', { count: filtered.length, total: total })}</p>
@@ -341,6 +356,9 @@ function CrudTable({ model }: { model: string }) {
             <table className="w-full text-sm">
               <thead className="border-b border-border/60 bg-muted/40">
                 <tr>
+                  <th className="px-4 py-3 text-left w-10">
+                    <input type="checkbox" className="rounded border-border/60" onChange={(e) => setSelectedIds(e.target.checked ? filtered.map(i => i.id) : [])} checked={filtered.length > 0 && selectedIds.length === filtered.length} />
+                  </th>
                   {displayFields.map((f) => (
                     <th key={f} className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">{f}</th>
                   ))}
@@ -350,10 +368,16 @@ function CrudTable({ model }: { model: string }) {
               </thead>
               <tbody className="divide-y divide-border/40">
                 {filtered.length === 0 && (
-                  <tr><td colSpan={displayFields.length + 1} className="px-4 py-12 text-center text-muted-foreground">{t('admin.table.noItems')}</td></tr>
+                  <tr><td colSpan={displayFields.length + 2} className="px-4 py-12 text-center text-muted-foreground">{t('admin.table.noItems')}</td></tr>
                 )}
                 {filtered.map((item) => (
                   <tr key={item.id} className="transition-colors hover:bg-muted/30">
+                    <td className="px-4 py-3">
+                      <input type="checkbox" className="rounded border-border/60" checked={selectedIds.includes(item.id)} onChange={(e) => {
+                        if (e.target.checked) setSelectedIds([...selectedIds, item.id]);
+                        else setSelectedIds(selectedIds.filter(id => id !== item.id));
+                      }} />
+                    </td>
                     {displayFields.map((f) => (
                       <td key={f} className="max-w-[200px] px-4 py-3">
                         {renderCell(item, f)}
