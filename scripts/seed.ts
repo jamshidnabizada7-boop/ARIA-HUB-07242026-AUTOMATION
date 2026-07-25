@@ -65,11 +65,11 @@ async function main() {
   const menus = [
     { label: 'Home', url: '#home', order: 0, labelI18n: { en: 'Home', fa: 'خانه', ps: 'کور' } },
     { label: 'Services', url: '#services', order: 1, labelI18n: { en: 'Services', fa: 'خدمات', ps: 'خدمات' } },
-    { label: 'Visas', url: '#visas', order: 2, labelI18n: { en: 'Visas', fa: 'ویزهها', ps: 'ویزې' } },
-    { label: 'Opportunities', url: '#opportunities', order: 3, labelI18n: { en: 'Opportunities', fa: 'فرصتها', ps: 'فرصتونه' } },
+    { label: 'Visas', url: '#visas', order: 2, labelI18n: { en: 'Visas', fa: 'ویزه‌ها', ps: 'ویزې' } },
+    { label: 'Opportunities', url: '#opportunities', order: 3, labelI18n: { en: 'Opportunities', fa: 'فرصت‌ها', ps: 'فرصتونه' } },
     { label: 'Promote', url: '#promote', order: 4, labelI18n: { en: 'Promote', fa: 'تبلیغات', ps: 'اعلانات' } },
     { label: 'Gallery', url: '#gallery', order: 5, labelI18n: { en: 'Gallery', fa: 'گالری', ps: 'ګالري' } },
-    { label: 'Payments', url: '#payments', order: 6, labelI18n: { en: 'Payments', fa: 'پرداختها', ps: 'تادیات' } },
+    { label: 'Payments', url: '#payments', order: 6, labelI18n: { en: 'Payments', fa: 'پرداخت‌ها', ps: 'تادیات' } },
     { label: 'Contact', url: '#contact', order: 7, labelI18n: { en: 'Contact', fa: 'تماس', ps: 'اړیکه' } },
   ];
   for (const m of menus) {

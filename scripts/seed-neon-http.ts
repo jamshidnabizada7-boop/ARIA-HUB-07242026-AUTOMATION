@@ -84,11 +84,11 @@ async function run() {
   const menus: [string, string, number, { fa: string; ps: string }][] = [
     ['Home','#home',0,{fa:'خانه',ps:'کور'}],
     ['Services','#services',1,{fa:'خدمات',ps:'خدمات'}],
-    ['Visas','#visas',2,{fa:'ویزهها',ps:'ویزې'}],
-    ['Opportunities','#opportunities',3,{fa:'فرصتها',ps:'فرصتونه'}],
+    ['Visas','#visas',2,{fa:'ویزه‌ها',ps:'ویزې'}],
+    ['Opportunities','#opportunities',3,{fa:'فرصت‌ها',ps:'فرصتونه'}],
     ['Promote','#promote',4,{fa:'تبلیغات',ps:'اعلانات'}],
     ['Gallery','#gallery',5,{fa:'گالری',ps:'ګالري'}],
-    ['Payments','#payments',6,{fa:'پرداختها',ps:'تادیات'}],
+    ['Payments','#payments',6,{fa:'پرداخت‌ها',ps:'تادیات'}],
     ['Contact','#contact',7,{fa:'تماس',ps:'اړیکه'}],
   ];
   const menuIds: Record<string, string> = {};
