@@ -247,6 +247,8 @@ model Opportunity {
   language          String?   // original source language code (en, fa, ps, ...)
   logoUrl           String?
   publishedDate     String?
+  extractedData     Json?     // store extra dynamic metadata scraped from the source
+
 
   @@index([categoryId])
   @@index([featured])
