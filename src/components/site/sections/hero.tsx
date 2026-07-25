@@ -61,6 +61,7 @@ export function Hero({ counters }: { counters: Counter[] }) {
           src="/images/hero/hero-bg.webp"
           alt=""
           priority={true}
+          sizes="100vw"
           className="absolute inset-0 h-full w-full opacity-60 dark:opacity-80"
           imgClassName="h-full w-full object-cover"
           gradient="from-primary/40 via-chart-2/30 to-background"
@@ -160,6 +161,7 @@ export function Hero({ counters }: { counters: Counter[] }) {
                   alt="Global network"
                   priority={true}
                   fetchPriority="high"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="h-full w-full"
                   imgClassName="h-full w-full object-cover"
                   gradient="from-primary/30 via-chart-2/20 to-chart-3/20"

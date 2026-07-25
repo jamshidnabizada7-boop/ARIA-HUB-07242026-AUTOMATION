@@ -36,7 +36,7 @@ export function ServicesSection({ services }: { services: Service[] }) {
               key={s.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
+              viewport={{ once: true, margin: '0px' }}
               transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
             >
               <ServiceCard service={s} t={t} onOpen={() => setSelected(s)} />

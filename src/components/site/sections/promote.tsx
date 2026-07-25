@@ -13,7 +13,7 @@ export function PromoteSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={{ once: true, margin: '0px' }}
           transition={{ duration: 0.6 }}
           className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-gradient-to-br from-primary via-primary to-chart-2 p-8 shadow-premium sm:p-14"
         >

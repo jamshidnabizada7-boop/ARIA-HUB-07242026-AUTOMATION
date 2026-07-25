@@ -50,7 +50,7 @@ export function NewsSection({ news }: { news: News[] }) {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
+              viewport={{ once: true, margin: '0px' }}
               transition={{ duration: 0.5 }}
               className="lg:row-span-2"
             >
@@ -99,7 +99,7 @@ export function NewsSection({ news }: { news: News[] }) {
               key={n.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
+              viewport={{ once: true, margin: '0px' }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
             >
               <button onClick={() => setSelected(n)} className="block w-full text-left">

@@ -38,8 +38,8 @@ export function PricingSection({ packages }: { packages: PricingPackage[] }) {
                 key={pkg.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.55, delay: i * 0.1 }}
+                viewport={{ once: true, margin: '0px' }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
                 className={cn('relative', isFeatured && 'lg:-mt-4 lg:mb-4')}
               >
                 <Card

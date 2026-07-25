@@ -39,7 +39,7 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                   variants={revealItem}
                   initial="hidden"
                   whileInView="show"
-                  viewport={{ once: true, margin: '-60px' }}
+                  viewport={{ once: true, margin: '0px' }}
                   transition={{ delay: i * 0.12 }}
                   className="relative"
                 >

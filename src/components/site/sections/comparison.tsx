@@ -24,7 +24,7 @@ export function ComparisonSection({ rows }: { rows: ComparisonRow[] }) {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={{ once: true, margin: '0px' }}
           transition={{ duration: 0.6 }}
           className="mt-14 overflow-hidden rounded-3xl border border-border/60 shadow-premium"
         >
@@ -50,7 +50,7 @@ export function ComparisonSection({ rows }: { rows: ComparisonRow[] }) {
               key={row.id}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
+              viewport={{ once: true, margin: '0px' }}
               transition={{ duration: 0.4, delay: i * 0.06 }}
               className={cn(
                 'grid grid-cols-[1.5fr_1fr_1fr] items-center gap-2 p-5 transition-colors hover:bg-accent/30 sm:gap-4 sm:p-6',

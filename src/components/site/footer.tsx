@@ -170,10 +170,10 @@ export function Footer({
                 <p className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {settings.address}</p>
               )}
               {settings?.phone && (
-                <a href={`tel:${settings.phone}`} className="flex items-center gap-2 transition-colors hover:text-foreground"><Phone className="h-4 w-4 shrink-0 text-primary" /> {settings.phone}</a>
+                <a href={`tel:${settings.phone}`} className="flex items-center gap-2 py-1 transition-colors hover:text-foreground"><Phone className="h-4 w-4 shrink-0 text-primary" /> {settings.phone}</a>
               )}
               {settings?.email && (
-                <a href={`mailto:${settings.email}`} className="flex items-center gap-2 transition-colors hover:text-foreground"><Mail className="h-4 w-4 shrink-0 text-primary" /> {settings.email}</a>
+                <a href={`mailto:${settings.email}`} className="flex items-center gap-2 py-1 transition-colors hover:text-foreground"><Mail className="h-4 w-4 shrink-0 text-primary" /> {settings.email}</a>
               )}
             </div>
           </div>
@@ -232,12 +232,12 @@ export function Footer({
       <div className="border-t border-border/60">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
           <p>© {new Date().getFullYear()} {settings?.siteName || 'ARIA HUB'}. {t('footer.rights')}</p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <a href="#" className="transition-colors hover:text-foreground">{t('footer.privacy')}</a>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <a href="#privacy" className="p-2 transition-colors hover:text-foreground">{t('footer.privacy')}</a>
             <span className="text-border">·</span>
-            <a href="#" className="transition-colors hover:text-foreground">{t('footer.terms')}</a>
+            <a href="#terms" className="p-2 transition-colors hover:text-foreground">{t('footer.terms')}</a>
             <span className="text-border">·</span>
-            <a href="#" className="transition-colors hover:text-foreground">{t('footer.cookies')}</a>
+            <a href="#cookies" className="p-2 transition-colors hover:text-foreground">{t('footer.cookies')}</a>
           </div>
         </div>
       </div>

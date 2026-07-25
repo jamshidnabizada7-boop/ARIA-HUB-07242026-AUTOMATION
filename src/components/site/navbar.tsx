@@ -27,7 +27,7 @@ function LogoMark({ src }: { src: string | null | undefined }) {
       </div>
     );
   }
-  return <Image src={src} alt="Logo" width={36} height={36} onError={() => setErr(true)} className="h-9 w-9 rounded-xl object-cover" />;
+  return <Image src={src} alt="Logo" width={72} height={72} onError={() => setErr(true)} className="h-9 w-9 rounded-xl object-cover" />;
 }
 
 interface NavbarProps {

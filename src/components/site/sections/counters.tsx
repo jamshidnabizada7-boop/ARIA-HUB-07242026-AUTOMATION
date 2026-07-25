@@ -10,7 +10,7 @@ import type { Counter } from '@/lib/types';
 export function CountersSection({ counters }: { counters: Counter[] }) {
   const t = useT();
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const inView = useInView(ref, { once: true, margin: '0px' });
 
   return (
     <section ref={ref} className="relative overflow-hidden py-24 sm:py-32">
