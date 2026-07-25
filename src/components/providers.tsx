@@ -7,8 +7,11 @@ import { useLangStore } from '@/lib/lang-store';
 function LangSync() {
   const { code, dir } = useLangStore();
   useEffect(() => {
-    // Rehydrate from localStorage after mount (skipHydration prevents SSR mismatch)
-    useLangStore.persist.rehydrate();
+    // Defer rehydration past React's hydration commit phase to prevent error #418
+    const t = setTimeout(() => {
+      useLangStore.persist.rehydrate();
+    }, 0);
+    return () => clearTimeout(t);
   }, []);
   useEffect(() => {
     const html = document.documentElement;

@@ -164,12 +164,11 @@
     border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
   }
   .text-gradient {
-    background: linear-gradient(120deg, var(--primary), var(--chart-2) 50%, var(--primary));
-    background-size: 200% auto;
+    background: linear-gradient(120deg, var(--primary), var(--chart-2));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: shine 6s linear infinite;
+    position: relative;
   }
   .text-gradient-static {
     background: linear-gradient(120deg, var(--primary), var(--chart-2));
@@ -239,9 +238,6 @@
   }
 }
 
-@keyframes shine {
-  to { background-position: 200% center; }
-}
 @keyframes float-slow {
   0%, 100% { transform: translateY(0) translateX(0); }
   50% { transform: translateY(-18px) translateX(8px); }
