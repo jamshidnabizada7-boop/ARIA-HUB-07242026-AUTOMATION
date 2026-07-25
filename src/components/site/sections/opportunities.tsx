@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarDays, MapPin, Building2, ArrowUpRight, ExternalLink, CheckCircle2, Award, FileText, Globe } from 'lucide-react';
+import { CalendarDays, MapPin, Building2, ArrowUpRight, ExternalLink, CheckCircle2, Award, FileText, Globe, Briefcase, DollarSign, GraduationCap, Clock, Info } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SectionHeading } from '../section-heading';
@@ -186,6 +186,18 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
           {deadline && (
             <MetaItem icon={CalendarDays} label={t('opportunities.deadline')} value={deadline} />
           )}
+          {opportunity.jobType && (
+            <MetaItem icon={Briefcase} label="Job Type" value={opportunity.jobType} />
+          )}
+          {opportunity.salary && (
+            <MetaItem icon={DollarSign} label="Salary" value={opportunity.salary} />
+          )}
+          {opportunity.educationReq && (
+            <MetaItem icon={GraduationCap} label="Education" value={opportunity.educationReq} />
+          )}
+          {opportunity.experience && (
+            <MetaItem icon={Clock} label="Experience" value={opportunity.experience} />
+          )}
           {opportunity.website && (
             <a href={opportunity.website} target="_blank" rel="noopener noreferrer" className="flex flex-col rounded-xl border border-border/60 bg-accent/30 p-3 transition-colors hover:border-primary/40">
               <Globe className="mb-1 h-4 w-4 text-primary" />
@@ -193,6 +205,9 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
               <p className="truncate text-xs font-bold text-primary">Visit ↗</p>
             </a>
           )}
+          {opportunity.extractedData && typeof opportunity.extractedData === 'object' && Object.entries(opportunity.extractedData).map(([key, val]) => (
+            val ? <MetaItem key={key} icon={Info} label={key.replace(/([A-Z])/g, ' $1').trim()} value={String(val)} /> : null
+          ))}
         </div>
 
         {description && (

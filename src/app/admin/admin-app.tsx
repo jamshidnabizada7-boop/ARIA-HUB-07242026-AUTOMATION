@@ -584,6 +584,7 @@ function FieldInput({ field, value, item, model, statusOptions, onChange }: { fi
   const isDirection = field === 'direction';
   const isType = field === 'type';
   const isAccent = field === 'accent';
+  const isJson = field === 'extractedData';
 
   // Try to get translation for field label, fallback to capitalized field name
   const getFieldLabel = () => {
@@ -681,6 +682,24 @@ function FieldInput({ field, value, item, model, statusOptions, onChange }: { fi
             <SelectItem value="rtl">rtl</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+    );
+  }
+
+  if (isJson) {
+    const stringValue = typeof value === 'object' && value !== null ? JSON.stringify(value, null, 2) : value || '';
+    return (
+      <div className="sm:col-span-2">
+        <Label className="mb-1.5 block text-sm font-medium">{getFieldLabel()} (JSON format)</Label>
+        <Textarea 
+          value={stringValue} 
+          onChange={(e) => {
+            const val = e.target.value;
+            try { onChange(JSON.parse(val)); } catch { onChange(val); }
+          }} 
+          rows={6} 
+          className="font-mono text-xs"
+        />
       </div>
     );
   }

@@ -138,6 +138,7 @@ export interface Opportunity {
   attachments?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  extractedData?: Record<string, any> | null;
 }
 
 // ── Automated import sources ──
