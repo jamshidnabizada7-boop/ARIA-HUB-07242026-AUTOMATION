@@ -156,16 +156,41 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
 
 function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k: string) => string }) {
   const lang = useLangStore((s) => s.code);
+  const isRtl = lang === 'fa' || lang === 'ps';
   
   const title = getLocalizedContent(opportunity.title, opportunity.titleI18n as any, lang);
   const description = getLocalizedContent(opportunity.description, opportunity.descriptionI18n as any, lang);
   const eligibility = getLocalizedContent(opportunity.eligibility, opportunity.eligibilityI18n as any, lang);
   const benefits = getLocalizedContent(opportunity.benefits, opportunity.benefitsI18n as any, lang);
+  const requirements = getLocalizedContent(opportunity.requirements, opportunity.requirementsI18n as any, lang);
+  const responsibilities = getLocalizedContent(opportunity.responsibilities, opportunity.responsibilitiesI18n as any, lang);
   
   const jobType = getLocalizedContent(opportunity.jobType, opportunity.jobTypeI18n as any, lang);
   const salary = getLocalizedContent(opportunity.salary, opportunity.salaryI18n as any, lang);
   const educationReq = getLocalizedContent(opportunity.educationReq, opportunity.educationReqI18n as any, lang);
   const experience = getLocalizedContent(opportunity.experience, opportunity.experienceI18n as any, lang);
+
+  const translateKey = (key: string) => {
+    const map: Record<string, {fa: string, ps: string}> = {
+      'Organization': {fa: 'سازمان', ps: 'سازمان'},
+      'Location': {fa: 'موقعیت', ps: 'موقعیت'},
+      'Job Type': {fa: 'نوع شغل', ps: 'د دندې ډول'},
+      'Salary': {fa: 'معاش', ps: 'معاش'},
+      'Education': {fa: 'تحصیلات', ps: 'زده کړه'},
+      'Experience': {fa: 'تجربه', ps: 'تجربه'},
+      'Vacancy Number': {fa: 'شماره بست', ps: 'د بست شمیره'},
+      'No. of Jobs': {fa: 'تعداد بست', ps: 'د دندو شمیر'},
+      'City': {fa: 'شهر', ps: 'ښار'},
+      'Contract Duration': {fa: 'مدت قرارداد', ps: 'د قرارداد موده'},
+      'Gender': {fa: 'جنسیت', ps: 'جنسیت'},
+      'Nationality': {fa: 'ملیت', ps: 'تابعیت'},
+      'Employment Type': {fa: 'نوع استخدام', ps: 'د کار ډول'},
+      'Category': {fa: 'دسته بندی', ps: 'کټګورۍ'},
+    };
+    if (lang === 'fa') return map[key]?.fa || key;
+    if (lang === 'ps') return map[key]?.ps || key;
+    return key;
+  };
   
   const getExtractedDataValue = (key: string, defaultVal: any) => {
     if (lang === 'en') return defaultVal;
@@ -189,34 +214,34 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
         </div>
       </div>
 
-      <div className="max-h-[55vh] overflow-y-auto p-6 sm:p-8">
+      <div className="max-h-[55vh] overflow-y-auto p-6 sm:p-8" dir={isRtl ? 'rtl' : 'ltr'}>
         {/* Meta row */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {opportunity.organization && (
-            <MetaItem icon={Building2} label="Organization" value={opportunity.organization} />
+            <MetaItem icon={Building2} label={translateKey("Organization")} value={opportunity.organization} />
           )}
           {opportunity.country && (
-            <MetaItem icon={MapPin} label="Location" value={opportunity.country} />
+            <MetaItem icon={MapPin} label={translateKey("Location")} value={opportunity.country} />
           )}
           {deadline && (
             <MetaItem icon={CalendarDays} label={t('opportunities.deadline')} value={deadline} />
           )}
           {jobType && (
-            <MetaItem icon={Briefcase} label="Job Type" value={jobType} />
+            <MetaItem icon={Briefcase} label={translateKey("Job Type")} value={jobType} />
           )}
           {salary && (
-            <MetaItem icon={DollarSign} label="Salary" value={salary} />
+            <MetaItem icon={DollarSign} label={translateKey("Salary")} value={salary} />
           )}
           {educationReq && (
-            <MetaItem icon={GraduationCap} label="Education" value={educationReq} />
+            <MetaItem icon={GraduationCap} label={translateKey("Education")} value={educationReq} />
           )}
           {experience && (
-            <MetaItem icon={Clock} label="Experience" value={experience} />
+            <MetaItem icon={Clock} label={translateKey("Experience")} value={experience} />
           )}
           {opportunity.website && (
             <a href={opportunity.website} target="_blank" rel="noopener noreferrer" className="flex flex-col rounded-xl border border-border/60 bg-accent/30 p-3 transition-colors hover:border-primary/40">
               <Globe className="mb-1 h-4 w-4 text-primary" />
-              <p className="text-[10px] font-medium uppercase text-muted-foreground">Website</p>
+              <p className="text-[10px] font-medium uppercase text-muted-foreground">{t('admin.table.website')}</p>
               <p className="truncate text-xs font-bold text-primary">Visit ↗</p>
             </a>
           )}
@@ -225,27 +250,41 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
             .map(([key, val]) => {
               if (!val) return null;
               const localizedVal = getExtractedDataValue(key, val);
-              return <MetaItem key={key} icon={Info} label={key.replace(/([A-Z])/g, ' $1').trim()} value={String(localizedVal)} />;
+              return <MetaItem key={key} icon={Info} label={translateKey(key)} value={String(localizedVal)} />;
             })}
         </div>
 
         {description && (
           <div className="mt-5">
-            <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-muted-foreground">Overview</h3>
+            <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-muted-foreground">{t('opportunities.overview') || 'Overview'}</h3>
             <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: description }} />
+          </div>
+        )}
+
+        {requirements && (
+          <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
+            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />{t('opportunities.requirements') || 'Requirements'}</h3>
+            <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: requirements }} />
+          </div>
+        )}
+
+        {responsibilities && (
+          <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
+            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />{t('opportunities.responsibilities') || 'Responsibilities'}</h3>
+            <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: responsibilities }} />
           </div>
         )}
 
         {eligibility && (
           <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
-            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />Eligibility</h3>
+            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />{t('opportunities.eligibility') || 'Eligibility'}</h3>
             <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: eligibility }} />
           </div>
         )}
 
         {benefits && (
           <div className="mt-4 rounded-xl border border-border/60 bg-accent/20 p-4">
-            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><Award className="h-4 w-4 text-chart-4" />Benefits</h3>
+            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><Award className="h-4 w-4 text-chart-4" />{t('opportunities.benefits') || 'Benefits'}</h3>
             <div className="text-sm leading-relaxed text-foreground/80 space-y-4" dangerouslySetInnerHTML={{ __html: benefits }} />
           </div>
         )}
