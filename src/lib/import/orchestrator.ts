@@ -274,6 +274,7 @@ async function processListing(
     publishedDate: listing.publishedDate || null,
     canonicalUrl: listing.sourceUrl,
     status: source.autoPublish ? 'published' : 'draft',
+    extractedData: listing.extractedData || {},
   };
 
   if (dedupe.action === 'update') {
