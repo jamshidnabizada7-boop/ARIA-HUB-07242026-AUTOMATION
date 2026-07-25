@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 const vazirmatn = Vazirmatn({
   variable: "--font-vazirmatn",
   subsets: ["arabic"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700", "900"],
   display: "swap",
   preload: true,
 });
@@ -64,9 +64,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable}`}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable} antialiased bg-background text-foreground`}
+        className="font-sans antialiased bg-background text-foreground"
       >
         <Providers>
           {children}
