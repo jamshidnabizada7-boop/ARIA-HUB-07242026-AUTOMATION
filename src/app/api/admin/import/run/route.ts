@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentAdmin, logAction, rateLimit } from '@/lib/admin-auth';
 import { runImport } from '@/lib/import/orchestrator';
 
+export const dynamic = 'force-dynamic';
+export const maxDuration = 300; // 5 minutes on Vercel Pro, 60s on Hobby
+
 /**
  * POST /api/admin/import/run
  *   body: { sourceId?: string, type?: 'job'|'scholarship' }
