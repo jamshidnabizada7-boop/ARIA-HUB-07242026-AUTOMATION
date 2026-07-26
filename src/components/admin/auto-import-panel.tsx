@@ -99,7 +99,7 @@ export function AutoImportPanel() {
   const retranslateOld = async () => {
     setRunning(true);
     try {
-      const res = await fetch('/api/admin/import/retranslate-all?take=50', { method: 'POST' });
+      const res = await fetch('/api/admin/import/retranslate-all?take=100', { method: 'POST' });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed');
       toast({ title: 'Retranslation', description: data.message });
@@ -147,8 +147,9 @@ export function AutoImportPanel() {
           <Button variant="outline" onClick={retryFailed} disabled={running}>
             <RefreshCw className="h-4 w-4 mr-1" /> {t('import.retryFailed')}
           </Button>
-          <Button variant="outline" onClick={retranslateOld} disabled={running}>
-            <RefreshCw className="h-4 w-4 mr-1" /> Fix Translations (50 jobs)
+          <Button variant="outline" size="sm" onClick={retranslateOld} disabled={running}>
+            {running ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCcw className="mr-2 h-4 w-4" />}
+            {t('admin.import.fixTranslations', 'Fix Translations (100 jobs)')}
           </Button>
         </div>
       </div>

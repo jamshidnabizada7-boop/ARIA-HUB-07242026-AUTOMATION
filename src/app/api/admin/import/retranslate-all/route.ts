@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const take = parseInt(searchParams.get('take') || '10', 10);
+    const take = parseInt(searchParams.get('take') || '100', 10);
 
     // Get opportunities that are missing jobTypeI18n
     // We check for records where jobTypeI18n is literally null

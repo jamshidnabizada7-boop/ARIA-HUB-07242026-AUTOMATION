@@ -257,10 +257,10 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
         {/* Meta row */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {opportunity.organization && (
-            <MetaItem icon={Building2} label={translateKey("Organization")} value={opportunity.organization} />
+            <MetaItem icon={Building2} label={translateKey("Organization")} value={getExtractedDataValue("Organization", opportunity.organization)} />
           )}
           {opportunity.country && (
-            <MetaItem icon={MapPin} label={translateKey("Location")} value={opportunity.country} />
+            <MetaItem icon={MapPin} label={translateKey("Location")} value={getExtractedDataValue("Location", opportunity.country)} />
           )}
           {deadline && (
             <MetaItem icon={CalendarDays} label={t('opportunities.deadline')} value={deadline} />
