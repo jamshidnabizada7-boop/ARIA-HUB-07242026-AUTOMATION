@@ -36,7 +36,7 @@ export abstract class BaseScraper {
   async fetchText(url: string, opts: FetchOptions = {}): Promise<string> {
     const retries = opts.retries ?? 2;
     const timeoutMs = opts.timeoutMs ?? this.source.config.timeoutMs ?? 30_000;
-    const delay = opts.crawlDelayMs ?? this.source.config.crawlDelayMs ?? 1500;
+    const delay = opts.crawlDelayMs ?? this.source.config.crawlDelayMs ?? 500;
 
     const cached = fetchCache.get(url);
     const fresh = cached && Date.now() - cached.at < CACHE_TTL_MS;
@@ -109,7 +109,7 @@ export abstract class BaseScraper {
    * via its detail page. Returns the full flattened set of listings.
    */
   async scrapeAll(): Promise<RawListing[]> {
-    const maxPages = this.source.config.maxPages ?? 5;
+    const maxPages = this.source.config.maxPages ?? 1;
     const all: RawListing[] = [];
     let nextUrl: string | null | undefined = this.source.baseUrl;
 
