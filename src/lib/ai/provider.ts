@@ -36,6 +36,9 @@ export interface AIProvider {
   /** Translate an array of strings (e.g. keywords, tags). */
   translateArray(items: string[], fromLang: string, toLang: string): Promise<string[]>;
 
+  /** Translate a dictionary of strings. */
+  translateObject(obj: Record<string, string>, fromLang: string, toLang: string, opts?: { context?: string }): Promise<Record<string, string>>;
+
   /** Generate SEO metadata for content in a given language. */
   generateSEO(content: string, lang: string, opts?: { title?: string }): Promise<SEOResult>;
 

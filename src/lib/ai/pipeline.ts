@@ -109,36 +109,58 @@ export async function runAIPipeline(
 
   for (const lang of targetLangs) {
     try {
-      // Title
-      titleI18n[lang] = await provider.translate(title, originalLang, lang, { context: listing.organization || '' });
-      // Description (use rewritten)
-      descI18n[lang] = await provider.translate(rewrittenDesc, originalLang, lang);
-      // Summary
-      if (summary) summaryI18n[lang] = await provider.translate(summary, originalLang, lang);
-      // Sections
+      // 1. Bundle all translatable text into a single object
+      const batchObj: Record<string, string> = {
+        title: title,
+        desc: rewrittenDesc,
+      };
+      if (summary) batchObj.summary = summary;
+      
       for (const s of sectionFields) {
-        if (s.value && sectionI18n[s.key]) {
-          sectionI18n[s.key][lang] = await provider.translate(s.value, originalLang, lang);
-        }
+        if (s.value) batchObj[`sec_${s.key}`] = s.value;
       }
-      // Extracted Data
+      
       if (listing.extractedData && typeof listing.extractedData === 'object') {
-        extractedDataI18n[lang] = {};
+        extractedDataI18n[lang] = {}; // Initialize dict
         for (const [key, val] of Object.entries(listing.extractedData)) {
           if (val && typeof val === 'string') {
-            extractedDataI18n[lang][key] = await provider.translate(val, originalLang, lang);
+            batchObj[`ext_${key}`] = val;
           } else {
-            extractedDataI18n[lang][key] = val; // keep as-is if not string
+            extractedDataI18n[lang][key] = val; // Copy non-strings directly
           }
         }
       }
-      // SEO for this language
+
+      // 2. Call the AI with the bundled object (1 API call!)
+      const translatedObj = await provider.translateObject(batchObj, originalLang, lang, { context: listing.organization || '' });
+
+      // 3. Unpack the translated results
+      titleI18n[lang] = translatedObj.title || title;
+      descI18n[lang] = translatedObj.desc || rewrittenDesc;
+      if (summary) summaryI18n[lang] = translatedObj.summary || summary;
+
+      for (const s of sectionFields) {
+        if (s.value && sectionI18n[s.key]) {
+          sectionI18n[s.key][lang] = translatedObj[`sec_${s.key}`] || s.value;
+        }
+      }
+
+      if (listing.extractedData && typeof listing.extractedData === 'object') {
+        for (const [key, val] of Object.entries(listing.extractedData)) {
+          if (val && typeof val === 'string') {
+            extractedDataI18n[lang][key] = translatedObj[`ext_${key}`] || val;
+          }
+        }
+      }
+
+      // 4. Generate SEO for this language (1 additional call per language)
       const seoLang = await provider.generateSEO(descI18n[lang] || rewrittenDesc, lang, { title: titleI18n[lang] });
       if (seoLang.seoTitle) seoTitleI18n[lang] = seoLang.seoTitle;
       if (seoLang.metaDescription) seoDescI18n[lang] = seoLang.metaDescription;
       if (seoLang.keywords.length) seoKeywordsI18n[lang] = seoLang.keywords;
       if (seoLang.ogTitle) ogTitleI18n[lang] = seoLang.ogTitle;
       if (seoLang.ogDescription) ogDescI18n[lang] = seoLang.ogDescription;
+      
       translationsOk++;
     } catch (e) {
       console.error(`[ai] translation to ${lang} failed:`, e);
@@ -206,6 +228,11 @@ function noAIMode(listing: RawListing, originalLang: Lang): PipelineOutput {
     title: listing.title,
     description: listing.description || stripHtml(listing.title),
     language: originalLang,
+    jobType: listing.jobType || null,
+    salary: listing.salary || null,
+    educationReq: listing.educationReq || null,
+    experience: listing.experience || null,
+    extractedData: listing.extractedData || null,
   };
   if (listing.eligibility) data.eligibility = listing.eligibility;
   if (listing.benefits) data.benefits = listing.benefits;

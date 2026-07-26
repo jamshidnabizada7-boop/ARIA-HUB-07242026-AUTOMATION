@@ -43,6 +43,17 @@ export class ZAIProvider implements AIProvider {
     return parsed?.items || (parsed ? [parsed.text].filter(Boolean) : [raw]);
   }
 
+  async translateObject(obj: Record<string, string>, fromLang: string, toLang: string, opts?: { context?: string }): Promise<Record<string, string>> {
+    const keys = Object.keys(obj);
+    if (!keys.length) return {};
+    
+    const user = `${opts?.context ? `Context: ${opts.context}\n\n` : ''}Translate the values of this JSON object to ${toLang}. Respond with ONLY a valid JSON object matching the exact keys.\n\nJSON:\n${JSON.stringify(obj, null, 2)}`;
+    const raw = await retry(() => this.chat(translateSystem(toLang), user));
+    const parsed = parseJSON(raw);
+    
+    return typeof parsed === 'object' && parsed !== null ? parsed : {};
+  }
+
   async generateSEO(content: string, lang: string, opts?: { title?: string }): Promise<SEOResult> {
     const user = `${opts?.title ? `Title hint: ${opts.title}\n\n` : ''}Content:\n${content.slice(0, 2000)}`;
     const raw = await retry(() => this.chat(seoSystem(lang), user));
