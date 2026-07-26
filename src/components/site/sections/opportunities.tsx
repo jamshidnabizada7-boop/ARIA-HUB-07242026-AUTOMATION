@@ -92,7 +92,7 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
   const title = getLocalizedContent(opportunity.title, opportunity.titleI18n as any, lang);
   const description = getLocalizedContent(opportunity.description, opportunity.descriptionI18n as any, lang);
   
-  const deadline = opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null;
+  const deadline = opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : null;
   const plainDescription = description ? description.replace(/<[^>]*>?/gm, '') : '';
 
   return (
@@ -130,7 +130,6 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
             <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{opportunity.country}</span>
           )}
         </div>
-        <p className="mt-3 line-clamp-2 flex-1 text-sm text-muted-foreground">{description}</p>
         {deadline && (
           <div className="mt-4 flex items-center gap-1.5 rounded-lg bg-accent/60 px-3 py-1.5 text-xs font-medium">
             <CalendarDays className="h-3.5 w-3.5 text-primary" />

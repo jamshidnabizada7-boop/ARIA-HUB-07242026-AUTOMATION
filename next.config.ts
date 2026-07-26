@@ -13,10 +13,8 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
-      { protocol: "https", hostname: "www.wazifaha.org" },
-      { protocol: "https", hostname: "wazifaha.org" },
-      { protocol: "https", hostname: "scholarships.af" },
-      { protocol: "https", hostname: "www.scholarships.af" },
+      { protocol: "https", hostname: "**" },
+      { protocol: "http", hostname: "**" }
     ],
   },
 };
