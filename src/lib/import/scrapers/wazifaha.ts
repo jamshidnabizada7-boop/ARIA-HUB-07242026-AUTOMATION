@@ -30,10 +30,12 @@ export class WazifahaScraper extends BaseScraper {
     const $ = cheerio.load(html);
     const listings: RawListing[] = [];
 
-    // Each job link: <a class="wz-browse-link" href="/jobs/ID/slug">
-    $('a.wz-browse-link').each(function () {
+    // Each job link: <a class="wz-job-name" href="/jobs/ID/slug">
+    // We use .d-none.d-md-block to avoid grabbing the duplicate mobile links.
+    $('a.wz-job-name.d-none.d-md-block').each(function () {
       const href = $(this).attr('href');
-      if (!href) return;
+      if (!href || !href.includes('/jobs/')) return;
+      
       const fullUrl = resolveUrl(href, pageUrl);
       if (!fullUrl) return;
 
