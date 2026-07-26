@@ -109,10 +109,9 @@ export async function runAIPipeline(
 
   for (const lang of targetLangs) {
     try {
-      // 1. Bundle all translatable text into a single object
+      // 1. Bundle all small text fields into a single JSON object
       const batchObj: Record<string, string> = {
         title: title,
-        desc: rewrittenDesc,
       };
       if (summary) batchObj.summary = summary;
       
@@ -134,9 +133,11 @@ export async function runAIPipeline(
       // 2. Call the AI with the bundled object (1 API call!)
       const translatedObj = await provider.translateObject(batchObj, originalLang, lang, { context: listing.organization || '' });
 
+      // 2.b Translate the long description separately to avoid JSON escaping errors
+      descI18n[lang] = await provider.translate(rewrittenDesc, originalLang, lang);
+
       // 3. Unpack the translated results
       titleI18n[lang] = translatedObj.title || title;
-      descI18n[lang] = translatedObj.desc || rewrittenDesc;
       if (summary) summaryI18n[lang] = translatedObj.summary || summary;
 
       for (const s of sectionFields) {
