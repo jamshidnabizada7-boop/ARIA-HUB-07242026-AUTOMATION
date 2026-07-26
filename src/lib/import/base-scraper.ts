@@ -25,7 +25,7 @@ export abstract class BaseScraper {
    * Optionally fetch and parse the detail page for a listing to enrich it
    * (full description, eligibility, etc.). Default: no-op (return as-is).
    */
-  protected async parseDetail(listing: RawListing): Promise<RawListing> {
+  public async parseDetail(listing: RawListing): Promise<RawListing> {
     return listing;
   }
 
@@ -125,19 +125,6 @@ export abstract class BaseScraper {
       }
 
       if (!page.listings.length) break;
-
-      // Optionally fetch detail pages (sequential + polite).
-      if (this.source.config.detailFetch !== false) {
-        for (const listing of page.listings) {
-          try {
-            const enriched = await this.parseDetail(listing);
-            Object.assign(listing, enriched);
-          } catch (e) {
-            console.error(`[import] detail failed (${listing.sourceUrl}):`, sanitizeError(e));
-            // keep the partial listing from the list page
-          }
-        }
-      }
 
       all.push(...page.listings);
       nextUrl = page.nextPage || null;

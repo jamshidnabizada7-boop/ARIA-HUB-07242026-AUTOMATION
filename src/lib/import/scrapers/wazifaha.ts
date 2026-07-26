@@ -71,7 +71,7 @@ export class WazifahaScraper extends BaseScraper {
   }
 
   /** Fetch the detail page and extract full listing data. */
-  protected async parseDetail(listing: RawListing): Promise<RawListing> {
+  public async parseDetail(listing: RawListing): Promise<RawListing> {
     try {
       const html = await this.fetchText(listing.sourceUrl);
       const $ = cheerio.load(html);

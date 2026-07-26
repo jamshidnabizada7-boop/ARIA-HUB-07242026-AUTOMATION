@@ -145,7 +145,7 @@ async function runOneSource(
     for (const listing of listings) {
       try {
         // eslint-disable-next-line no-await-in-loop
-        await processListing(db, listing, source, categories, knownSlugs, counters);
+        await processListing(db, scraper, listing, source, categories, knownSlugs, counters);
       } catch (e) {
         counters.failed++;
         errors.push({ url: listing.sourceUrl, message: sanitizeError(e), ts: new Date().toISOString() });
@@ -211,6 +211,7 @@ async function runOneSource(
 /** Process a single listing: dedupe → images → AI → upsert. */
 async function processListing(
   db: PrismaClient,
+  scraper: any,
   listing: RawListing,
   source: { id: string; name: string; type: string; scraperKey: string; baseUrl: string; config: string | null; defaultCategory: string | null; autoPublish: boolean },
   categories: Array<{ id: string; slug: string; name: string }>,
@@ -236,6 +237,16 @@ async function processListing(
       data: { lastChecked: new Date() },
     });
     return;
+  }
+
+  // Fetch detail page now that we know we need to create/update it
+  if (scraper && typeof scraper.parseDetail === 'function' && source.config?.detailFetch !== false) {
+    try {
+      const enriched = await scraper.parseDetail(listing);
+      Object.assign(listing, enriched);
+    } catch (e) {
+      console.error(`[import] detail failed (${listing.sourceUrl}):`, sanitizeError(e));
+    }
   }
 
   // Images
