@@ -1,29 +1,18 @@
 /**
- * Google Gemini AI Provider adapter.
+ * Groq AI Provider adapter.
  *
- * Dynamically imports the `@google/genai` package ONLY when this provider is
- * selected. Requires GEMINI_API_KEY.
+ * Uses Groq's ultra-fast LLM inference API with Llama models.
+ * Requires GROQ_API_KEY.
  */
 
 import type { AIProvider, RewriteResult, SEOResult } from '../provider';
 import { REWRITE_SYSTEM, translateSystem, seoSystem, categorizeSystem } from '../prompts';
 import { parseJSON, retry } from './helpers';
 
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+const MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+const API_BASE = 'https://api.groq.com/openai/v1';
 
-export class GeminiProvider implements AIProvider {
-  private clientPromise: Promise<any> | null = null;
-
-  private async getClient(): Promise<any> {
-    if (!this.clientPromise) {
-      this.clientPromise = (async () => {
-        const { GoogleGenerativeAI } = await import('@google/generative-ai');
-        return new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-      })();
-    }
-    return this.clientPromise;
-  }
-
+export class GroqProvider implements AIProvider {
   async rewrite(content: string, opts: { type?: string } = {}): Promise<RewriteResult> {
     const user = `Opportunity type: ${opts.type || 'general'}\n\nContent to rewrite:\n${content}`;
     const raw = await retry(() => this.chat(REWRITE_SYSTEM, user));
@@ -35,7 +24,7 @@ export class GeminiProvider implements AIProvider {
     const user = `${opts?.context ? `Context: ${opts.context}\n\n` : ''}Translate to ${toLang}:\n${text}`;
     const raw = await retry(() => this.chat(translateSystem(toLang), user));
     const parsed = parseJSON(raw);
-    return parsed?.text || raw;
+    return parsed?.text || raw.trim();
   }
 
   async translateArray(items: string[], fromLang: string, toLang: string): Promise<string[]> {
@@ -50,11 +39,17 @@ export class GeminiProvider implements AIProvider {
     const keys = Object.keys(obj);
     if (!keys.length) return {};
     
-    const user = `${opts?.context ? `Context: ${opts.context}\n\n` : ''}Translate the values of this JSON object to ${toLang}. Respond with ONLY a valid JSON object matching the exact keys.\n\nJSON:\n${JSON.stringify(obj, null, 2)}`;
+    const user = `${opts?.context ? `Context: ${opts.context}\n\n` : ''}Translate ALL values in this JSON object to ${toLang}. Keep keys unchanged. Respond with ONLY a valid JSON object with the same keys.\n\nJSON:\n${JSON.stringify(obj, null, 2)}`;
     const raw = await retry(() => this.chat(translateSystem(toLang), user));
     const parsed = parseJSON(raw);
     
-    return typeof parsed === 'object' && parsed !== null ? parsed : {};
+    // Ensure we got a valid object back
+    if (typeof parsed === 'object' && parsed !== null) {
+      return parsed;
+    }
+    
+    // Fallback: return original
+    return obj;
   }
 
   async generateSEO(content: string, lang: string, opts?: { title?: string }): Promise<SEOResult> {
@@ -79,27 +74,32 @@ export class GeminiProvider implements AIProvider {
   }
 
   private async chat(system: string, user: string): Promise<string> {
-    const client = await this.getClient();
-    const model = client.getGenerativeModel({ model: MODEL });
-    const chat = model.startChat({
-      history: [
-        {
-          role: 'user',
-          parts: [{ text: system }],
-        },
-        {
-          role: 'model',
-          parts: [{ text: 'I understand. I will follow these instructions.' }],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.3,
-        maxOutputTokens: 4000,
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) throw new Error('GROQ_API_KEY not configured');
+
+    const response = await fetch(`${API_BASE}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
       },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: user },
+        ],
+        temperature: 0.3,
+        max_tokens: 4000,
+      }),
     });
-    
-    const result = await chat.sendMessage(user);
-    const response = await result.response;
-    return response.text() || '';
+
+    if (!response.ok) {
+      const err = await response.text();
+      throw new Error(`Groq API error: ${response.status} ${err}`);
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || '';
   }
 }

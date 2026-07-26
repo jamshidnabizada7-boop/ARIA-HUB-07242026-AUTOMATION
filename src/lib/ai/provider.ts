@@ -53,10 +53,55 @@ let cachedProvider: AIProvider | null | undefined; // undefined = not checked ye
 export async function getAIProvider(): Promise<AIProvider | null> {
   if (cachedProvider !== undefined) return cachedProvider;
 
-  const provider = (process.env.AI_PROVIDER || 'zai').toLowerCase();
+  // Priority order: cerebras > gemini > nvidia > groq > cloudflare > openrouter
+  const provider = (process.env.AI_PROVIDER || 'cerebras').toLowerCase();
 
   try {
     switch (provider) {
+      case 'cerebras': {
+        if (!process.env.CEREBRAS_API_KEY) {
+          console.warn('[ai] CEREBRAS_API_KEY not set — running in no-AI mode.');
+          cachedProvider = null;
+          return null;
+        }
+        const { CerebrasProvider } = await import('./providers/cerebras');
+        cachedProvider = new CerebrasProvider();
+        console.log('[ai] Using Cerebras provider');
+        break;
+      }
+      case 'gemini': {
+        if (!process.env.GEMINI_API_KEY) {
+          console.warn('[ai] GEMINI_API_KEY not set — running in no-AI mode.');
+          cachedProvider = null;
+          return null;
+        }
+        const { GeminiProvider } = await import('./providers/gemini');
+        cachedProvider = new GeminiProvider();
+        console.log('[ai] Using Gemini provider');
+        break;
+      }
+      case 'groq': {
+        if (!process.env.GROQ_API_KEY) {
+          console.warn('[ai] GROQ_API_KEY not set — running in no-AI mode.');
+          cachedProvider = null;
+          return null;
+        }
+        const { GroqProvider } = await import('./providers/groq');
+        cachedProvider = new GroqProvider();
+        console.log('[ai] Using Groq provider (consider llama-3.1-8b-instant for better rate limits)');
+        break;
+      }
+      case 'openrouter': {
+        if (!process.env.OPENROUTER_API_KEY) {
+          console.warn('[ai] OPENROUTER_API_KEY not set — running in no-AI mode.');
+          cachedProvider = null;
+          return null;
+        }
+        const { OpenRouterProvider } = await import('./providers/openrouter');
+        cachedProvider = new OpenRouterProvider();
+        console.log('[ai] Using OpenRouter provider');
+        break;
+      }
       case 'zai': {
         if (!process.env.ZAI_API_KEY) {
           console.warn('[ai] ZAI_API_KEY not set — running in no-AI mode.');
@@ -75,16 +120,6 @@ export async function getAIProvider(): Promise<AIProvider | null> {
         }
         const { OpenAIProvider } = await import('./providers/openai');
         cachedProvider = new OpenAIProvider();
-        break;
-      }
-      case 'gemini': {
-        if (!process.env.GEMINI_API_KEY) {
-          console.warn('[ai] GEMINI_API_KEY not set — running in no-AI mode.');
-          cachedProvider = null;
-          return null;
-        }
-        const { GeminiProvider } = await import('./providers/gemini');
-        cachedProvider = new GeminiProvider();
         break;
       }
       default:

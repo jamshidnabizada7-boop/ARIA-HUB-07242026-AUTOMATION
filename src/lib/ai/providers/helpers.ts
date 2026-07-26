@@ -32,12 +32,29 @@ export async function retry<T>(fn: () => Promise<T>, max = 3, baseMs = 1000): Pr
   for (let i = 0; i < max; i++) {
     try {
       return await fn();
-    } catch (e) {
+    } catch (e: any) {
       lastErr = e;
-      if (i < max - 1) await sleep(baseMs * Math.pow(2, i));
+      // Check if it's a rate limit error
+      const isRateLimit = e?.message?.includes('rate_limit') || e?.message?.includes('429');
+      if (isRateLimit && i < max - 1) {
+        // For rate limits, wait longer
+        const waitTime = baseMs * Math.pow(2, i) * 2;
+        console.log(`⏳ Rate limit hit, waiting ${waitTime}ms before retry ${i + 1}/${max}...`);
+        await sleep(waitTime);
+      } else if (i < max - 1) {
+        await sleep(baseMs * Math.pow(2, i));
+      }
     }
   }
   throw lastErr;
+}
+
+/**
+ * Add a small delay between API calls to avoid rate limiting.
+ * Call this after each API request.
+ */
+export async function rateLimitDelay(ms = 500): Promise<void> {
+  return sleep(ms);
 }
 
 function sleep(ms: number): Promise<void> {

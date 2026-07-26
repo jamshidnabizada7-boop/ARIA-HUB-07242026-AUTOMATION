@@ -48,14 +48,15 @@ Respond as JSON: {"text": "<rewritten markdown>", "summary": "<2-4 sentence summ
 
 /** System prompt for translation. */
 export function translateSystem(toLang: string): string {
-  return `You are a professional translator. Translate the given text into ${LANG_NAMES[toLang] || toLang}.
+  return `You are a professional translator specializing in job postings and educational opportunities. Translate the given text into ${LANG_NAMES[toLang] || toLang}.
 
-Rules:
+CRITICAL RULES:
+- Translate ALL readable text content including job titles, descriptions, requirements, and all other text.
 - Produce a NATURAL, FLUENT, PROFESSIONAL translation — NOT a literal word-for-word machine translation.
 - Do NOT translate (keep exactly as-is): ${DO_NOT_TRANSLATE.join(', ')}.
-- Keep all Markdown formatting intact.
-- Keep all links, emails, and URLs exactly as given.
-- If a term has no good translation, keep the original in parentheses.
+- Keep all Markdown formatting, HTML tags, links, emails, and URLs exactly as given.
+- If a technical term has no good translation, provide the translation with the original in parentheses.
+- IMPORTANT: The output should be fully readable in ${LANG_NAMES[toLang] || toLang}. A native speaker should understand the entire content without needing to know English.
 
 Respond as JSON: {"text": "<translation>"}`;
 }
