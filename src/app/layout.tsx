@@ -24,14 +24,18 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: "ARIA HUB — Professional Business Services Platform",
+  title: "ARIA HUB | آریا هاب — Business & Visa Services",
   description:
-    "Premium business, visa, and global opportunity services. Your gateway to international success — business setup, legal services, visas, scholarships, and more.",
+    "Premium business, visa, and global opportunity services. خدمات حرفه‌ای تجارت، ویزا، و فرصت‌های تحصیلی جهانی - آریا هاب. Your gateway to international success.",
   keywords: [
     "ARIA HUB",
+    "آریا هاب",
+    "اریا هاب",
     "business services",
     "visa services",
+    "خدمات ویزا",
     "scholarships",
+    "بورسیه تحصیلی",
     "opportunities",
     "immigration",
     "consulting",
@@ -43,17 +47,17 @@ export const metadata: Metadata = {
     apple: "/images/logo-mark.webp",
   },
   openGraph: {
-    title: "ARIA HUB — Professional Business Services Platform",
+    title: "ARIA HUB | آریا هاب — Business & Visa Services",
     description:
-      "Premium business, visa, and global opportunity services. Your gateway to international success.",
+      "Premium business, visa, and global opportunity services. خدمات حرفه‌ای تجارت، ویزا، و فرصت‌های تحصیلی جهانی - آریا هاب.",
     siteName: "ARIA HUB",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ARIA HUB — Professional Business Services Platform",
+    title: "ARIA HUB | آریا هاب — Business & Visa Services",
     description:
-      "Premium business, visa, and global opportunity services.",
+      "Premium business, visa, and global opportunity services. خدمات حرفه‌ای تجارت، ویزا، و فرصت‌های تحصیلی جهانی - آریا هاب.",
   },
 };
 
@@ -63,7 +67,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" translate="no" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable}`}>
       <body
         suppressHydrationWarning
         className="font-sans antialiased bg-background text-foreground"
