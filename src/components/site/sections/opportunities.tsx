@@ -120,8 +120,8 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
         </div>
       </button>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="line-clamp-2 text-base font-bold leading-tight transition-colors group-hover:text-primary">{title}</h3>
-        <p className="mt-2 flex-1 text-sm text-muted-foreground line-clamp-2">{plainDescription}</p>
+        <h3 dir="auto" className="line-clamp-2 text-base font-bold leading-tight transition-colors group-hover:text-primary">{title}</h3>
+        <p dir="auto" className="mt-2 flex-1 text-sm text-muted-foreground line-clamp-2">{plainDescription}</p>
         <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[11px] font-medium text-muted-foreground">
           {opportunity.organization && (
             <span className="inline-flex items-center gap-1"><Building2 className="h-3.5 w-3.5" />{opportunity.organization}</span>
@@ -157,18 +157,18 @@ const FormattedContent = ({ content }: { content: string }) => {
   if (!content) return null;
   
   if (/<(p|ul|ol|li|br|div|h[1-6])[>\s]/i.test(content)) {
-    return <div className="text-sm leading-relaxed text-foreground/80 space-y-4 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: content }} />;
+    return <div dir="auto" className="text-sm leading-relaxed text-foreground/80 space-y-4 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: content }} />;
   }
 
   const cleanLine = (l: string) => l.replace(/^\s*#+\s+/, '').replace(/\*\*(.*?)\*\*/g, '$1').trim();
   const lines = content.split('\n').map(l => l.trim()).filter(Boolean);
   
   if (lines.length === 1) {
-    return <p className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">{cleanLine(lines[0])}</p>;
+    return <p dir="auto" className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">{cleanLine(lines[0])}</p>;
   }
 
   return (
-    <ul className="space-y-2 text-sm leading-relaxed text-foreground/80">
+    <ul dir="auto" className="space-y-2 text-sm leading-relaxed text-foreground/80">
       {lines.map((rawLine, i) => {
         let line = cleanLine(rawLine);
         const isHeading = rawLine.startsWith('#') || line.endsWith(':');
@@ -178,11 +178,11 @@ const FormattedContent = ({ content }: { content: string }) => {
         }
 
         if (isHeading) {
-          return <li key={i} className="mt-4 font-semibold text-foreground list-none">{line}</li>;
+          return <li key={i} dir="auto" className="mt-4 font-semibold text-foreground list-none">{line}</li>;
         }
         
         return (
-          <li key={i} className="flex items-start gap-2">
+          <li key={i} dir="auto" className="flex items-start gap-2">
             <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
             <span className="flex-1 whitespace-pre-wrap">{line}</span>
           </li>
@@ -248,7 +248,7 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
           {opportunity.category && (
             <span className="rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm">{opportunity.category.name}</span>
           )}
-          <h2 className="mt-2 text-2xl font-bold drop-shadow sm:text-3xl">{title}</h2>
+          <h2 dir="auto" className="mt-2 text-2xl font-bold drop-shadow sm:text-3xl">{title}</h2>
         </div>
       </div>
 
@@ -353,7 +353,7 @@ function MetaItem({ icon: Icon, label, value }: { icon: any; label: string; valu
     <div className="flex flex-col rounded-xl border border-border/60 bg-accent/30 p-3">
       <Icon className="mb-1 h-4 w-4 text-primary" />
       <p className="text-[10px] font-medium uppercase text-muted-foreground">{label}</p>
-      <p className="text-xs font-bold">{value}</p>
+      <p dir="auto" className="text-xs font-bold">{value}</p>
     </div>
   );
 }
