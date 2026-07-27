@@ -1,34 +1,29 @@
 /**
- * AI Pipeline — orchestrates rewrite → SEO → categorize → translate for one
- * RawListing and returns a fully-populated object ready for Prisma upsert.
+ * Import Pipeline — prepares a RawListing for Prisma upsert.
  *
- * Output shape uses the EXACT {en, fa, ps} i18n pattern that the existing
- * `getLocalizedContent()` helper consumes. No separate translation system.
- *
- * On partial AI failure, saves whatever languages succeeded and marks
- * translationStatus='partial'. In no-AI mode, stores scraped content verbatim.
+ * This pipeline has been simplified to bypass all AI translation and 
+ * rewriting logic, keeping scrapes exactly in their original language.
  */
 
 import type { PrismaClient } from '@prisma/client';
-import { getAIProvider } from './provider';
 import { slugify, stripHtml } from '../import/utils';
 import type { RawListing } from '../import/types';
 
-/** The three supported language codes (matches the site's i18n system). */
+/** The three supported language codes. */
 const LANGS = ['en', 'fa', 'ps'] as const;
 type Lang = (typeof LANGS)[number];
 
 export interface PipelineOutput {
   /** Prisma data object (base fields + i18n fields). */
   data: Record<string, unknown>;
-  /** Category slug suggestions from the AI. */
+  /** Category slug suggestions (empty without AI). */
   categorySlugs: string[];
-  /** Translation completeness. */
+  /** Translation completeness (hardcoded to complete since translations are disabled). */
   translationStatus: 'complete' | 'partial' | 'pending';
 }
 
 /**
- * Run the full AI pipeline on a listing.
+ * Run the pipeline on a listing.
  * `originalLang` is the source language (default 'en').
  */
 export async function runAIPipeline(
@@ -36,195 +31,6 @@ export async function runAIPipeline(
   ctx: { db: PrismaClient; knownCategorySlugs: string[] },
   originalLang: Lang = 'en',
 ): Promise<PipelineOutput> {
-  const provider = await getAIProvider();
-
-  // ── No-AI mode: store verbatim, mark pending ──
-  if (!provider) {
-    return noAIMode(listing, originalLang);
-  }
-
-  const sourceText = buildSourceText(listing);
-  const title = listing.title;
-  const data: Record<string, unknown> = {};
-
-  // 1. Rewrite (English)
-  const rewrite = await safe(provider.rewrite(sourceText, { type: listing.jobType || undefined }));
-  const rewrittenDesc = rewrite?.text || listing.description || sourceText;
-  const summary = rewrite?.summary || '';
-
-  // 2. SEO (English, generated from rewritten content)
-  const seoEn = await safe(provider.generateSEO(rewrittenDesc, 'en', { title }));
-
-  // 3. Categorize
-  const cats = await safe(provider.categorize(sourceText, ctx.knownCategorySlugs));
-  const categorySlugs = Array.isArray(cats) && cats.length ? cats : [];
-
-  // 4. Translate title + description + sections into fa and ps
-  // i18n objects keyed by language
-  const titleI18n: Record<string, string> = { en: title };
-  const descI18n: Record<string, string> = { en: rewrittenDesc };
-  const summaryI18n: Record<string, string> = {};
-  const seoTitleI18n: Record<string, string> = {};
-  const seoDescI18n: Record<string, string> = {};
-  const seoKeywordsI18n: Record<string, string[]> = {};
-  const ogTitleI18n: Record<string, string> = {};
-  const ogDescI18n: Record<string, string> = {};
-
-  // English SEO fields
-  if (seoEn) {
-    if (seoEn.seoTitle) seoTitleI18n.en = seoEn.seoTitle;
-    if (seoEn.metaDescription) seoDescI18n.en = seoEn.metaDescription;
-    if (seoEn.keywords.length) seoKeywordsI18n.en = seoEn.keywords;
-    if (seoEn.ogTitle) ogTitleI18n.en = seoEn.ogTitle;
-    if (seoEn.ogDescription) ogDescI18n.en = seoEn.ogDescription;
-  }
-  if (summary) summaryI18n.en = summary;
-
-  // Translate sections that exist on the listing
-  const sectionFields: Array<{ key: string; value?: string | null }> = [
-    { key: 'eligibility', value: listing.eligibility },
-    { key: 'benefits', value: listing.benefits },
-    { key: 'responsibilities', value: listing.responsibilities },
-    { key: 'requirements', value: listing.requirements || listing.requiredDocuments },
-    { key: 'jobType', value: listing.jobType },
-    { key: 'salary', value: listing.salary },
-    { key: 'educationReq', value: listing.educationReq },
-    { key: 'experience', value: listing.experience },
-  ];
-  const sectionI18n: Record<string, Record<string, string>> = {};
-  for (const s of sectionFields) {
-    if (s.value) sectionI18n[s.key] = { en: s.value };
-  }
-
-  // Handle extractedData translations
-  const extractedDataI18n: Record<string, Record<string, string>> = {};
-  if (listing.extractedData && typeof listing.extractedData === 'object') {
-    extractedDataI18n.en = { ...listing.extractedData };
-  }
-
-  // Translate to fa + ps
-  const targetLangs: Lang[] = ['fa', 'ps'];
-  let translationsOk = 0;
-  const expectedTranslations = targetLangs.length; // per-field count tracked below
-
-  for (const lang of targetLangs) {
-    try {
-      // 1. Bundle all small text fields into a single JSON object
-      const batchObj: Record<string, string> = {
-        title: title,
-      };
-      if (summary) batchObj.summary = summary;
-      
-      for (const s of sectionFields) {
-        if (s.value) batchObj[`sec_${s.key}`] = s.value;
-      }
-      
-      if (listing.extractedData && typeof listing.extractedData === 'object') {
-        extractedDataI18n[lang] = {}; // Initialize dict
-        for (const [key, val] of Object.entries(listing.extractedData)) {
-          if (val && typeof val === 'string') {
-            batchObj[`ext_${key}`] = val;
-          } else {
-            extractedDataI18n[lang][key] = val; // Copy non-strings directly
-          }
-        }
-      }
-
-      // 2. Call the AI with the bundled object (1 API call!)
-      const translatedObj = await provider.translateObject(batchObj, originalLang, lang, { context: listing.organization || '' });
-
-      // 2.b Translate the long description separately to avoid JSON escaping errors
-      descI18n[lang] = await provider.translate(rewrittenDesc, originalLang, lang);
-
-      // 3. Unpack the translated results
-      titleI18n[lang] = translatedObj.title || title;
-      if (summary) summaryI18n[lang] = translatedObj.summary || summary;
-
-      for (const s of sectionFields) {
-        if (s.value && sectionI18n[s.key]) {
-          sectionI18n[s.key][lang] = translatedObj[`sec_${s.key}`] || s.value;
-        }
-      }
-
-      if (listing.extractedData && typeof listing.extractedData === 'object') {
-        for (const [key, val] of Object.entries(listing.extractedData)) {
-          if (val && typeof val === 'string') {
-            extractedDataI18n[lang][key] = translatedObj[`ext_${key}`] || val;
-          }
-        }
-      }
-
-      // 4. Generate SEO for this language (1 additional call per language)
-      const seoLang = await provider.generateSEO(descI18n[lang] || rewrittenDesc, lang, { title: titleI18n[lang] });
-      if (seoLang.seoTitle) seoTitleI18n[lang] = seoLang.seoTitle;
-      if (seoLang.metaDescription) seoDescI18n[lang] = seoLang.metaDescription;
-      if (seoLang.keywords.length) seoKeywordsI18n[lang] = seoLang.keywords;
-      if (seoLang.ogTitle) ogTitleI18n[lang] = seoLang.ogTitle;
-      if (seoLang.ogDescription) ogDescI18n[lang] = seoLang.ogDescription;
-      
-      translationsOk++;
-    } catch (e) {
-      console.error(`[ai] translation to ${lang} failed:`, e);
-    }
-  }
-
-  const translationStatus: 'complete' | 'partial' =
-    translationsOk === expectedTranslations ? 'complete' : 'partial';
-
-  // ── Assemble base fields + i18n objects ──
-  data.title = title;
-  data.titleI18n = titleI18n;
-  data.description = rewrittenDesc;
-  data.descriptionI18n = descI18n;
-  if (summary) {
-    data.aiSummary = summary;
-    data.aiSummaryI18n = summaryI18n;
-  }
-
-  // Sections
-  for (const s of sectionFields) {
-    if (s.value && sectionI18n[s.key]) {
-      data[s.key] = s.value;
-      data[`${s.key}I18n`] = sectionI18n[s.key];
-    }
-  }
-
-  if (Object.keys(extractedDataI18n).length > 0) {
-    data.extractedData = listing.extractedData;
-    data.extractedDataI18n = extractedDataI18n;
-  }
-
-  // SEO (base = English)
-  if (seoEn) {
-    data.seoTitle = seoEn.seoTitle || null;
-    data.seoDescription = seoEn.metaDescription || null;
-    data.canonicalUrl = listing.sourceUrl;
-  }
-  if (Object.keys(seoTitleI18n).length) data.seoTitleI18n = seoTitleI18n;
-  if (Object.keys(seoDescI18n).length) data.seoDescriptionI18n = seoDescI18n;
-  if (Object.keys(seoKeywordsI18n).length) {
-    data.seoKeywords = JSON.stringify(seoKeywordsI18n.en || []);
-    data.seoKeywordsI18n = seoKeywordsI18n;
-  }
-  if (Object.keys(ogTitleI18n).length) data.ogTitleI18n = ogTitleI18n;
-  if (Object.keys(ogDescI18n).length) data.ogDescriptionI18n = ogDescI18n;
-
-  // Tags (from keywords)
-  const tagsEn = seoEn?.keywords || [];
-  if (tagsEn.length) {
-    data.tags = JSON.stringify(tagsEn);
-    const tagsI18n: Record<string, string[]> = { en: tagsEn };
-    for (const lang of targetLangs) {
-      if (seoKeywordsI18n[lang]) tagsI18n[lang] = seoKeywordsI18n[lang];
-    }
-    data.tagsI18n = tagsI18n;
-  }
-
-  return { data, categorySlugs, translationStatus };
-}
-
-/** No-AI fallback: store scraped content verbatim, mark translation pending. */
-function noAIMode(listing: RawListing, originalLang: Lang): PipelineOutput {
   const data: Record<string, unknown> = {
     title: listing.title,
     description: listing.description || stripHtml(listing.title),
@@ -235,39 +41,40 @@ function noAIMode(listing: RawListing, originalLang: Lang): PipelineOutput {
     experience: listing.experience || null,
     extractedData: listing.extractedData || null,
   };
+  
   if (listing.eligibility) data.eligibility = listing.eligibility;
   if (listing.benefits) data.benefits = listing.benefits;
   if (listing.responsibilities) data.responsibilities = listing.responsibilities;
   if (listing.requirements || listing.requiredDocuments) {
     data.requirements = listing.requirements || listing.requiredDocuments;
   }
-  return { data, categorySlugs: [], translationStatus: 'pending' };
-}
-
-/** Build a single text blob from all available listing fields for rewriting. */
-function buildSourceText(l: RawListing): string {
-  const parts: string[] = [];
-  parts.push(`Title: ${l.title}`);
-  if (l.organization) parts.push(`Organization: ${l.organization}`);
-  if (l.deadline) parts.push(`Deadline: ${l.deadline}`);
-  if (l.location) parts.push(`Location: ${l.location}`);
-  if (l.salary) parts.push(`Salary: ${l.salary}`);
-  if (l.experience) parts.push(`Experience: ${l.experience}`);
-  if (l.educationReq) parts.push(`Education: ${l.educationReq}`);
-  if (l.description) parts.push(`\nDescription:\n${stripHtml(l.description)}`);
-  if (l.eligibility) parts.push(`\nEligibility:\n${stripHtml(l.eligibility)}`);
-  if (l.responsibilities) parts.push(`\nResponsibilities:\n${stripHtml(l.responsibilities)}`);
-  if (l.benefits) parts.push(`\nBenefits:\n${stripHtml(l.benefits)}`);
-  if (l.requirements || l.requiredDocuments) {
-    parts.push(`\nRequirements:\n${stripHtml(l.requirements || l.requiredDocuments || '')}`);
+  
+  // Set the i18n field for the original language to ensure the UI can display it
+  data.titleI18n = { [originalLang]: listing.title };
+  data.descriptionI18n = { [originalLang]: data.description };
+  
+  const sectionFields: Array<{ key: string; value?: string | null }> = [
+    { key: 'eligibility', value: listing.eligibility },
+    { key: 'benefits', value: listing.benefits },
+    { key: 'responsibilities', value: listing.responsibilities },
+    { key: 'requirements', value: listing.requirements || listing.requiredDocuments },
+    { key: 'jobType', value: listing.jobType },
+    { key: 'salary', value: listing.salary },
+    { key: 'educationReq', value: listing.educationReq },
+    { key: 'experience', value: listing.experience },
+  ];
+  
+  for (const s of sectionFields) {
+    if (s.value) {
+      data[`${s.key}I18n`] = { [originalLang]: s.value };
+    }
   }
-  if (l.applyUrl) parts.push(`\nApplication link: ${l.applyUrl}`);
-  return parts.join('\n');
-}
 
-/** Wrap a promise to never throw — returns null on failure. */
-async function safe<T>(p: Promise<T>): Promise<T | null> {
-  try { return await p; } catch (e) { console.error('[ai] step failed:', e); return null; }
+  if (listing.extractedData && typeof listing.extractedData === 'object') {
+    data.extractedDataI18n = { [originalLang]: { ...listing.extractedData } };
+  }
+
+  return { data, categorySlugs: [], translationStatus: 'complete' };
 }
 
 /** Ensure a slug is unique by appending a suffix if needed. */
