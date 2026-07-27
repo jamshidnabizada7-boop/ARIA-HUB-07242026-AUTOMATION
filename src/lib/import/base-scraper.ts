@@ -50,12 +50,19 @@ export abstract class BaseScraper {
       ...(opts.headers || {}),
     };
     if (cached?.etag) headers['If-None-Match'] = cached.etag;
+    
+    // ScraperAPI integration
+    const apiKey = process.env.SCRAPER_API_KEY || '1fbecd6f0cc065e86a9de62dd3b87291';
+    // If we use ScraperAPI, we send the request to their endpoint instead
+    const targetUrl = apiKey 
+      ? `http://api.scraperapi.com/?api_key=${apiKey}&url=${encodeURIComponent(url)}`
+      : url;
 
     for (let attempt = 0; attempt <= retries; attempt++) {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), timeoutMs);
       try {
-        const res = await fetch(url, { headers, signal: controller.signal, redirect: 'follow' });
+        const res = await fetch(targetUrl, { headers, signal: controller.signal, redirect: 'follow' });
         if (res.status === 304 && cached) return cached.body;
         if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
         const body = await res.text();
@@ -119,7 +126,9 @@ export abstract class BaseScraper {
         const body = await this.fetchText(nextUrl);
         page = await this.parseListPage(body, nextUrl);
       } catch (e) {
-        // Record the page failure but keep going with whatever we have.
+        // If we fail on the very first page, throw so the run is marked as error
+        if (all.length === 0) throw e;
+        // Otherwise, record the page failure but keep going with whatever we have.
         console.error(`[import] list page failed (${nextUrl}):`, sanitizeError(e));
         break;
       }
