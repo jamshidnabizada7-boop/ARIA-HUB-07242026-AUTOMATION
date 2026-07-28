@@ -8,10 +8,10 @@ export function cn(...inputs: ClassValue[]) {
 export function normalizeImageUrl(url: string | null | undefined): string | null | undefined {
   if (!url) return url;
   
-  // Convert Google Drive view links to raw export links so they can be rendered in <img> tags
+  // Convert Google Drive view links to direct image links bypassing 'uc' endpoint hotlink protection
   const driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/]+)/);
   if (driveMatch && driveMatch[1]) {
-    return `https://drive.google.com/uc?export=view&id=${driveMatch[1]}`;
+    return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
   }
   
   return url;

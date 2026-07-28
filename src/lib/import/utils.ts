@@ -53,13 +53,13 @@ export function cleanHtmlWhitespace(html: string): string {
   if (!html) return '';
   let s = html;
   // Remove empty paragraphs or paragraphs only containing whitespace/&nbsp;/<br>
-  s = s.replace(/<p>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '');
+  s = s.replace(/<p>\s*(?:&nbsp;|<br\s*\/?>|&#8203;|\s)*<\/p>/gi, '');
   // Remove empty divs
-  s = s.replace(/<div[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/div>/gi, '');
-  // Replace multiple <br> tags (3 or more) with just two
-  s = s.replace(/(?:<br\s*\/?>\s*){3,}/gi, '<br><br>');
-  // Replace multiple newlines with double newline to prevent excessive markdown spacing
-  s = s.replace(/\n{3,}/g, '\n\n');
+  s = s.replace(/<div[^>]*>\s*(?:&nbsp;|<br\s*\/?>|&#8203;|\s)*<\/div>/gi, '');
+  // Replace multiple <br> tags (2 or more) with just one
+  s = s.replace(/(?:<br\s*\/?>\s*){2,}/gi, '<br>');
+  // Replace multiple newlines with single newline
+  s = s.replace(/\n{2,}/g, '\n');
   return s.trim();
 }
 

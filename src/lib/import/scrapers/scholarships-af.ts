@@ -219,15 +219,32 @@ export class ScholarshipsAfScraper extends BaseScraper {
    * Extract eligibility / requirements / benefits from sub-headings within
    * the description body.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private extractSections(descEl: any, listing: RawListing): void {
     const $desc = descEl;
-    $desc.children('h2, h3, h4').each(function (this: any) {
+    const selectors = 'h2, h3, h4, p:has(strong), p:has(b), strong, b';
+    
+    // We must find elements in order and process them. Since we might mutate the DOM,
+    // we collect all matching headers first, but process them carefully.
+    $desc.find(selectors).each(function (this: any) {
       const $h = $desc.find(this);
+      // Skip if this element was already removed or is a descendant of a matched header
+      if (!$h.closest('body').length && $desc.find($h).length === 0) return;
+      
       const heading = $h.text().trim().toLowerCase();
-      const bodyHtml = $h.nextUntil('h2, h3, h4').html() || '';
-      if (!bodyHtml.trim()) return;
-      const body = stripHtml(bodyHtml);
+      if (!heading || heading.length > 80) return; // Ignore very long bold text
+
+      const $container = $h.parent().is('p') ? $h.parent() : $h;
+      const matched = $container.nextUntil(selectors);
+      const subBody = matched.toArray().map((el: any) => {
+        // use cheerios html on each element
+        const tag = (el.tagName || '').toLowerCase();
+        // If it's a text node or similar without prop/html, just use text
+        return $desc.find(el).prop('outerHTML') || $desc.find(el).html() || $desc.find(el).text();
+      }).join('<br>');
+      
+      if (!subBody.trim()) return;
+      const body = stripHtml(subBody);
       let isExtracted = false;
 
       if (heading.includes('eligib')) {
@@ -249,8 +266,8 @@ export class ScholarshipsAfScraper extends BaseScraper {
       }
 
       if (isExtracted) {
-        $h.nextUntil('h2, h3, h4').remove();
-        $h.remove();
+        matched.remove();
+        $container.remove();
       }
     });
   }

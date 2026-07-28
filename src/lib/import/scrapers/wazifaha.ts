@@ -155,13 +155,15 @@ export class WazifahaScraper extends BaseScraper {
             let isSubExtracted = false;
             
             if (subHeading.includes('responsib') || subHeading.includes('dut') || subHeading.includes('role')) {
-              const subBody = $container.nextUntil('h2, h3, h4, p:has(strong), p:has(b), strong, b').html() || '';
+              const matched = $container.nextUntil('h2, h3, h4, p:has(strong), p:has(b), strong, b');
+              const subBody = matched.toArray().map((el: any) => innerDesc(el).prop('outerHTML') || innerDesc(el).html()).join('<br>');
               if (subBody) {
                 listing.responsibilities = listing.responsibilities ? `${listing.responsibilities}\n\n${stripHtml(subBody)}` : stripHtml(subBody);
                 isSubExtracted = true;
               }
             } else if (subHeading.includes('requirement') || subHeading.includes('qualification')) {
-              const subBody = $container.nextUntil('h2, h3, h4, p:has(strong), p:has(b), strong, b').html() || '';
+              const matched = $container.nextUntil('h2, h3, h4, p:has(strong), p:has(b), strong, b');
+              const subBody = matched.toArray().map((el: any) => innerDesc(el).prop('outerHTML') || innerDesc(el).html()).join('<br>');
               if (subBody) {
                 listing.requirements = listing.requirements ? `${listing.requirements}\n\n${stripHtml(subBody)}` : stripHtml(subBody);
                 isSubExtracted = true;
