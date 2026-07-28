@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { getCurrentAdmin, logAction } from '@/lib/admin-auth';
 
 const ALLOWED = [
-  'siteName', 'tagline', 'description', 'email', 'phone', 'address',
+  'siteName', 'siteNameI18n', 'tagline', 'taglineI18n', 'description', 'descriptionI18n', 'email', 'phone', 'address', 'addressI18n',
   'currency', 'timezone', 'dateFormat', 'primaryColor', 'secondaryColor',
   'accentColor', 'fontFamily', 'socialPosition', 'socialHideOnScroll',
   'maintenanceMode', 'gaId', 'fbPixelId', 'logoUrl', 'logoDarkUrl', 'faviconUrl',

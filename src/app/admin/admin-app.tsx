@@ -597,7 +597,8 @@ function FieldInput({ field, value, item, model, statusOptions, onChange }: { fi
     'name', 'role', 'company', 'bio',
     'question', 'answer',
     'country', 'visaType', 'eligibility', 'requirements', 'documents', 'applicationProcess',
-    'benefits', 'subtitle', 'buttonText', 'features'
+    'benefits', 'subtitle', 'buttonText', 'features',
+    'label', 'caption', 'ariaValue', 'feature', 'othersValue', 'secondaryText', 'suffix'
   ];
   
   const isMultilingual = multilingualFields.includes(field);
@@ -827,17 +828,41 @@ function SettingsPanel() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {textFields.map(({ f, labelKey }) => (
             <div key={f}>
-              <Label className="mb-1.5 block text-sm font-medium">{t(labelKey)}</Label>
-              <Input value={settings[f] || ''} onChange={(e) => set(f, e.target.value)} />
+              <MultilingualInput
+                field={f}
+                value={settings[f]}
+                i18nValue={settings[`${f}I18n`]}
+                isLong={false}
+                onChange={(baseValue, i18nValue) => {
+                  set(f, baseValue);
+                  set(`${f}I18n`, i18nValue);
+                }}
+              />
             </div>
           ))}
           <div className="sm:col-span-2">
-            <Label className="mb-1.5 block text-sm font-medium">{t('admin.settings.description')}</Label>
-            <Textarea value={settings.description || ''} onChange={(e) => set('description', e.target.value)} rows={3} />
+            <MultilingualInput
+              field="description"
+              value={settings.description}
+              i18nValue={settings.descriptionI18n}
+              isLong={true}
+              onChange={(baseValue, i18nValue) => {
+                set('description', baseValue);
+                set('descriptionI18n', i18nValue);
+              }}
+            />
           </div>
           <div className="sm:col-span-2">
-            <Label className="mb-1.5 block text-sm font-medium">{t('admin.settings.address')}</Label>
-            <Textarea value={settings.address || ''} onChange={(e) => set('address', e.target.value)} rows={2} />
+            <MultilingualInput
+              field="address"
+              value={settings.address}
+              i18nValue={settings.addressI18n}
+              isLong={true}
+              onChange={(baseValue, i18nValue) => {
+                set('address', baseValue);
+                set('addressI18n', i18nValue);
+              }}
+            />
           </div>
         </div>
       </section>
