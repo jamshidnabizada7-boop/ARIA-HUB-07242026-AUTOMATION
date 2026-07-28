@@ -58,7 +58,7 @@ export default async function OpportunitiesPage({
       <main className="flex-1 pt-24 pb-20">
         <OpportunitiesClient 
           opportunities={opportunities as any} 
-          categories={categories}
+          categories={categories as any}
           currentPage={page}
           totalPages={totalPages}
           currentCategory={categoryParam}
