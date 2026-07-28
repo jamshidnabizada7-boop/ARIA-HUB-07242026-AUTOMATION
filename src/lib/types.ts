@@ -242,7 +242,7 @@ export interface TeamMember {
   roleI18n?: Record<string, string> | null;
   bioI18n?: Record<string, string> | null;
 }
-export interface ComparisonRow { id: string; feature: string; ariaValue: string; othersValue: string; order: number; status: string; }
+export interface ComparisonRow { id: string; feature: string; ariaValue: string; othersValue: string; order: number; status: string; featureI18n?: Record<string, string> | null; ariaValueI18n?: Record<string, string> | null; othersValueI18n?: Record<string, string> | null; }
 export interface CtaBanner { 
   id: string; title: string; subtitle: string | null; buttonText: string; buttonUrl: string; 
   secondaryText: string | null; accent: string; order: number; status: string;

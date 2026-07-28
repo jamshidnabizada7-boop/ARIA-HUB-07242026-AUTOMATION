@@ -215,7 +215,7 @@ const FormattedContent = ({ content }: { content: string }) => {
   if (!content) return null;
   
   if (/<(p|ul|ol|li|br|div|h[1-6])[>\s]/i.test(content)) {
-    return <div dir="auto" className="text-sm leading-relaxed text-foreground/80 space-y-4 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: content }} />;
+    return <div dir="auto" className="text-sm leading-relaxed text-foreground/80 space-y-4 whitespace-pre-wrap [&_*]:!bg-transparent" dangerouslySetInnerHTML={{ __html: content }} />;
   }
 
   const cleanLine = (l: string) => l.replace(/^\s*#+\s+/, '').replace(/\*\*(.*?)\*\*/g, '$1').trim();
@@ -355,42 +355,42 @@ function OpportunityDetail({ opportunity, t, phone }: { opportunity: Opportunity
         </div>
 
         {description && (
-          <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
+          <div className="mt-5 rounded-2xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-muted-foreground"><Info className="h-4 w-4 text-primary" />{t('opportunities.overview') || 'Overview'}</h3>
             <FormattedContent content={description} />
           </div>
         )}
 
         {requirements && (
-          <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
+          <div className="mt-5 rounded-2xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />{t('opportunities.requirements') || 'Requirements'}</h3>
             <FormattedContent content={requirements} />
           </div>
         )}
 
         {responsibilities && (
-          <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
+          <div className="mt-5 rounded-2xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />{t('opportunities.responsibilities') || 'Responsibilities'}</h3>
             <FormattedContent content={responsibilities} />
           </div>
         )}
 
         {eligibility && (
-          <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
+          <div className="mt-5 rounded-2xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><CheckCircle2 className="h-4 w-4 text-chart-3" />{t('opportunities.eligibility') || 'Eligibility'}</h3>
             <FormattedContent content={eligibility} />
           </div>
         )}
 
         {benefits && (
-          <div className="mt-4 rounded-xl border border-border/60 bg-accent/20 p-4">
+          <div className="mt-4 rounded-2xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><Award className="h-4 w-4 text-chart-4" />{t('opportunities.benefits') || 'Benefits'}</h3>
             <FormattedContent content={benefits} />
           </div>
         )}
 
         {guidelines && (
-          <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
+          <div className="mt-5 rounded-2xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><Info className="h-4 w-4 text-primary" />{t('opportunities.guidelines') || 'Submission Guidelines'}</h3>
             <FormattedContent content={guidelines} />
           </div>

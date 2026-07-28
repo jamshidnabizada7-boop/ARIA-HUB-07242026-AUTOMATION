@@ -132,11 +132,19 @@ export class ScholarshipsAfScraper extends BaseScraper {
       
       // Defensively remove unwanted footer/related blocks if they get caught in the description
       const stripAfter = [
+        'Frequently Asked Questions',
         'Other Opportunities You May Like',
         'Other Opportunities you may like',
         'Follow Us:',
+        'Facebook',
+        'YouTube',
+        'Telegram',
+        'Instagram',
+        'WhatsApp',
         'Scholarship for Afghanistan — Making Education',
-        'scholarships.af · o4af.com'
+        'Scholarship for Afghanistan',
+        'scholarships.af · o4af.com',
+        'scholarships.af  o4af.com'
       ];
       for (const phrase of stripAfter) {
         const idx = descHtml.indexOf(phrase);

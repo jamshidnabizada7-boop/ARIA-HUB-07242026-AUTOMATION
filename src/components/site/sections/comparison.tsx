@@ -4,11 +4,14 @@ import { motion } from 'framer-motion';
 import { Check, X, Minus, Sparkles } from 'lucide-react';
 import { SectionHeading } from '../section-heading';
 import { useT } from '@/hooks/use-t';
+import { useLangStore } from '@/lib/lang-store';
+import { getLocalizedContent } from '@/lib/i18n-content';
 import type { ComparisonRow } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 export function ComparisonSection({ rows }: { rows: ComparisonRow[] }) {
   const t = useT();
+  const lang = useLangStore((s) => s.lang);
   if (!rows.length) return null;
 
   return (
@@ -57,12 +60,12 @@ export function ComparisonSection({ rows }: { rows: ComparisonRow[] }) {
                 i % 2 === 1 && 'bg-accent/10'
               )}
             >
-              <div className="text-sm font-medium">{row.feature}</div>
+              <div className="text-sm font-medium">{getLocalizedContent(row.feature, row.featureI18n, lang)}</div>
               <div className="text-center">
-                <ValueCell value={row.ariaValue} positive />
+                <ValueCell value={getLocalizedContent(row.ariaValue, row.ariaValueI18n, lang)} positive />
               </div>
               <div className="text-center">
-                <ValueCell value={row.othersValue} positive={false} />
+                <ValueCell value={getLocalizedContent(row.othersValue, row.othersValueI18n, lang)} positive={false} />
               </div>
             </motion.div>
           ))}
