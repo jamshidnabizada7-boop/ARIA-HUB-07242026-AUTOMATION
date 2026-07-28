@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 
 export function ComparisonSection({ rows }: { rows: ComparisonRow[] }) {
   const t = useT();
-  const lang = useLangStore((s) => s.lang);
+  const lang = useLangStore((s) => s.code);
   if (!rows.length) return null;
 
   return (
