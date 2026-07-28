@@ -1,40 +1,57 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarDays, MapPin, Building2, ArrowUpRight, ExternalLink, CheckCircle2, Award, FileText, Globe, Briefcase, DollarSign, GraduationCap, Clock, Info } from 'lucide-react';
+import { CalendarDays, MapPin, Building2, ArrowUpRight, ExternalLink, CheckCircle2, Award, FileText, Globe, Briefcase, DollarSign, GraduationCap, Clock, Info, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { SectionHeading } from '../section-heading';
-import { SmartImage } from '../smart-image';
-import { DetailModal } from '../detail-modal';
+import { SectionHeading } from '@/components/site/section-heading';
+import { SmartImage } from '@/components/site/smart-image';
+import { DetailModal } from '@/components/site/detail-modal';
 import { useT } from '@/hooks/use-t';
 import { useLangStore } from '@/lib/lang-store';
 import { getLocalizedContent } from '@/lib/i18n-content';
 import type { Opportunity, OpportunityCategory } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-export function OpportunitiesSection({
+export function OpportunitiesClient({
   opportunities,
   categories,
+  currentPage,
+  totalPages,
+  currentCategory
 }: {
   opportunities: Opportunity[];
   categories: OpportunityCategory[];
+  currentPage: number;
+  totalPages: number;
+  currentCategory: string;
 }) {
   const t = useT();
-  const [active, setActive] = useState<string>('all');
+  const router = useRouter();
   const [selected, setSelected] = useState<Opportunity | null>(null);
+  const lang = useLangStore((s) => s.code);
+  const isRtl = lang === 'fa' || lang === 'ps';
 
-  const filtered = (active === 'all' ? opportunities : opportunities.filter((o) => o.category?.slug === active)).slice(0, 6);
-  const tabs = [{ id: 'all', name: t('common.all') }, ...categories.map((c) => ({ id: c.slug, name: c.name }))];
+  const tabs = [{ id: 'all', name: t('common.all') || 'All' }, ...categories.map((c) => ({ id: c.slug, name: c.name }))];
+
+  const handleTabClick = (tabId: string) => {
+    router.push(`/opportunities?category=${tabId}&page=1`);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return;
+    router.push(`/opportunities?category=${currentCategory}&page=${newPage}`);
+  };
 
   return (
-    <section id="opportunities" className="relative py-24 sm:py-32">
+    <section className="relative">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow={t('opportunities.eyebrow')}
-          title={t('opportunities.title')}
-          subtitle={t('opportunities.subtitle')}
+          eyebrow={t('opportunities.eyebrow') || 'Opportunities'}
+          title={t('opportunities.title') || 'Latest Opportunities'}
+          subtitle={t('opportunities.subtitle') || 'Browse all available jobs, scholarships, and programs.'}
         />
 
         {/* Tabs */}
@@ -42,10 +59,10 @@ export function OpportunitiesSection({
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActive(tab.id)}
+              onClick={() => handleTabClick(tab.id)}
               className={cn(
                 'rounded-full border px-4 py-1.5 text-sm font-medium transition-all',
-                active === tab.id
+                currentCategory === tab.id
                   ? 'border-primary bg-primary text-primary-foreground shadow-float'
                   : 'border-border bg-card/50 text-muted-foreground hover:border-primary/40 hover:text-foreground'
               )}
@@ -56,13 +73,12 @@ export function OpportunitiesSection({
         </div>
 
         {/* Grid */}
-        {filtered.length === 0 ? (
-          <div className="mt-10 grid place-items-center py-16 text-muted-foreground">{t('empty.opportunities')}</div>
+        {opportunities.length === 0 ? (
+          <div className="mt-10 grid place-items-center py-16 text-muted-foreground">{t('empty.opportunities') || 'No opportunities found.'}</div>
         ) : (
-        <>
           <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
-              {filtered.map((o, i) => (
+              {opportunities.map((o, i) => (
                 <motion.div
                   key={o.id}
                   layout
@@ -76,12 +92,39 @@ export function OpportunitiesSection({
               ))}
             </AnimatePresence>
           </div>
-          <div className="mt-12 flex justify-center">
-            <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-chart-2 px-8 font-semibold shadow-float">
-              <a href="/opportunities">{t('opportunities.viewAll') || 'View All Opportunities'}</a>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-12 flex items-center justify-center gap-2" dir="ltr">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="h-10 w-10 rounded-full"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            
+            <div className="flex items-center gap-1 px-4 text-sm font-medium">
+              <span>Page</span>
+              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                {currentPage}
+              </span>
+              <span>of {totalPages}</span>
+            </div>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="h-10 w-10 rounded-full"
+            >
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-        </>
         )}
       </div>
 
@@ -92,10 +135,11 @@ export function OpportunitiesSection({
   );
 }
 
+// Below are copied from the original opportunities section
+
 function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity; t: (k: string) => string; onOpen: () => void }) {
   const lang = useLangStore((s) => s.code);
   
-  // Get localized content
   const title = getLocalizedContent(opportunity.title, opportunity.titleI18n as any, lang);
   const description = getLocalizedContent(opportunity.description, opportunity.descriptionI18n as any, lang);
   
@@ -140,17 +184,17 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
         {deadline && (
           <div className="mt-4 flex items-center gap-1.5 rounded-lg bg-accent/60 px-3 py-1.5 text-xs font-medium">
             <CalendarDays className="h-3.5 w-3.5 text-primary" />
-            <span className="text-muted-foreground">{t('opportunities.deadline')}:</span>
+            <span className="text-muted-foreground">{t('opportunities.deadline') || 'Deadline'}:</span>
             <span className="font-semibold">{deadline}</span>
           </div>
         )}
         <div className="mt-4 flex gap-2">
           <Button onClick={onOpen} variant="outline" size="sm" className="flex-1 rounded-lg text-xs">
-            <FileText className="me-1 h-3.5 w-3.5" />{t('detail.viewDetails')}
+            <FileText className="me-1 h-3.5 w-3.5" />{t('detail.viewDetails') || 'View Details'}
           </Button>
           <Button asChild size="sm" className="flex-1 rounded-lg bg-gradient-to-r from-primary to-chart-2 text-xs">
             <a href={opportunity.applyUrl || '#contact'} target={opportunity.applyUrl ? '_blank' : undefined}>
-              {t('opportunities.apply')}
+              {t('opportunities.apply') || 'Apply Now'}
               <ArrowUpRight className="ms-1 h-3.5 w-3.5 rtl-flip" />
             </a>
           </Button>
@@ -260,7 +304,6 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
       </div>
 
       <div className="max-h-[55vh] overflow-y-auto p-6 sm:p-8" dir={isRtl ? 'rtl' : 'ltr'}>
-        {/* Meta row */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {opportunity.organization && (
             <MetaItem icon={Building2} label={translateKey("Organization")} value={getExtractedDataValue("Organization", opportunity.organization)} />
@@ -269,7 +312,7 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
             <MetaItem icon={MapPin} label={translateKey("Location")} value={getExtractedDataValue("Location", opportunity.country)} />
           )}
           {deadline && (
-            <MetaItem icon={CalendarDays} label={t('opportunities.deadline')} value={deadline} />
+            <MetaItem icon={CalendarDays} label={t('opportunities.deadline') || 'Deadline'} value={deadline} />
           )}
           {jobType && (
             <MetaItem icon={Briefcase} label={translateKey("Job Type")} value={jobType} />
@@ -286,7 +329,7 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
           {opportunity.website && (
             <a href={opportunity.website} target="_blank" rel="noopener noreferrer" className="flex flex-col rounded-xl border border-border/60 bg-accent/30 p-3 transition-colors hover:border-primary/40">
               <Globe className="mb-1 h-4 w-4 text-primary" />
-              <p className="text-[10px] font-medium uppercase text-muted-foreground">{t('admin.table.website')}</p>
+              <p className="text-[10px] font-medium uppercase text-muted-foreground">{t('admin.table.website') || 'Website'}</p>
               <p className="truncate text-xs font-bold text-primary">Visit ↗</p>
             </a>
           )}
@@ -338,7 +381,7 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
           {opportunity.applyUrl && (
             <Button asChild className="h-11 rounded-xl bg-gradient-to-r from-primary to-chart-2">
               <a href={opportunity.applyUrl} target="_blank" rel="noopener noreferrer">
-                {t('opportunities.apply')}<ArrowUpRight className="ms-2 h-4 w-4 rtl-flip" />
+                {t('opportunities.apply') || 'Apply'}<ArrowUpRight className="ms-2 h-4 w-4 rtl-flip" />
               </a>
             </Button>
           )}

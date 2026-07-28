@@ -38,7 +38,7 @@ export async function getSiteData(): Promise<SiteData> {
       db.service.findMany({ where: { status: 'published' }, orderBy: { sort: 'asc' }, include: { category: true } }).catch(() => []),
       db.visa.findMany({ where: { status: 'published' }, orderBy: { sort: 'asc' } }).catch(() => []),
       db.opportunityCategory.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
-      db.opportunity.findMany({ where: { status: 'published' }, orderBy: { sort: 'asc' }, include: { category: true } }).catch(() => []),
+      db.opportunity.findMany({ where: { status: 'published' }, orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }], take: 60, include: { category: true } }).catch(() => []),
       db.galleryItem.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
       db.paymentMethod.findMany({ where: { status: 'active' }, orderBy: { order: 'asc' } }).catch(() => []),
       db.testimonial.findMany({ where: { status: 'published' }, orderBy: { order: 'asc' } }).catch(() => []),
