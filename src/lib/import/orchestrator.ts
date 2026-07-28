@@ -300,6 +300,7 @@ async function processListing(
       data: {
         ...pipeline.data,
         ...importFields,
+        ...(categoryId ? { categoryId } : {}),
         slug: newSlug,
         importStatus: 'updated',
       },
