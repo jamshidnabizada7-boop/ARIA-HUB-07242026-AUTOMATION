@@ -31,15 +31,25 @@ export async function runAIPipeline(
   ctx: { db: PrismaClient; knownCategorySlugs: string[] },
   originalLang: Lang = 'en',
 ): Promise<PipelineOutput> {
+  const plainDescription = stripHtml(listing.description || listing.title || '').trim();
+  const shortDesc = plainDescription.substring(0, 155) + (plainDescription.length > 155 ? '...' : '');
+
   const data: Record<string, unknown> = {
     title: listing.title,
-    description: listing.description || stripHtml(listing.title),
+    description: listing.description || plainDescription,
     language: originalLang,
     jobType: listing.jobType || null,
     salary: listing.salary || null,
     educationReq: listing.educationReq || null,
     experience: listing.experience || null,
     extractedData: listing.extractedData || null,
+    
+    // Auto-fill SEO and summary fields
+    seoTitle: listing.title,
+    seoDescription: shortDesc,
+    ogTitle: listing.title,
+    ogDescription: shortDesc,
+    aiSummary: shortDesc,
   };
   
   if (listing.eligibility) data.eligibility = listing.eligibility;
@@ -52,6 +62,11 @@ export async function runAIPipeline(
   // Set the i18n field for the original language to ensure the UI can display it
   data.titleI18n = { [originalLang]: listing.title };
   data.descriptionI18n = { [originalLang]: data.description };
+  data.seoTitleI18n = { [originalLang]: listing.title };
+  data.seoDescriptionI18n = { [originalLang]: shortDesc };
+  data.ogTitleI18n = { [originalLang]: listing.title };
+  data.ogDescriptionI18n = { [originalLang]: shortDesc };
+  data.aiSummaryI18n = { [originalLang]: shortDesc };
   
   const sectionFields: Array<{ key: string; value?: string | null }> = [
     { key: 'eligibility', value: listing.eligibility },
