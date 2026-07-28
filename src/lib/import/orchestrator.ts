@@ -258,7 +258,7 @@ async function processListing(
   const pipeline = await runAIPipeline(listing, { db, knownCategorySlugs: knownSlugs }, (listing.sourceLanguage as 'en' | 'fa' | 'ps') || 'en');
 
   // Resolve category
-  const categoryId = resolveCategory(pipeline.categorySlugs, listing.category, source.defaultCategory, categories);
+  const categoryId = resolveCategory(pipeline.categorySlugs, listing.category, listing.jobType, source.defaultCategory, categories);
 
   // Common import-tracking fields
   const importFields = {
@@ -325,15 +325,23 @@ async function processListing(
 function resolveCategory(
   aiSlugs: string[],
   sourceCategory: string | null | undefined,
+  jobType: string | null | undefined,
   defaultSlug: string | null | undefined,
   categories: Array<{ id: string; slug: string; name: string }>,
 ): string | null {
   const candidates = [...aiSlugs];
   if (sourceCategory) candidates.push(slugify(sourceCategory));
+  if (jobType) candidates.push(slugify(jobType));
   if (defaultSlug) candidates.push(defaultSlug);
 
   for (const c of candidates) {
-    const match = categories.find((cat) => cat.slug === c || cat.name.toLowerCase() === c.toLowerCase());
+    if (!c) continue;
+    const match = categories.find((cat) => 
+      cat.slug === c || 
+      cat.name.toLowerCase() === c.toLowerCase() ||
+      cat.slug === `${c}s` || // check plural
+      `${cat.slug}s` === c    // check singular
+    );
     if (match) return match.id;
   }
   // Fallback: match default slug only
