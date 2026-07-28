@@ -66,7 +66,7 @@ async function main() {
   }
 
   // ── Menu items (nested) ────────────────────────────────────
-  await db.menuItem.deleteMany({});
+  // await db.menuItem.deleteMany({});
   const menus = [
     { label: 'Home', url: '#home', order: 0, labelI18n: { en: 'Home', fa: 'خانه', ps: 'کور' } },
     { label: 'Services', url: '#services', order: 1, labelI18n: { en: 'Services', fa: 'خدمات', ps: 'خدمات' } },
@@ -110,7 +110,7 @@ async function main() {
   }
 
   // ── Service categories ─────────────────────────────────────
-  await db.serviceCategory.deleteMany({});
+  // await db.serviceCategory.deleteMany({});
   const catNames = ['Opportunities','Education','Career','Translation','Technology','Marketing','Consulting','Printing'];
   const catMap: Record<string, string> = {};
   for (let i = 0; i < catNames.length; i++) {
@@ -119,7 +119,7 @@ async function main() {
   }
 
   // ── Services ───────────────────────────────────────────────
-  await db.service.deleteMany({});
+  // await db.service.deleteMany({});
   const services = [
     { title: 'Jobs & Global Opportunities', slug: 'jobs-opportunities', cat: 'Opportunities', icon: 'Globe', image: '/images/services/business.png', excerpt: 'Access international jobs and global funding.', description: 'International job listings, exchange programs, and funding opportunities to advance your global career.', price: 'From $50', featured: true, titleI18n: {"en":"Jobs & Global Opportunities","fa":"کار و فرصت‌های جهانی","ps":"دندې او نړیوال فرصتونه"}, excerptI18n: {"en":"Access international jobs and global funding.","fa":"دسترسی به مشاغل بین‌المللی و بودجه‌های جهانی.","ps":"نړیوالو دندو او مالي مرستو ته لاسرسی."}, descriptionI18n: {"en":"International job listings, exchange programs, and funding opportunities to advance your global career.","fa":"لیست کارهای بین‌المللی، برنامه‌های تبادل و فرصت‌های مالی برای پیشرفت شغلی جهانی شما.","ps":"د نړیوالو دندو لیستونه، د تبادلې پروګرامونه، او د مالي مرستو فرصتونه ترڅو ستاسو نړیوال مسلک پرمختګ وکړي."} },
     { title: 'Study Abroad & Scholarships', slug: 'study-abroad', cat: 'Education', icon: 'GraduationCap', image: '/images/services/consulting.png', excerpt: 'Secure university admissions and scholarships.', description: 'Expert consultation for university admissions, fully-funded scholarships, and complete application review.', price: 'From $150', featured: true, titleI18n: {"en":"Study Abroad & Scholarships","fa":"تحصیل در خارج و بورسیه‌ها","ps":"په بهر کې زده کړې او بورسونه"}, excerptI18n: {"en":"Secure university admissions and scholarships.","fa":"تضمین پذیرش دانشگاهی و بورسیه‌های تحصیلی.","ps":"د پوهنتون داخله او بورسونه ترلاسه کړئ."}, descriptionI18n: {"en":"Expert consultation for university admissions, fully-funded scholarships, and complete application review.","fa":"مشاوره تخصصی برای پذیرش دانشگاه‌ها، بورسیه‌های تحصیلی کامل و بررسی جامع مدارک درخواست.","ps":"د پوهنتون داخلو، بشپړ تمویل شویو بورسونو، او د غوښتنلیکونو بشپړې بیاکتنې لپاره د متخصص مشوره."} },
@@ -137,7 +137,7 @@ async function main() {
   }
 
   // ── Visas ──────────────────────────────────────────────────
-  await db.visa.deleteMany({});
+  // await db.visa.deleteMany({});
   const visas = [
     { country: 'United States', countryCode: 'us', visaType: 'B1/B2 Tourist', image: '/images/visas/usa.png', duration: '6 months stay', processingTime: '7-14 days', fee: '$185', requirements: ['Valid passport', 'DS-160 confirmation', 'Photo', 'Visa fee receipt'], documents: ['Bank statements', 'Employment letter', 'Travel itinerary'], featured: true, description: 'The US B1/B2 visa allows business and tourism travel to the United States for up to 180 days per entry.' },
     { country: 'Canada', countryCode: 'ca', visaType: 'Visitor Visa', image: '/images/visas/canada.png', duration: '6 months stay', processingTime: '14-30 days', fee: '$100 CAD', requirements: ['Valid passport', 'Invitation letter', 'Financial proof'], documents: ['Travel history', 'Ties to home country'], featured: true, description: 'Canada visitor visa for tourism, family visits, and short business trips with multiple entry options.' },
@@ -152,8 +152,8 @@ async function main() {
   }
 
   // ── Opportunity categories + opportunities ─────────────────
-  await db.opportunityCategory.deleteMany({});
-  await db.opportunity.deleteMany({});
+  // await db.opportunityCategory.deleteMany({});
+  // await db.opportunity.deleteMany({});
   const oppCats = ['Jobs', 'Scholarships', 'Internships', 'Competitions', 'Conferences', 'Volunteer', 'Exchange Programs', 'Training'];
   const oppCatMap: Record<string, string> = {};
   for (let i = 0; i < oppCats.length; i++) {
@@ -174,8 +174,8 @@ async function main() {
   }
 
   // ── Gallery ────────────────────────────────────────────────
-  await db.galleryAlbum.deleteMany({});
-  await db.galleryItem.deleteMany({});
+  // await db.galleryAlbum.deleteMany({});
+  // await db.galleryItem.deleteMany({});
   const galleryItems = [
     { title: 'Corporate Headquarters', url: '/images/gallery/g1.png', category: 'Office' },
     { title: 'Team Strategy Session', url: '/images/gallery/g2.png', category: 'Team' },
@@ -189,7 +189,7 @@ async function main() {
   }
 
   // ── Payments ───────────────────────────────────────────────
-  await db.paymentMethod.deleteMany({});
+  // await db.paymentMethod.deleteMany({});
   const payments = [
     { name: 'Bank Transfer', slug: 'bank', accountNumber: '0000-0000-0000-0000', iban: 'AF00 0000 0000 0000 0000 0000', accountTitle: 'ARIA HUB Ltd.', description: 'Direct wire transfer to our corporate account.', instructions: 'Use your invoice number as reference. Processing: 1-3 business days.', order: 0 },
     { name: 'EasyPaisa', slug: 'easypaisa', accountNumber: '0300-0000000', accountTitle: 'ARIA HUB', description: 'Mobile wallet payment via EasyPaisa.', instructions: 'Send payment to the number above and share transaction ID.', order: 1 },
@@ -204,7 +204,7 @@ async function main() {
   }
 
   // ── Testimonials ───────────────────────────────────────────
-  await db.testimonial.deleteMany({});
+  // await db.testimonial.deleteMany({});
   const testimonials = [
     { name: 'Ahmad Rahimi', role: 'Entrepreneur', company: 'Rahimi Group', avatar: '/images/avatars/a1.png', rating: 5, content: 'ARIA HUB made our company registration effortless. Their team handled every legal detail with professionalism and speed. Highly recommended!', featured: true },
     { name: 'Sara Khan', role: 'Scholarship Recipient', company: 'Fulbright Scholar', avatar: '/images/avatars/a2.png', rating: 5, content: 'Thanks to ARIA HUB\'s expert guidance, I secured a fully-funded scholarship. Their attention to detail in my application was incredible.', featured: true },
@@ -216,14 +216,14 @@ async function main() {
   }
 
   // ── Partners ───────────────────────────────────────────────
-  await db.partner.deleteMany({});
+  // await db.partner.deleteMany({});
   const partners = ['Visa Group', 'Global Trust', 'EuroBank', 'TechCorp', 'WorldRelocate', 'PrimeLegal', 'EduConnect', 'FinPro'];
   for (let i = 0; i < partners.length; i++) {
     await db.partner.create({ data: { name: partners[i], order: i, status: 'active', website: '#' } });
   }
 
   // ── Counters ───────────────────────────────────────────────
-  await db.counter.deleteMany({});
+  // await db.counter.deleteMany({});
   const counters = [
     { label: 'Projects Completed', value: 1250, suffix: '+', icon: 'CheckCircle', order: 0 },
     { label: 'Happy Clients', value: 980, suffix: '+', icon: 'Users', order: 1 },
@@ -235,7 +235,7 @@ async function main() {
   }
 
   // ── FAQs ───────────────────────────────────────────────────
-  await db.faq.deleteMany({});
+  // await db.faq.deleteMany({});
   const faqs = [
     { question: 'What services does ARIA HUB offer?', answer: 'We provide business setup, legal services, visa & travel assistance, professional translation, strategic consulting, and financial services — all under one roof.', order: 0 },
     { question: 'How long does visa processing take?', answer: 'Processing times vary by country and visa type, typically ranging from 3 to 30 days. We provide accurate timelines during your consultation.', order: 1 },
@@ -249,8 +249,8 @@ async function main() {
   }
 
   // ── News ───────────────────────────────────────────────────
-  await db.newsCategory.deleteMany({});
-  await db.news.deleteMany({});
+  // await db.newsCategory.deleteMany({});
+  // await db.news.deleteMany({});
   const newsCat = await db.newsCategory.create({ data: { name: 'Company', slug: 'company' } });
   const newsCat2 = await db.newsCategory.create({ data: { name: 'Industry', slug: 'industry' } });
   const news = [
@@ -263,7 +263,7 @@ async function main() {
   }
 
   // ── Social links ───────────────────────────────────────────
-  await db.socialLink.deleteMany({});
+  // await db.socialLink.deleteMany({});
   const socials = [
     { platform: 'whatsapp', label: 'WhatsApp', url: 'https://wa.me/93700876806', icon: 'MessageCircle', color: '#25D366', order: 0 },
     { platform: 'phone', label: 'Call Us', url: 'tel:+93728915695', icon: 'Phone', color: '#0A66C2', order: 1 },
@@ -279,7 +279,7 @@ async function main() {
   }
 
   // ── Footer links ───────────────────────────────────────────
-  await db.footerLink.deleteMany({});
+  // await db.footerLink.deleteMany({});
   const footerCols: Record<string, string[]> = {
     quickLinks: ['Home', 'About Us', 'Services', 'Gallery', 'Contact'],
     services: ['Business Setup', 'Legal Services', 'Visa & Travel', 'Translation', 'Consulting'],
@@ -292,7 +292,7 @@ async function main() {
   }
 
   // ── Departments ────────────────────────────────────────────
-  await db.department.deleteMany({});
+  // await db.department.deleteMany({});
   const depts = [
     { name: 'Visa & Immigration', email: 'visa@ariahub.com', phone: '+93 70 000 0001', order: 0 },
     { name: 'Business Services', email: 'business@ariahub.com', phone: '+93 70 000 0002', order: 1 },
@@ -304,7 +304,7 @@ async function main() {
   }
 
   // ── Branches ───────────────────────────────────────────────
-  await db.branch.deleteMany({});
+  // await db.branch.deleteMany({});
   const branches = [
     { name: 'Mazar-e-Sharif HQ', address: 'Sediqyar Square, Opposit of Balkh Medical Faculty, Mazar-e-Sharif, Afghanistan', phone: '+93 72 891 5695', email: 'info@myariahub.com', hours: 'Sat-Thu: 8:00 AM - 6:00 PM', isMain: true, order: 0 },
     { name: 'Support Team', address: 'Online / Remote', phone: '+93 70 087 6806', email: 'support@myariahub.com', hours: '24/7', order: 1 },
@@ -315,7 +315,7 @@ async function main() {
   }
 
   // ── Process steps (How It Works) ───────────────────────────
-  await db.processStep.deleteMany({});
+  // await db.processStep.deleteMany({});
   const processSteps = [
     { title: 'Consultation', titleI18n: {"en":"Consultation","fa":"مشاوره","ps":"مشوره"}, description: 'Share your goals with our experts in a free, no-obligation consultation. We assess your needs and outline the best path forward.', descriptionI18n: {"en":"Share your goals with our experts in a free, no-obligation consultation. We assess your needs and outline the best path forward.","fa":"اهداف خود را در یک مشاوره رایگان با کارشناسان ما در میان بگذارید. ما نیازهای شما را ارزیابی کرده و بهترین مسیر را مشخص می‌کنیم.","ps":"خپل اهداف زموږ د متخصصینو سره په وړیا مشوره کې شریک کړئ. موږ ستاسو اړتیاوې ارزوو او غوره لار په ګوته کوو."}, icon: 'MessageCircle', order: 0 },
     { title: 'Documentation', titleI18n: {"en":"Documentation","fa":"مستندسازی","ps":"اسناد جوړونه"}, description: 'Our team collects, prepares, and verifies all required documents — ensuring every detail meets official standards.', descriptionI18n: {"en":"Our team collects, prepares, and verifies all required documents — ensuring every detail meets official standards.","fa":"تیم ما تمام مدارک لازم را جمع‌آوری، آماده و تأیید می‌کند تا اطمینان حاصل شود که هر جزئیات با استانداردهای رسمی مطابقت دارد.","ps":"زموږ ټیم ټول اړین اسناد راټولوي، چمتو کوي، او تصدیق کوي ترڅو ډاډ ترلاسه شي چې هر جزئیات له رسمي معیارونو سره سم دي."}, icon: 'FileText', order: 1 },
@@ -327,7 +327,7 @@ async function main() {
   }
 
   // ── Pricing packages ───────────────────────────────────────
-  await db.pricingPackage.deleteMany({});
+  // await db.pricingPackage.deleteMany({});
   const packages = [
     {
       name: 'Starter', slug: 'starter', price: '$199', period: 'one-time',
@@ -353,7 +353,7 @@ async function main() {
   }
 
   // ── Team members ────────────────────────────────────────────
-  await db.teamMember.deleteMany({});
+  // await db.teamMember.deleteMany({});
   const team = [
     { name: 'Ahmad Rahimi', role: 'Founder & CEO', bio: '20+ years in international business development and immigration law. Ahmad founded ARIA HUB to make global opportunities accessible to everyone.', photo: '/images/avatars/a1.png', email: 'ahmad@ariahub.com', linkedin: 'https://linkedin.com', order: 0, featured: true },
     { name: 'Sara Khan', role: 'Head of Education Services', bio: 'Fulbright alumna with deep expertise in scholarship advisory. Sara has helped 500+ students secure fully-funded education worldwide.', photo: '/images/avatars/a2.png', email: 'sara@ariahub.com', linkedin: 'https://linkedin.com', order: 1, featured: true },
@@ -365,7 +365,7 @@ async function main() {
   }
 
   // ── Comparison rows ─────────────────────────────────────────
-  await db.comparisonRow.deleteMany({});
+  // await db.comparisonRow.deleteMany({});
   const comparisonRows = [
     { feature: 'Dedicated case manager', ariaValue: '✓', othersValue: '—' },
     { feature: 'Transparent fixed pricing', ariaValue: '✓', othersValue: 'Hidden fees' },
@@ -381,7 +381,7 @@ async function main() {
   }
 
   // ── CTA banners ─────────────────────────────────────────────
-  await db.ctaBanner.deleteMany({});
+  // await db.ctaBanner.deleteMany({});
   const ctaBanners = [
     { title: 'Ready to start your journey?', subtitle: 'Join 980+ clients who turned ambition into achievement with ARIA HUB.', buttonText: 'Book Free Consultation', buttonUrl: '#contact', secondaryText: 'No commitment · 30-min session · Expert advice', accent: 'primary', order: 0 },
   ];
