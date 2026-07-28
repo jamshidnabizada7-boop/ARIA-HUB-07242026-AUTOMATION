@@ -21,7 +21,7 @@
 
 import * as cheerio from 'cheerio';
 import { BaseScraper } from '../base-scraper';
-import { resolveUrl, stripHtml, parseDate } from '../utils';
+import { resolveUrl, stripHtml, parseDate, cleanHtmlWhitespace } from '../utils';
 import type { RawListing, ScrapePage } from '../types';
 
 export class WazifahaScraper extends BaseScraper {
@@ -179,7 +179,7 @@ export class WazifahaScraper extends BaseScraper {
       });
 
       if (sections.length) {
-        listing.description = sections.join('\n\n');
+        listing.description = cleanHtmlWhitespace(sections.join('\n\n'));
       }
 
       return listing;

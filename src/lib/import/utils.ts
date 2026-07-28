@@ -47,6 +47,23 @@ export function stripHtml(html: string): string {
 }
 
 /**
+ * Clean up HTML to remove excessive multiple line spaces / empty paragraphs.
+ */
+export function cleanHtmlWhitespace(html: string): string {
+  if (!html) return '';
+  let s = html;
+  // Remove empty paragraphs or paragraphs only containing whitespace/&nbsp;/<br>
+  s = s.replace(/<p>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '');
+  // Remove empty divs
+  s = s.replace(/<div[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/div>/gi, '');
+  // Replace multiple <br> tags (3 or more) with just two
+  s = s.replace(/(?:<br\s*\/?>\s*){3,}/gi, '<br><br>');
+  // Replace multiple newlines with double newline to prevent excessive markdown spacing
+  s = s.replace(/\n{3,}/g, '\n\n');
+  return s.trim();
+}
+
+/**
  * Collapse HTML to a single-spaced plain-text summary (no line breaks),
  * useful for short excerpts and hashing.
  */

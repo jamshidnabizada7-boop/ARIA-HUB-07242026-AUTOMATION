@@ -28,7 +28,7 @@
 
 import * as cheerio from 'cheerio';
 import { BaseScraper } from '../base-scraper';
-import { resolveUrl, stripHtml, parseDate } from '../utils';
+import { resolveUrl, stripHtml, parseDate, cleanHtmlWhitespace } from '../utils';
 import type { RawListing, ScrapePage } from '../types';
 
 export class ScholarshipsAfScraper extends BaseScraper {
@@ -128,9 +128,27 @@ export class ScholarshipsAfScraper extends BaseScraper {
       // Extract eligibility / benefits sections from headings in description (and remove them from descEl)
       this.extractSections(descEl, listing);
 
-      const descHtml = descEl.html() || '';
+      let descHtml = descEl.html() || '';
+      
+      // Defensively remove unwanted footer/related blocks if they get caught in the description
+      const stripAfter = [
+        'Other Opportunities You May Like',
+        'Other Opportunities you may like',
+        'Follow Us:',
+        'Scholarship for Afghanistan — Making Education',
+        'scholarships.af · o4af.com'
+      ];
+      for (const phrase of stripAfter) {
+        const idx = descHtml.indexOf(phrase);
+        if (idx !== -1) {
+          // Find the start of the current block (e.g., <p> or <div>) before the phrase
+          const blockStart = descHtml.lastIndexOf('<', idx);
+          descHtml = descHtml.substring(0, blockStart !== -1 ? blockStart : idx);
+        }
+      }
+
       if (descHtml.trim()) {
-        listing.description = descHtml.trim();
+        listing.description = cleanHtmlWhitespace(descHtml.trim());
       }
 
       // Extract deadline + key details from description if not already set
