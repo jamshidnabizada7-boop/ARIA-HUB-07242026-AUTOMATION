@@ -17,8 +17,8 @@ export async function GET(req: NextRequest) {
 
   const where = sourceId ? { sourceId } : {};
 
-  // Cleanup stale running imports (older than 10 mins)
-  const staleThreshold = new Date(Date.now() - 10 * 60 * 1000);
+  // Cleanup stale running imports (older than 2 mins - Vercel max duration is 60s)
+  const staleThreshold = new Date(Date.now() - 2 * 60 * 1000);
   await db.importRun.updateMany({
     where: { status: 'running', startedAt: { lt: staleThreshold } },
     data: { status: 'error' }

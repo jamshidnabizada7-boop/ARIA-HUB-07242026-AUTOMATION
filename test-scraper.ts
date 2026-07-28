@@ -1,1 +1,1 @@
-import { ScholarshipsAfScraper } from './src/lib/import/scrapers/scholarships-af'; (async () => { const scraper = new ScholarshipsAfScraper(); const listings = await scraper.scrapeListings(); console.log(listings.slice(0,2)); })();
+import { ScholarshipsAfScraper } from './src/lib/import/scrapers/scholarships-af'; (async () => { const scraper = new ScholarshipsAfScraper({ baseUrl: 'https://scholarships.af/opportunities/?job_type=scholarship', config: {} }); const listings = await scraper.scrapeAll(); console.log(JSON.stringify(listings.slice(0,2), null, 2)); })();

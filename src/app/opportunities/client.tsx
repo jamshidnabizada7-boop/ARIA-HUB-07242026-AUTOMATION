@@ -260,6 +260,7 @@ function OpportunityDetail({ opportunity, t, phone }: { opportunity: Opportunity
   const benefits = getLocalizedContent(opportunity.benefits, opportunity.benefitsI18n as any, lang);
   const requirements = getLocalizedContent(opportunity.requirements, opportunity.requirementsI18n as any, lang);
   const responsibilities = getLocalizedContent(opportunity.responsibilities, opportunity.responsibilitiesI18n as any, lang);
+  const guidelines = getLocalizedContent((opportunity as any).guidelines, (opportunity as any).guidelinesI18n, lang);
   
   const jobType = getLocalizedContent(opportunity.jobType, opportunity.jobTypeI18n as any, lang);
   const salary = getLocalizedContent(opportunity.salary, opportunity.salaryI18n as any, lang);
@@ -354,8 +355,8 @@ function OpportunityDetail({ opportunity, t, phone }: { opportunity: Opportunity
         </div>
 
         {description && (
-          <div className="mt-5">
-            <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-muted-foreground">{t('opportunities.overview') || 'Overview'}</h3>
+          <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
+            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-muted-foreground"><Info className="h-4 w-4 text-primary" />{t('opportunities.overview') || 'Overview'}</h3>
             <FormattedContent content={description} />
           </div>
         )}
@@ -385,6 +386,13 @@ function OpportunityDetail({ opportunity, t, phone }: { opportunity: Opportunity
           <div className="mt-4 rounded-xl border border-border/60 bg-accent/20 p-4">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><Award className="h-4 w-4 text-chart-4" />{t('opportunities.benefits') || 'Benefits'}</h3>
             <FormattedContent content={benefits} />
+          </div>
+        )}
+
+        {guidelines && (
+          <div className="mt-5 rounded-xl border border-border/60 bg-accent/20 p-4">
+            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-bold"><Info className="h-4 w-4 text-primary" />{t('opportunities.guidelines') || 'Submission Guidelines'}</h3>
+            <FormattedContent content={guidelines} />
           </div>
         )}
 

@@ -3,6 +3,8 @@ import { db } from '@/lib/db';
 import { WazifahaScraper } from '@/lib/import/scrapers/wazifaha';
 import { ScholarshipsAfScraper } from '@/lib/import/scrapers/scholarships-af';
 
+export const maxDuration = 60; // Max allowed for Vercel Hobby
+
 export async function GET() {
   try {
     console.log('🚀 Starting Prisma-based simple import...');

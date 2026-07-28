@@ -7,7 +7,7 @@ import { SectionHeading } from '../section-heading';
 import { SmartImage } from '../smart-image';
 import { useT } from '@/hooks/use-t';
 import type { GalleryItem } from '@/lib/types';
-import { cn } from '@/lib/utils';
+import { cn, normalizeImageUrl } from '@/lib/utils';
 
 export function GallerySection({ items }: { items: GalleryItem[] }) {
   const t = useT();
@@ -94,7 +94,7 @@ export function GallerySection({ items }: { items: GalleryItem[] }) {
                   )}
                 >
                   <SmartImage
-                    src={item.url}
+                    src={normalizeImageUrl(item.url) || ''}
                     alt={item.title}
                     className="absolute inset-0 h-full w-full"
                     imgClassName="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -157,7 +157,7 @@ export function GallerySection({ items }: { items: GalleryItem[] }) {
               onClick={(e) => e.stopPropagation()}
               className="relative max-h-[85vh] max-w-5xl px-4"
             >
-              <img src={filtered[active].url} alt={filtered[active].title} className="max-h-[85vh] w-auto rounded-2xl object-contain" />
+              <img src={normalizeImageUrl(filtered[active].url) || ''} alt={filtered[active].title} className="max-h-[85vh] w-auto rounded-2xl object-contain" />
               <p className="mt-4 text-center text-sm text-white/80">{filtered[active].title}</p>
             </motion.div>
           </motion.div>

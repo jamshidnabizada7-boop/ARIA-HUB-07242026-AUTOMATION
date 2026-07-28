@@ -39,9 +39,11 @@ export class ScholarshipsAfScraper extends BaseScraper {
   protected async parseListPage(html: string, pageUrl: string): Promise<ScrapePage> {
     const $ = cheerio.load(html);
     const listings: RawListing[] = [];
+    console.log('HTML Length:', html.length, 'URL:', pageUrl);
 
     $('.jobsearch-joblisting-classic-wrap').each(function () {
       const card = $(this);
+      console.log('Found card in scraper');
       const titleLink = card.find('.jobsearch-pst-title a').first();
       const href = titleLink.attr('href') || '';
       const fullUrl = resolveUrl(href, pageUrl);
