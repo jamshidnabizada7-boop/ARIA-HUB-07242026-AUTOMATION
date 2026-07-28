@@ -20,13 +20,15 @@ export function OpportunitiesClient({
   categories,
   currentPage,
   totalPages,
-  currentCategory
+  currentCategory,
+  phone,
 }: {
   opportunities: Opportunity[];
   categories: OpportunityCategory[];
   currentPage: number;
   totalPages: number;
   currentCategory: string;
+  phone?: string | null;
 }) {
   const t = useT();
   const router = useRouter();
@@ -87,7 +89,7 @@ export function OpportunitiesClient({
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3, delay: (i % 3) * 0.05 }}
                 >
-                  <OpportunityCard opportunity={o} t={t} onOpen={() => setSelected(o)} />
+                  <OpportunityCard opportunity={o} t={t} phone={phone} onOpen={() => setSelected(o)} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -129,7 +131,7 @@ export function OpportunitiesClient({
       </div>
 
       <DetailModal open={!!selected} onClose={() => setSelected(null)}>
-        {selected && <OpportunityDetail opportunity={selected} t={t} />}
+        {selected && <OpportunityDetail opportunity={selected} t={t} phone={phone} />}
       </DetailModal>
     </section>
   );
@@ -137,7 +139,7 @@ export function OpportunitiesClient({
 
 // Below are copied from the original opportunities section
 
-function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity; t: (k: string) => string; onOpen: () => void }) {
+function OpportunityCard({ opportunity, t, onOpen, phone }: { opportunity: Opportunity; t: (k: string) => string; onOpen: () => void; phone?: string | null }) {
   const lang = useLangStore((s) => s.code);
   
   const title = getLocalizedContent(opportunity.title, opportunity.titleI18n as any, lang);
@@ -145,6 +147,9 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
   
   const deadline = opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : null;
   const plainDescription = description ? description.replace(/<[^>]*>?/gm, '') : '';
+
+  const whatsappMessage = `Hello ARIA HUB! I am interested in applying for this opportunity:\n\nTitle: ${title}\nSource: ${opportunity.sourceName || 'ARIA HUB'}`;
+  const applyLink = phone ? `https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}` : opportunity.applyUrl;
 
   return (
     <Card className="group relative flex h-full flex-col overflow-hidden border-border/60 p-0 shadow-premium transition-all duration-500 hover:-translate-y-1.5 hover:shadow-float">
@@ -192,12 +197,14 @@ function OpportunityCard({ opportunity, t, onOpen }: { opportunity: Opportunity;
           <Button onClick={onOpen} variant="outline" size="sm" className="flex-1 rounded-lg text-xs">
             <FileText className="me-1 h-3.5 w-3.5" />{t('detail.viewDetails') || 'View Details'}
           </Button>
-          <Button asChild size="sm" className="flex-1 rounded-lg bg-gradient-to-r from-primary to-chart-2 text-xs">
-            <a href={opportunity.applyUrl || '#contact'} target={opportunity.applyUrl ? '_blank' : undefined}>
-              {t('opportunities.apply') || 'Apply Now'}
-              <ArrowUpRight className="ms-1 h-3.5 w-3.5 rtl-flip" />
-            </a>
-          </Button>
+          {applyLink && (
+            <Button asChild size="sm" className="flex-1 rounded-lg bg-gradient-to-r from-primary to-chart-2 text-xs">
+              <a href={applyLink} target="_blank" rel="noopener noreferrer">
+                {t('opportunities.apply') || 'Apply Now'}
+                <ArrowUpRight className="ms-1 h-3.5 w-3.5 rtl-flip" />
+              </a>
+            </Button>
+          )}
         </div>
       </div>
     </Card>
@@ -243,7 +250,7 @@ const FormattedContent = ({ content }: { content: string }) => {
   );
 };
 
-function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k: string) => string }) {
+function OpportunityDetail({ opportunity, t, phone }: { opportunity: Opportunity; t: (k: string) => string; phone?: string | null }) {
   const lang = useLangStore((s) => s.code);
   const isRtl = lang === 'fa' || lang === 'ps';
   
@@ -290,6 +297,10 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
   };
   
   const deadline = opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : null;
+
+  const whatsappMessage = `Hello ARIA HUB! I am interested in applying for this opportunity:\n\nTitle: ${title}\nSource: ${opportunity.sourceName || 'ARIA HUB'}`;
+  const applyLink = phone ? `https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}` : opportunity.applyUrl;
+
   return (
     <div>
       <div className="relative aspect-[16/9] overflow-hidden">
@@ -378,9 +389,9 @@ function OpportunityDetail({ opportunity, t }: { opportunity: Opportunity; t: (k
         )}
 
         <div className="mt-6 flex flex-wrap gap-3">
-          {opportunity.applyUrl && (
+          {applyLink && (
             <Button asChild className="h-11 rounded-xl bg-gradient-to-r from-primary to-chart-2">
-              <a href={opportunity.applyUrl} target="_blank" rel="noopener noreferrer">
+              <a href={applyLink} target="_blank" rel="noopener noreferrer">
                 {t('opportunities.apply') || 'Apply'}<ArrowUpRight className="ms-2 h-4 w-4 rtl-flip" />
               </a>
             </Button>

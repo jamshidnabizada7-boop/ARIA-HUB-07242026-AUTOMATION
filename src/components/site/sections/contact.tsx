@@ -149,10 +149,25 @@ export function ContactSection({
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">{b.address}</p>
                     {b.phone && <p className="mt-1 text-xs text-muted-foreground">{b.phone}</p>}
+                    {b.mapEmbed && (
+                      <div 
+                        className="mt-3 w-full h-40 [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-0 rounded-lg overflow-hidden border border-border/60"
+                        dangerouslySetInnerHTML={{ __html: b.mapEmbed }}
+                      />
+                    )}
                   </div>
                 ))}
               </div>
             </Card>
+
+            {settings?.mapEmbed && (
+              <Card className="overflow-hidden border-border/60 shadow-premium">
+                <div 
+                  className="w-full h-64 sm:h-80 [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-0"
+                  dangerouslySetInnerHTML={{ __html: settings.mapEmbed }}
+                />
+              </Card>
+            )}
           </motion.div>
         </div>
       </div>

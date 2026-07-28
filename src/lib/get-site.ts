@@ -58,7 +58,7 @@ export async function getSiteData(): Promise<SiteData> {
     ]);
 
     const menuTree = buildMenuTree(menuItems as any) as MenuItem[];
-    const footer: Record<string, typeof footerLinks> = {};
+    const footer: Record<string, any[]> = {};
     for (const fl of footerLinks) {
       (footer[fl.column] ||= []).push(fl);
     }

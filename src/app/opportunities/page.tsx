@@ -62,6 +62,7 @@ export default async function OpportunitiesPage({
           currentPage={page}
           totalPages={totalPages}
           currentCategory={categoryParam}
+          phone={data.settings?.phone}
         />
       </main>
       <Footer

@@ -54,7 +54,7 @@ export function Home({ data }: { data: SiteData }) {
     whyChooseUs: <WhyChooseUsSection />,
     process: <ProcessSection steps={data.processSteps} />,
     visas: <VisasSection visas={data.visas} />,
-    opportunities: <OpportunitiesSection opportunities={data.opportunities} categories={data.opportunityCategories} />,
+    opportunities: <OpportunitiesSection opportunities={data.opportunities} categories={data.opportunityCategories} phone={data.settings?.phone} />,
     counters: <CountersSection counters={data.counters} />,
     pricing: <PricingSection packages={data.pricingPackages} />,
     team: <TeamSection members={data.teamMembers} />,
