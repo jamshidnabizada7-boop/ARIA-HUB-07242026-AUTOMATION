@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import { cn, normalizeImageUrl } from '@/lib/utils';
 
 interface SmartImageProps {
   src: string | null | undefined;
@@ -26,7 +26,7 @@ export function SmartImage({ src, alt, className, imgClassName, gradient = 'from
       <div className="absolute inset-0 bg-grid opacity-20" />
       {!error && src && (
         <Image
-          src={src}
+          src={normalizeImageUrl(src) as string}
           alt={alt}
           fill
           priority={priority}
