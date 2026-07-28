@@ -122,6 +122,10 @@ export class ScholarshipsAfScraper extends BaseScraper {
       // Full description (strip ad scripts/ins)
       const descEl = $('.jobsearch-description').first().clone();
       descEl.find('script, ins.adsbygoogle, .code-block').remove();
+
+      // Extract eligibility / benefits sections from headings in description (and remove them from descEl)
+      this.extractSections(descEl, listing);
+
       const descHtml = descEl.html() || '';
       if (descHtml.trim()) {
         listing.description = descHtml.trim();
@@ -131,9 +135,6 @@ export class ScholarshipsAfScraper extends BaseScraper {
       if (!listing.deadline) {
         listing.deadline = this.extractDeadlineFromText(descEl.text());
       }
-
-      // Extract eligibility / benefits sections from headings in description
-      this.extractSections(descEl, listing);
 
       // Apply link — external URL in "Apply Now" button
       const applyUrl = this.findApplyLink($);
@@ -207,13 +208,26 @@ export class ScholarshipsAfScraper extends BaseScraper {
       const bodyHtml = $h.nextUntil('h2, h3, h4').html() || '';
       if (!bodyHtml.trim()) return;
       const body = stripHtml(bodyHtml);
+      let isExtracted = false;
+
       if (heading.includes('eligib')) {
         listing.eligibility = listing.eligibility ? `${listing.eligibility}\n\n${body}` : body;
+        isExtracted = true;
       } else if (heading.includes('benefit') || heading.includes('funding') ||
                  (heading.includes('cover') && heading.includes('what'))) {
         listing.benefits = listing.benefits ? `${listing.benefits}\n\n${body}` : body;
+        isExtracted = true;
       } else if (heading.includes('require') || heading.includes('document')) {
         listing.requirements = listing.requirements ? `${listing.requirements}\n\n${body}` : body;
+        isExtracted = true;
+      } else if (heading.includes('responsib') || heading.includes('dut')) {
+        listing.responsibilities = listing.responsibilities ? `${listing.responsibilities}\n\n${body}` : body;
+        isExtracted = true;
+      }
+
+      if (isExtracted) {
+        $h.nextUntil('h2, h3, h4').remove();
+        $h.remove();
       }
     });
   }

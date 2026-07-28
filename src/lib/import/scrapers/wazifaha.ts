@@ -118,12 +118,30 @@ export class WazifahaScraper extends BaseScraper {
         listing.applyUrl = externalLink;
       }
 
-      // Description — combine all content sections
+      // Description and specific sections
       const sections: string[] = [];
       $('.wz-content-card .wz-section-body').each(function () {
         const heading = $(this).prev('.wz-section-heading').text().trim();
+        const headingLower = heading.toLowerCase();
         const body = $(this).html() || '';
-        if (body.trim()) {
+        if (!body.trim()) return;
+
+        let isExtracted = false;
+        if (headingLower.includes('requirement') || headingLower.includes('qualification')) {
+          listing.requirements = stripHtml(body);
+          isExtracted = true;
+        } else if (headingLower.includes('responsib') || headingLower.includes('dut')) {
+          listing.responsibilities = stripHtml(body);
+          isExtracted = true;
+        } else if (headingLower.includes('eligib') || headingLower.includes('criteria')) {
+          listing.eligibility = stripHtml(body);
+          isExtracted = true;
+        } else if (headingLower.includes('benefit') || headingLower.includes('compensation')) {
+          listing.benefits = stripHtml(body);
+          isExtracted = true;
+        }
+
+        if (!isExtracted) {
           sections.push(heading ? `<h3>${heading}</h3>\n${body}` : body);
         }
       });
@@ -131,24 +149,6 @@ export class WazifahaScraper extends BaseScraper {
       if (sections.length) {
         listing.description = sections.join('\n\n');
       }
-
-      // Responsibilities / requirements / eligibility — try to extract from section headings
-      const allSections = $('.wz-section-heading');
-      allSections.each(function () {
-        const heading = $(this).text().trim().toLowerCase();
-        const body = $(this).next('.wz-section-body').html() || '';
-        if (!body.trim()) return;
-
-        if (heading.includes('requirement') || heading.includes('qualification')) {
-          listing.requirements = stripHtml(body);
-        } else if (heading.includes('responsib') || heading.includes('dut') || heading.includes('description')) {
-          listing.responsibilities = stripHtml(body);
-        } else if (heading.includes('eligib') || heading.includes('criteria')) {
-          listing.eligibility = stripHtml(body);
-        } else if (heading.includes('benefit') || heading.includes('compensation')) {
-          listing.benefits = stripHtml(body);
-        }
-      });
 
       return listing;
     } catch (e) {
