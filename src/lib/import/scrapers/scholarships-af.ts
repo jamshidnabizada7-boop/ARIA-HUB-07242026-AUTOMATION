@@ -220,7 +220,7 @@ export class ScholarshipsAfScraper extends BaseScraper {
       } else if (heading.includes('require') || heading.includes('document')) {
         listing.requirements = listing.requirements ? `${listing.requirements}\n\n${body}` : body;
         isExtracted = true;
-      } else if (heading.includes('responsib') || heading.includes('dut')) {
+      } else if (heading.includes('responsib') || heading.includes('dut') || heading.includes('role')) {
         listing.responsibilities = listing.responsibilities ? `${listing.responsibilities}\n\n${body}` : body;
         isExtracted = true;
       } else if (heading.includes('submission') || heading.includes('apply') || heading.includes('guideline')) {

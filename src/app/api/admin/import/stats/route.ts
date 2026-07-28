@@ -10,6 +10,13 @@ export async function GET() {
   const admin = await getCurrentAdmin();
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  // Cleanup stale running imports (older than 10 mins)
+  const staleThreshold = new Date(Date.now() - 10 * 60 * 1000);
+  await db.importRun.updateMany({
+    where: { status: 'running', startedAt: { lt: staleThreshold } },
+    data: { status: 'error' }
+  }).catch(() => {});
+
   const [
     totalImported,
     totalFailed,

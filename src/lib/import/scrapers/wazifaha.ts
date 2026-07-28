@@ -130,7 +130,7 @@ export class WazifahaScraper extends BaseScraper {
         if (headingLower.includes('requirement') || headingLower.includes('qualification')) {
           listing.requirements = stripHtml(body);
           isExtracted = true;
-        } else if (headingLower.includes('responsib') || headingLower.includes('dut')) {
+        } else if (headingLower.includes('responsib') || headingLower.includes('dut') || headingLower.includes('role')) {
           listing.responsibilities = stripHtml(body);
           isExtracted = true;
         } else if (headingLower.includes('eligib') || headingLower.includes('criteria')) {
@@ -154,7 +154,7 @@ export class WazifahaScraper extends BaseScraper {
             const $container = innerDesc(this).parent().is('p') ? innerDesc(this).parent() : innerDesc(this);
             let isSubExtracted = false;
             
-            if (subHeading.includes('responsib') || subHeading.includes('dut')) {
+            if (subHeading.includes('responsib') || subHeading.includes('dut') || subHeading.includes('role')) {
               const subBody = $container.nextUntil('h2, h3, h4, p:has(strong), p:has(b), strong, b').html() || '';
               if (subBody) {
                 listing.responsibilities = listing.responsibilities ? `${listing.responsibilities}\n\n${stripHtml(subBody)}` : stripHtml(subBody);

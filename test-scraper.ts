@@ -1,0 +1,1 @@
+import { ScholarshipsAfScraper } from './src/lib/import/scrapers/scholarships-af'; (async () => { const scraper = new ScholarshipsAfScraper(); const listings = await scraper.scrapeListings(); console.log(listings.slice(0,2)); })();

@@ -16,6 +16,14 @@ export async function GET(req: NextRequest) {
   const limit = Math.min(100, Math.max(1, parseInt(sp.get('limit') || '20', 10)));
 
   const where = sourceId ? { sourceId } : {};
+
+  // Cleanup stale running imports (older than 10 mins)
+  const staleThreshold = new Date(Date.now() - 10 * 60 * 1000);
+  await db.importRun.updateMany({
+    where: { status: 'running', startedAt: { lt: staleThreshold } },
+    data: { status: 'error' }
+  }).catch(() => {});
+
   const [items, total] = await Promise.all([
     db.importRun.findMany({
       where,

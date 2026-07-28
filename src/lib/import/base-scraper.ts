@@ -35,8 +35,8 @@ export abstract class BaseScraper {
    */
   async fetchText(url: string, opts: FetchOptions = {}): Promise<string> {
     const retries = opts.retries ?? 2;
-    const timeoutMs = opts.timeoutMs ?? this.source.config.timeoutMs ?? 30_000;
-    const delay = opts.crawlDelayMs ?? this.source.config.crawlDelayMs ?? 500;
+    const timeoutMs = opts.timeoutMs ?? (this.source.config as any)?.timeoutMs ?? 8000;
+    const delay = opts.crawlDelayMs ?? (this.source.config as any)?.crawlDelayMs ?? 500;
 
     const cached = fetchCache.get(url);
     const fresh = cached && Date.now() - cached.at < CACHE_TTL_MS;
