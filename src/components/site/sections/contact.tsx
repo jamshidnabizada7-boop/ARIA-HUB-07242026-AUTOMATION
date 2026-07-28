@@ -144,11 +144,11 @@ export function ContactSection({
                 {branches.map((b) => (
                   <div key={b.id} className="rounded-xl border border-border/60 p-3">
                     <div className="flex items-center justify-between">
-                      <p className="font-semibold">{b.name}</p>
+                      <p className="font-semibold" dir="auto">{b.name}</p>
                       {b.isMain && <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase text-primary">{t('contact.hq')}</span>}
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{b.address}</p>
-                    {b.phone && <p className="mt-1 text-xs text-muted-foreground">{b.phone}</p>}
+                    <p className="mt-1 text-xs text-muted-foreground" dir="auto">{b.address}</p>
+                    {b.phone && <p className="mt-1 text-xs text-muted-foreground" dir="auto">{b.phone}</p>}
                     {b.mapEmbed && (
                       <div 
                         className="mt-3 w-full h-40 [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-0 rounded-lg overflow-hidden border border-border/60"
@@ -191,7 +191,7 @@ function InfoRow({ icon: Icon, text, href }: { icon: any; text: string; href?: s
       <div className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
         <Icon className="h-4 w-4" />
       </div>
-      <span className="text-sm">{text}</span>
+      <span className="text-sm" dir="auto">{text}</span>
     </div>
   );
   return href ? <a href={href} className="block transition-colors hover:text-primary">{content}</a> : content;
