@@ -55,6 +55,7 @@ export async function runAIPipeline(
   if (listing.eligibility) data.eligibility = listing.eligibility;
   if (listing.benefits) data.benefits = listing.benefits;
   if (listing.responsibilities) data.responsibilities = listing.responsibilities;
+  if (listing.guidelines) data.guidelines = listing.guidelines;
   if (listing.requirements || listing.requiredDocuments) {
     data.requirements = listing.requirements || listing.requiredDocuments;
   }
@@ -72,6 +73,7 @@ export async function runAIPipeline(
     { key: 'eligibility', value: listing.eligibility },
     { key: 'benefits', value: listing.benefits },
     { key: 'responsibilities', value: listing.responsibilities },
+    { key: 'guidelines', value: listing.guidelines },
     { key: 'requirements', value: listing.requirements || listing.requiredDocuments },
     { key: 'jobType', value: listing.jobType },
     { key: 'salary', value: listing.salary },

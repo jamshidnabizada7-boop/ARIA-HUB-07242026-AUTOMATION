@@ -25,6 +25,7 @@ export interface RawListing {
   benefits?: string | null;
   requiredDocuments?: string | null;
   requirements?: string | null;   // alias: required documents / qualification list
+  guidelines?: string | null;     // submission guidelines / how to apply
   salary?: string | null;
   educationReq?: string | null;
   experience?: string | null;

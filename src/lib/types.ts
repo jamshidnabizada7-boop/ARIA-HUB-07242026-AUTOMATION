@@ -123,6 +123,8 @@ export interface Opportunity {
   responsibilitiesI18n?: Record<string, string> | null;
   requirements?: string | null;
   requirementsI18n?: Record<string, string> | null;
+  guidelines?: string | null;
+  guidelinesI18n?: Record<string, string> | null;
   tags?: string | null;
   tagsI18n?: Record<string, string[]> | null;
   seoTitleI18n?: Record<string, string> | null;

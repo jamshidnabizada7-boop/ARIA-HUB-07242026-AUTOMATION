@@ -235,6 +235,8 @@ model Opportunity {
   responsibilitiesI18n Json?
   requirements      String?   // required documents / materials
   requirementsI18n  Json?
+  guidelines        String?   // submission guidelines / how to apply
+  guidelinesI18n    Json?
   tags              String?   // JSON array of strings
   tagsI18n          Json?     // { en: [...], fa: [...], ps: [...] }
   seoTitleI18n      Json?

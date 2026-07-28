@@ -139,6 +139,9 @@ export class WazifahaScraper extends BaseScraper {
         } else if (headingLower.includes('benefit') || headingLower.includes('compensation')) {
           listing.benefits = stripHtml(body);
           isExtracted = true;
+        } else if (headingLower.includes('submission') || headingLower.includes('apply') || headingLower.includes('guideline')) {
+          listing.guidelines = stripHtml(body);
+          isExtracted = true;
         }
 
         if (!isExtracted) {
