@@ -145,7 +145,36 @@ export class WazifahaScraper extends BaseScraper {
         }
 
         if (!isExtracted) {
-          sections.push(heading ? `<h3>${heading}</h3>\n${body}` : body);
+          // If the section is generic like "Job Description", duties or requirements might be buried inside as <strong> or <p><strong>
+          const innerDesc = require('cheerio').load(`<div>${body}</div>`);
+          innerDesc('strong, b, h2, h3, h4').each(function (this: any) {
+            const subHeading = innerDesc(this).text().trim().toLowerCase();
+            if (!subHeading || subHeading.length > 60) return;
+            
+            const $container = innerDesc(this).parent().is('p') ? innerDesc(this).parent() : innerDesc(this);
+            let isSubExtracted = false;
+            
+            if (subHeading.includes('responsib') || subHeading.includes('dut')) {
+              const subBody = $container.nextUntil('h2, h3, h4, p:has(strong), p:has(b), strong, b').html() || '';
+              if (subBody) {
+                listing.responsibilities = listing.responsibilities ? `${listing.responsibilities}\n\n${stripHtml(subBody)}` : stripHtml(subBody);
+                isSubExtracted = true;
+              }
+            } else if (subHeading.includes('requirement') || subHeading.includes('qualification')) {
+              const subBody = $container.nextUntil('h2, h3, h4, p:has(strong), p:has(b), strong, b').html() || '';
+              if (subBody) {
+                listing.requirements = listing.requirements ? `${listing.requirements}\n\n${stripHtml(subBody)}` : stripHtml(subBody);
+                isSubExtracted = true;
+              }
+            }
+
+            if (isSubExtracted) {
+              $container.nextUntil('h2, h3, h4, p:has(strong), p:has(b), strong, b').remove();
+              $container.remove();
+            }
+          });
+          
+          sections.push(heading ? `<h3>${heading}</h3>\n${innerDesc('div').html()}` : innerDesc('div').html() || '');
         }
       });
 
