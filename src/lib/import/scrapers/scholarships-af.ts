@@ -32,6 +32,14 @@ import { resolveUrl, stripHtml, parseDate, cleanHtmlWhitespace } from '../utils'
 import type { RawListing, ScrapePage } from '../types';
 
 export class ScholarshipsAfScraper extends BaseScraper {
+  constructor(source: any) {
+    super(source);
+    // Automatically upgrade the old URL to the sitemap URL
+    if (this.source.baseUrl.includes('opportunities/?job_type=scholarship')) {
+      this.source.baseUrl = 'https://scholarships.af/job-sitemap1.xml';
+    }
+  }
+
   /**
    * Parse the listing page. Each card links to a detail page
    * `/opportunity/<slug>/` which `parseDetail()` enriches.

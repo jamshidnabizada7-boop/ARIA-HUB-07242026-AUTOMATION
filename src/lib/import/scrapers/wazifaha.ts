@@ -25,6 +25,13 @@ import { resolveUrl, stripHtml, parseDate, cleanHtmlWhitespace } from '../utils'
 import type { RawListing, ScrapePage } from '../types';
 
 export class WazifahaScraper extends BaseScraper {
+  constructor(source: any) {
+    super(source);
+    // Ensure we scrape all wazifaha pages (Wazifaha has many pages, override default 10 to 50)
+    if (!this.source.config) this.source.config = {};
+    if (!this.source.config.maxPages) this.source.config.maxPages = 50;
+  }
+
   /** Parse the job listing list page. Returns titles + URLs, paginates. */
   protected async parseListPage(html: string, pageUrl: string): Promise<ScrapePage> {
     const $ = cheerio.load(html);
