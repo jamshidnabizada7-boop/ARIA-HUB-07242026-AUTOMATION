@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Check, X, Clock, Tag } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -18,6 +18,13 @@ export function ServicesSection({ services }: { services: Service[] }) {
   const t = useT();
   const [selected, setSelected] = useState<Service | null>(null);
   const [visibleCount, setVisibleCount] = useState(6);
+
+  // Set visible count based on screen size safely without hydration errors
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setVisibleCount(1);
+    }
+  }, []);
 
   const visibleServices = services.slice(0, visibleCount);
 
@@ -51,11 +58,13 @@ export function ServicesSection({ services }: { services: Service[] }) {
             {services.length > visibleCount && (
               <div className="mt-12 flex justify-center">
                 <Button 
-                  onClick={() => setVisibleCount(prev => prev + 6)}
+                  asChild
                   size="lg" 
                   className="rounded-full bg-gradient-to-r from-primary to-chart-2 px-8 font-semibold shadow-float"
                 >
-                  {t('section.viewAll') || 'View All'}
+                  <a href="/services" target="_blank" rel="noopener noreferrer">
+                    {t('section.viewAll') || 'View All'}
+                  </a>
                 </Button>
               </div>
             )}

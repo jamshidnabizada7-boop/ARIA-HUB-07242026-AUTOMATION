@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarDays, MapPin, Building2, ArrowUpRight, ExternalLink, CheckCircle2, Award, FileText, Globe, Briefcase, DollarSign, GraduationCap, Clock, Info } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -26,8 +26,15 @@ export function OpportunitiesSection({
   const t = useT();
   const [active, setActive] = useState<string>('all');
   const [selected, setSelected] = useState<Opportunity | null>(null);
+  const [visibleCount, setVisibleCount] = useState(6);
 
-  const filtered = (active === 'all' ? opportunities : opportunities.filter((o) => o.category?.slug === active)).slice(0, 6);
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setVisibleCount(1);
+    }
+  }, []);
+
+  const filtered = (active === 'all' ? opportunities : opportunities.filter((o) => o.category?.slug === active)).slice(0, visibleCount);
   const tabs = [{ id: 'all', name: t('common.all') }, ...categories.map((c) => ({ id: c.slug, name: c.name }))];
 
   return (
@@ -80,7 +87,7 @@ export function OpportunitiesSection({
           </div>
           <div className="mt-12 flex justify-center">
             <Button asChild size="lg" className="rounded-full bg-gradient-to-r from-primary to-chart-2 px-8 font-semibold shadow-float">
-              <a href="/opportunities">{t('opportunities.viewAll') || 'View All Opportunities'}</a>
+              <a href="/opportunities" target="_blank" rel="noopener noreferrer">{t('opportunities.viewAll') || 'View All Opportunities'}</a>
             </Button>
           </div>
         </>

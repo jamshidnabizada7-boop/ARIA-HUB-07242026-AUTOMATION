@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, DollarSign, Calendar, ArrowRight, Plane, FileText, CheckCircle2, MapPin, ListChecks } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -22,6 +22,12 @@ export function VisasSection({ visas }: { visas: Visa[] }) {
   const t = useT();
   const [selected, setSelected] = useState<Visa | null>(null);
   const [visibleCount, setVisibleCount] = useState(6);
+
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setVisibleCount(1);
+    }
+  }, []);
 
   const visibleVisas = visas.slice(0, visibleCount);
 
@@ -55,11 +61,13 @@ export function VisasSection({ visas }: { visas: Visa[] }) {
             {visas.length > visibleCount && (
               <div className="mt-12 flex justify-center">
                 <Button 
-                  onClick={() => setVisibleCount(prev => prev + 6)}
+                  asChild
                   size="lg" 
                   className="rounded-full bg-gradient-to-r from-primary to-chart-2 px-8 font-semibold shadow-float"
                 >
-                  {t('section.viewAll') || 'View All'}
+                  <a href="/visas" target="_blank" rel="noopener noreferrer">
+                    {t('section.viewAll') || 'View All'}
+                  </a>
                 </Button>
               </div>
             )}
