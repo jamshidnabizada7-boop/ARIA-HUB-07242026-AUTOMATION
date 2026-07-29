@@ -67,7 +67,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable}`}>
+    <html lang="fa" dir="rtl" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                let d = localStorage.getItem('aria-lang');
+                let dir = 'rtl';
+                let lang = 'fa';
+                if (d) {
+                  let parsed = JSON.parse(d);
+                  if (parsed.state) {
+                    dir = parsed.state.dir || 'rtl';
+                    lang = parsed.state.code || 'fa';
+                  }
+                }
+                document.documentElement.dir = dir;
+                document.documentElement.lang = lang;
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body
         suppressHydrationWarning
         className="font-sans antialiased bg-background text-foreground"
