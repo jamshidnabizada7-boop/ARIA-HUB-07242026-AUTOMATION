@@ -17,6 +17,9 @@ import type { Service } from '@/lib/types';
 export function ServicesSection({ services }: { services: Service[] }) {
   const t = useT();
   const [selected, setSelected] = useState<Service | null>(null);
+  const [visibleCount, setVisibleCount] = useState(6);
+
+  const visibleServices = services.slice(0, visibleCount);
 
   return (
     <section id="services" className="relative py-24 sm:py-32">
@@ -30,19 +33,33 @@ export function ServicesSection({ services }: { services: Service[] }) {
         {services.length === 0 ? (
           <div className="mt-14 grid place-items-center py-16 text-muted-foreground">{t('empty.services')}</div>
         ) : (
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((s, i) => (
-            <motion.div
-              key={s.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '0px' }}
-              transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
-            >
-              <ServiceCard service={s} t={t} onOpen={() => setSelected(s)} />
-            </motion.div>
-          ))}
-        </div>
+          <>
+            <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {visibleServices.map((s, i) => (
+                <motion.div
+                  key={s.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '0px' }}
+                  transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
+                >
+                  <ServiceCard service={s} t={t} onOpen={() => setSelected(s)} />
+                </motion.div>
+              ))}
+            </div>
+            
+            {services.length > visibleCount && (
+              <div className="mt-12 flex justify-center">
+                <Button 
+                  onClick={() => setVisibleCount(prev => prev + 6)}
+                  size="lg" 
+                  className="rounded-full bg-gradient-to-r from-primary to-chart-2 px-8 font-semibold shadow-float"
+                >
+                  {t('section.viewAll') || 'View All'}
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -63,6 +80,7 @@ function ServiceCard({ service, t, onOpen }: { service: Service; t: (k: string) 
 
   // 3D tilt on mouse move
   const handleMove = (e: React.MouseEvent) => {
+    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) return;
     const el = ref.current;
     if (!el) return;
     const r = el.getBoundingClientRect();

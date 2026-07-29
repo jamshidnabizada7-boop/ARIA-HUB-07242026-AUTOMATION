@@ -21,6 +21,9 @@ function parseArr(v: string | null): string[] {
 export function VisasSection({ visas }: { visas: Visa[] }) {
   const t = useT();
   const [selected, setSelected] = useState<Visa | null>(null);
+  const [visibleCount, setVisibleCount] = useState(6);
+
+  const visibleVisas = visas.slice(0, visibleCount);
 
   return (
     <section id="visas" className="relative py-24 sm:py-32">
@@ -34,19 +37,33 @@ export function VisasSection({ visas }: { visas: Visa[] }) {
         {visas.length === 0 ? (
           <div className="mt-14 grid place-items-center py-16 text-muted-foreground">{t('empty.visas')}</div>
         ) : (
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {visas.map((v, i) => (
-            <motion.div
-              key={v.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '0px' }}
-              transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
-            >
-              <VisaCard visa={v} t={t} onOpen={() => setSelected(v)} />
-            </motion.div>
-          ))}
-        </div>
+          <>
+            <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {visibleVisas.map((v, i) => (
+                <motion.div
+                  key={v.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '0px' }}
+                  transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
+                >
+                  <VisaCard visa={v} t={t} onOpen={() => setSelected(v)} />
+                </motion.div>
+              ))}
+            </div>
+            
+            {visas.length > visibleCount && (
+              <div className="mt-12 flex justify-center">
+                <Button 
+                  onClick={() => setVisibleCount(prev => prev + 6)}
+                  size="lg" 
+                  className="rounded-full bg-gradient-to-r from-primary to-chart-2 px-8 font-semibold shadow-float"
+                >
+                  {t('section.viewAll') || 'View All'}
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
