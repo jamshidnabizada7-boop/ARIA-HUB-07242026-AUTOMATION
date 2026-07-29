@@ -137,12 +137,20 @@ async function runOneSource(
   try {
     if (!scraper) throw new Error(`No scraper registered for key "${source.scraperKey}"`);
 
+    // Give the run a 45-second deadline so Vercel Serverless Functions don't time out
+    const GLOBAL_TIMEOUT = 45000;
+    scraper.deadline = startedAt + GLOBAL_TIMEOUT;
+
     // 1. Scrape
     const listings = await scraper.scrapeAll();
     counters.found = listings.length;
 
     // 2. Process each listing
     for (const listing of listings) {
+      if (Date.now() - startedAt > GLOBAL_TIMEOUT) {
+        console.warn(`[import] Approaching function timeout (${GLOBAL_TIMEOUT}ms). Saving partial run.`);
+        break;
+      }
       try {
         // eslint-disable-next-line no-await-in-loop
         await processListing(db, scraper, listing, source, categories, knownSlugs, counters);

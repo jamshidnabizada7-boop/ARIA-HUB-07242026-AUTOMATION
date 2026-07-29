@@ -16,7 +16,12 @@ const fetchCache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 export abstract class BaseScraper {
-  constructor(protected source: SourceHandle) {}
+  public source: SourceHandle;
+  public deadline: number = 0; // if set > 0, scraping will break early
+
+  constructor(protected src: SourceHandle) {
+    this.source = src;
+  }
 
   /** Parse a single page of the source's list view. Must return nextPage (abs URL or null). */
   protected abstract parseListPage(html: string, pageUrl: string): Promise<ScrapePage> | ScrapePage;
@@ -121,10 +126,15 @@ export abstract class BaseScraper {
     let nextUrl: string | null | undefined = this.source.baseUrl;
 
     for (let page = 0; page < maxPages && nextUrl; page++) {
-      let page: ScrapePage;
+      if (this.deadline > 0 && Date.now() > this.deadline) {
+        console.warn(`[import] Scraper deadline exceeded (${this.deadline}), stopping at page ${page}`);
+        break;
+      }
+      
+      let scrapePage: ScrapePage;
       try {
         const body = await this.fetchText(nextUrl);
-        page = await this.parseListPage(body, nextUrl);
+        scrapePage = await this.parseListPage(body, nextUrl);
       } catch (e) {
         // If we fail on the very first page, throw so the run is marked as error
         if (all.length === 0) throw e;
@@ -133,10 +143,10 @@ export abstract class BaseScraper {
         break;
       }
 
-      if (!page.listings.length) break;
+      if (!scrapePage.listings.length) break;
 
-      all.push(...page.listings);
-      nextUrl = page.nextPage || null;
+      all.push(...scrapePage.listings);
+      nextUrl = scrapePage.nextPage || null;
     }
 
     return all;
