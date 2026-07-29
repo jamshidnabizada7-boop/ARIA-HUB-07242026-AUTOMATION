@@ -116,7 +116,7 @@ export abstract class BaseScraper {
    * via its detail page. Returns the full flattened set of listings.
    */
   async scrapeAll(): Promise<RawListing[]> {
-    const maxPages = this.source.config.maxPages ?? 1;
+    const maxPages = this.source.config.maxPages ?? 10;
     const all: RawListing[] = [];
     let nextUrl: string | null | undefined = this.source.baseUrl;
 

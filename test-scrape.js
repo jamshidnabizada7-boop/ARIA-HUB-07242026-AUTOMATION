@@ -1,0 +1,1 @@
+fetch('https://scholarships.af/wp-admin/admin-ajax.php', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'action=jobsearch_jobs_content_load&page_num=2' }).then(r => r.json()).catch(e => console.log('not json')).then(j => console.log(j ? 'Success' : 'none'));

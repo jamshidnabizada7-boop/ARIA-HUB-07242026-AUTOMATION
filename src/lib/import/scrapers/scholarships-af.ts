@@ -37,38 +37,51 @@ export class ScholarshipsAfScraper extends BaseScraper {
    * `/opportunity/<slug>/` which `parseDetail()` enriches.
    */
   protected async parseListPage(html: string, pageUrl: string): Promise<ScrapePage> {
-    const $ = cheerio.load(html);
+    const $ = cheerio.load(html, { xmlMode: html.trim().startsWith('<?xml') || html.includes('<urlset') });
     const listings: RawListing[] = [];
-    console.log('HTML Length:', html.length, 'URL:', pageUrl);
+    console.log('HTML/XML Length:', html.length, 'URL:', pageUrl);
 
+    if (html.trim().startsWith('<?xml') || html.includes('<urlset') || html.includes('<sitemapindex')) {
+      // It's a sitemap!
+      if (html.includes('<urlset')) {
+        // Individual sitemap with URLs
+        $('loc').each(function () {
+          const url = $(this).text().trim();
+          if (url && url.includes('/opportunity/')) {
+            listings.push({
+              title: 'Unknown Title', // Will be populated in parseDetail
+              sourceUrl: url,
+              originalUrl: url,
+              sourceName: 'Scholarships.af',
+              sourceLanguage: 'en',
+              category: 'scholarship',
+            });
+          }
+        });
+      }
+      return { listings, nextPage: null };
+    }
+
+    // Standard HTML parse fallback
     $('.jobsearch-joblisting-classic-wrap').each(function () {
       const card = $(this);
-      console.log('Found card in scraper');
       const titleLink = card.find('.jobsearch-pst-title a').first();
       const href = titleLink.attr('href') || '';
       const fullUrl = resolveUrl(href, pageUrl);
       if (!fullUrl) return;
 
       const title = titleLink.attr('title')?.trim() || titleLink.text().trim();
-
-      // Organization
       const orgText = card.find('.job-company-name a').first().text().trim();
       const organization = orgText.replace(/^@\s*/i, '').trim() || null;
-
-      // Image / logo
       const imgSrc = card.find('figure img').first().attr('src') || null;
       const imageUrl = imgSrc ? resolveUrl(imgSrc, pageUrl) : null;
-
-      // Type (Scholarship / Fellowship / ...)
       const typeBtn = card.find('.jobsearch-option-btn').first().text().trim();
       const jobType = typeBtn ? typeBtn.toLowerCase() : 'scholarship';
 
-      // Deadline — scan list items for "Deadline"
       let deadline: string | null = null;
       card.find('li').each(function () {
         const li = $(this).text().trim();
         if (/deadline/i.test(li) && !deadline) {
-          // Extract date portion after "Deadline"
           const m = li.replace(/.*deadline\s*/i, '').trim();
           deadline = parseDate(m) || m || null;
         }
@@ -89,8 +102,24 @@ export class ScholarshipsAfScraper extends BaseScraper {
       });
     });
 
-    // JS-driven pagination — no static next page URL.
-    return { listings, nextPage: null };
+    let nextPage: string | null = null;
+    if (listings.length > 0) {
+      const pageMatch = pageUrl.match(/\/page\/(\d+)/);
+      if (pageMatch) {
+        const nextNum = parseInt(pageMatch[1], 10) + 1;
+        if (nextNum <= 10) {
+          nextPage = pageUrl.replace(/\/page\/\d+/, `/page/${nextNum}`);
+        }
+      } else {
+        const urlObj = new URL(pageUrl);
+        let path = urlObj.pathname;
+        if (!path.endsWith('/')) path += '/';
+        path += 'page/2/';
+        nextPage = `${urlObj.origin}${path}${urlObj.search}`;
+      }
+    }
+
+    return { listings, nextPage };
   }
 
   /** Enrich a listing with full detail-page content. */
