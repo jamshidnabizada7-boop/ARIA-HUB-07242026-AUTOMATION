@@ -79,7 +79,6 @@
     "next-intl": "^4.3.4",
     "next-themes": "^0.4.6",
     "openai": "^6.47.0",
-    "prisma": "^6.11.1",
     "react": "^19.0.0",
     "react-day-picker": "^9.8.0",
     "react-dom": "^19.0.0",
@@ -115,6 +114,7 @@
     "eslint-config-next": "^16.1.1",
     "fast-check": "^4.8.0",
     "jsdom": "^29.1.1",
+    "prisma": "^6.11.1",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }
