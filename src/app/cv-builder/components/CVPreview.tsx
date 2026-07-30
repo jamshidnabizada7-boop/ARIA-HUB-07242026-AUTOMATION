@@ -2,6 +2,7 @@ import React from 'react';
 import { CVData, TemplateType } from '../types';
 import { Mail, Phone, MapPin, Linkedin, Globe, User, Link as LinkIcon } from 'lucide-react';
 import { useT } from '@/hooks/use-t';
+import { useLangStore } from '@/store/lang';
 import ReactMarkdown from 'react-markdown';
 
 interface CVPreviewProps {
@@ -12,6 +13,9 @@ interface CVPreviewProps {
 
 export function CVPreview({ data, template, settings }: CVPreviewProps) {
   const t = useT();
+  const lang = useLangStore(state => state.code);
+  const isRtl = lang === 'fa' || lang === 'ps';
+  
   // If all fields are empty, show a placeholder overlay
   const isEmpty = !data.personal.fullName && data.education.length === 0 && data.experience.length === 0 && data.skills.length === 0;
 
