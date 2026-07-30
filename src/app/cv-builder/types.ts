@@ -9,7 +9,10 @@ export interface CVData {
     linkedIn: string;
     website: string;
     summary: string;
+    gender: string;
+    picture: string;
   };
+  socialLinks: SocialLink[];
   education: Education[];
   experience: Experience[];
   skills: Skill[];
@@ -17,6 +20,12 @@ export interface CVData {
   certifications: Certification[];
   projects: Project[];
   references: Reference[];
+}
+
+export interface SocialLink {
+  id: string;
+  platform: string;
+  url: string;
 }
 
 export interface Education {

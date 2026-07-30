@@ -3,7 +3,9 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, X, Clock, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Check, X, Clock, Tag, ChevronLeft, ChevronRight, ChevronRight as ChevronRightIcon, CheckCircle2, MapPin, Building, Link2, Share2, Printer, CalendarDays, ExternalLink, MessageSquare, Briefcase, HelpCircle, Phone, Mail, Award } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SectionHeading } from '@/components/site/section-heading';
@@ -193,7 +195,11 @@ function ServiceDetail({ service, t }: { service: Service; t: (k: string) => str
         <div className="grid gap-6 lg:grid-cols-3 lg:gap-10">
           <div className="lg:col-span-2">
             <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-primary">{t('common.overview')}</h3>
-            <div dir="auto" className="prose prose-sm max-w-none text-muted-foreground sm:prose-base prose-p:leading-relaxed" dangerouslySetInnerHTML={{ __html: description }} />
+            {description && (
+              <div dir="auto" className="prose prose-sm max-w-none text-muted-foreground sm:prose-base prose-p:leading-relaxed">
+                <ReactMarkdown rehypePlugins={[rehypeRaw]}>{description}</ReactMarkdown>
+              </div>
+            )}
           </div>
           <div className="space-y-6">
             {(service.duration || service.price) && (

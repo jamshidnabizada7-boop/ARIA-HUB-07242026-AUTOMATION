@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarDays, MapPin, Building2, ArrowUpRight, ExternalLink, CheckCircle2, Award, FileText, Globe, Briefcase, DollarSign, GraduationCap, Clock, Info, ChevronLeft, ChevronRight } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SectionHeading } from '@/components/site/section-heading';
@@ -213,40 +215,10 @@ function OpportunityCard({ opportunity, t, onOpen, phone }: { opportunity: Oppor
 
 const FormattedContent = ({ content }: { content: string }) => {
   if (!content) return null;
-  
-  if (/<(p|ul|ol|li|br|div|h[1-6])[>\s]/i.test(content)) {
-    return <div dir="auto" className="text-sm leading-relaxed text-foreground/80 space-y-4 whitespace-pre-wrap [&_*]:!bg-transparent" dangerouslySetInnerHTML={{ __html: content }} />;
-  }
-
-  const cleanLine = (l: string) => l.replace(/^\s*#+\s+/, '').replace(/\*\*(.*?)\*\*/g, '$1').trim();
-  const lines = content.split('\n').map(l => l.trim()).filter(Boolean);
-  
-  if (lines.length === 1) {
-    return <p dir="auto" className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">{cleanLine(lines[0])}</p>;
-  }
-
   return (
-    <ul dir="auto" className="space-y-2 text-sm leading-relaxed text-foreground/80">
-      {lines.map((rawLine, i) => {
-        let line = cleanLine(rawLine);
-        const isHeading = rawLine.startsWith('#') || line.endsWith(':');
-        
-        if (line.startsWith('- ') || line.startsWith('* ')) {
-          line = line.substring(2).trim();
-        }
-
-        if (isHeading) {
-          return <li key={i} dir="auto" className="mt-4 font-semibold text-foreground list-none">{line}</li>;
-        }
-        
-        return (
-          <li key={i} dir="auto" className="flex items-start gap-2">
-            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-            <span className="flex-1 whitespace-pre-wrap">{line}</span>
-          </li>
-        );
-      })}
-    </ul>
+    <div dir="auto" className="prose prose-sm max-w-none text-foreground/80 prose-p:leading-relaxed">
+      <ReactMarkdown rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
+    </div>
   );
 };
 

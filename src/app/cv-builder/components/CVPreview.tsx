@@ -1,7 +1,8 @@
 import React from 'react';
 import { CVData, TemplateType } from '../types';
-import { Mail, Phone, MapPin, Linkedin, Globe } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Globe, User, Link as LinkIcon } from 'lucide-react';
 import { useT } from '@/hooks/use-t';
+import ReactMarkdown from 'react-markdown';
 
 interface CVPreviewProps {
   data: CVData;
@@ -15,21 +16,22 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
   const isEmpty = !data.personal.fullName && data.education.length === 0 && data.experience.length === 0 && data.skills.length === 0;
 
   const PrintHeader = () => (
-    <div className="hidden print:flex items-center justify-between border-b-2 border-slate-200 pb-4 mb-6">
-      <div className="flex items-center space-x-4 space-x-reverse">
+    <div className="hidden print:flex flex-row items-center justify-between border-b-2 border-slate-200 pb-4 mb-6 w-full gap-4">
+      <div className="flex flex-row items-center gap-4 ltr:text-left rtl:text-right">
         {settings?.logoUrl ? (
-          <img src={settings.logoUrl} alt={settings?.siteName || 'ARIA HUB'} className="h-12 w-auto object-contain" />
+          <img src={settings.logoUrl} alt={settings?.siteName || 'ARIA HUB'} className="h-14 w-auto object-contain shrink-0" />
         ) : (
-          <div className="text-2xl font-bold text-slate-800">{settings?.siteName || 'ARIA HUB'}</div>
+          <div className="text-2xl font-bold text-slate-800 shrink-0">{settings?.siteName || 'ARIA HUB'}</div>
         )}
-        <div>
-          <h2 className="text-xl font-bold text-slate-800">{settings?.siteName || 'ARIA HUB'}</h2>
-          <p className="text-xs text-slate-500 max-w-[200px]">{settings?.description || 'Your Gateway to Global Opportunities'}</p>
+        <div className="flex flex-col">
+          <h2 className="text-xl font-bold text-slate-800 m-0 leading-tight">{settings?.siteName || 'ARIA HUB'}</h2>
+          <p className="text-xs text-slate-500 max-w-[300px] m-0">{settings?.description || 'Your Gateway to Global Opportunities'}</p>
         </div>
       </div>
-      <div className="text-right text-xs text-slate-600">
-        <p>{settings?.address || 'Kabul, Afghanistan'}</p>
-        <p>{settings?.email || 'info@ariahub.com'} | {settings?.phone || '+93 123 456 789'}</p>
+      <div className="flex flex-col text-xs text-slate-600 ltr:text-right rtl:text-left whitespace-nowrap">
+        <p className="m-0 font-medium">{settings?.address || 'Kabul, Afghanistan'}</p>
+        <p className="m-0">{settings?.email || 'info@ariahub.com'}</p>
+        <p className="m-0">{settings?.phone || '+93 123 456 789'}</p>
       </div>
     </div>
   );
@@ -48,17 +50,36 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
         <div className="flex h-full">
           {/* Left Column - Dark Blue */}
           <div className="w-1/3 bg-[#0f172a] text-white p-6 flex flex-col print:bg-[#0f172a] print:text-white" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+            {data.personal.picture && (
+              <div className="mb-6 flex justify-center">
+                <img src={data.personal.picture} alt="Profile" className="w-32 h-32 rounded-full object-cover border-4 border-slate-700/50" />
+              </div>
+            )}
             <div className="mb-6">
               <h1 className="text-2xl font-bold tracking-tight mb-1 leading-tight">{data.personal.fullName || t('tools.cvBuilder.yourName')}</h1>
               <div className="w-10 h-1 bg-blue-500 mt-2 rounded"></div>
             </div>
 
             <div className="space-y-3 mb-8 text-slate-300">
-              {data.personal.email && <div className="flex items-center"><Mail className="w-3 h-3 mr-2" /> {data.personal.email}</div>}
-              {data.personal.phone && <div className="flex items-center"><Phone className="w-3 h-3 mr-2" /> {data.personal.phone}</div>}
-              {data.personal.location && <div className="flex items-center"><MapPin className="w-3 h-3 mr-2" /> {data.personal.location}</div>}
-              {data.personal.linkedIn && <div className="flex items-center"><Linkedin className="w-3 h-3 mr-2" /> {data.personal.linkedIn}</div>}
-              {data.personal.website && <div className="flex items-center"><Globe className="w-3 h-3 mr-2" /> {data.personal.website}</div>}
+              {data.personal.email && <div className="flex items-center"><Mail className="w-3 h-3 mr-2 rtl:ml-2 rtl:mr-0 shrink-0" /> <span className="break-all">{data.personal.email}</span></div>}
+              {data.personal.phone && <div className="flex items-center"><Phone className="w-3 h-3 mr-2 rtl:ml-2 rtl:mr-0 shrink-0" /> {data.personal.phone}</div>}
+              {data.personal.location && <div className="flex items-center"><MapPin className="w-3 h-3 mr-2 rtl:ml-2 rtl:mr-0 shrink-0" /> {data.personal.location}</div>}
+              {data.personal.gender && <div className="flex items-center"><User className="w-3 h-3 mr-2 rtl:ml-2 rtl:mr-0 shrink-0" /> {data.personal.gender === 'Male' ? (t('tools.cvBuilder.personal.male') || 'Male') : data.personal.gender === 'Female' ? (t('tools.cvBuilder.personal.female') || 'Female') : (t('tools.cvBuilder.personal.other') || 'Other')}</div>}
+              
+              {/* Render new socialLinks (and fallback to old linkedIn/website if available but not in socialLinks) */}
+              {data.socialLinks && data.socialLinks.length > 0 ? (
+                data.socialLinks.map(link => (
+                  <div key={link.id} className="flex items-center">
+                    <LinkIcon className="w-3 h-3 mr-2 rtl:ml-2 rtl:mr-0 shrink-0" />
+                    <a href={link.url} target="_blank" rel="noreferrer" className="hover:text-white break-all">{link.platform}</a>
+                  </div>
+                ))
+              ) : (
+                <>
+                  {data.personal.linkedIn && <div className="flex items-center"><Linkedin className="w-3 h-3 mr-2 rtl:ml-2 rtl:mr-0 shrink-0" /> <span className="break-all">{data.personal.linkedIn}</span></div>}
+                  {data.personal.website && <div className="flex items-center"><Globe className="w-3 h-3 mr-2 rtl:ml-2 rtl:mr-0 shrink-0" /> <span className="break-all">{data.personal.website}</span></div>}
+                </>
+              )}
             </div>
 
             {data.skills.length > 0 && (
@@ -104,7 +125,9 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
             {data.personal.summary && (
               <div className="mb-6">
                 <h2 className="text-sm font-bold text-slate-900 border-b-2 border-slate-200 pb-1 mb-2 uppercase tracking-wider">{t('tools.cvBuilder.personal.summary')}</h2>
-                <p className="text-slate-600 text-[11px] leading-relaxed">{data.personal.summary}</p>
+                <div className="text-slate-600 text-[11px] leading-relaxed prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2">
+                  <ReactMarkdown>{data.personal.summary}</ReactMarkdown>
+                </div>
               </div>
             )}
 
@@ -119,7 +142,9 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
                         <span className="text-slate-500 text-[9px] font-medium bg-slate-100 px-1.5 py-0.5 rounded">{exp.startDate} - {exp.endDate}</span>
                       </div>
                       <div className="text-blue-600 font-medium text-[10px] mb-1">{exp.company} {exp.location && `• ${exp.location}`}</div>
-                      <p className="text-slate-600 whitespace-pre-wrap">{exp.description}</p>
+                      <div className="text-slate-600 prose prose-sm max-w-none prose-p:my-0.5 prose-ul:my-0.5 prose-li:my-0">
+                        <ReactMarkdown>{exp.description}</ReactMarkdown>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -137,7 +162,9 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
                         <span className="text-slate-500 text-[9px] font-medium bg-slate-100 px-1.5 py-0.5 rounded">{ed.startDate} - {ed.endDate}</span>
                       </div>
                       <div className="text-slate-700 font-medium text-[10px] mb-1">{ed.institution} {ed.location && `• ${ed.location}`}</div>
-                      <p className="text-slate-600 whitespace-pre-wrap">{ed.description}</p>
+                      <div className="text-slate-600 prose prose-sm max-w-none prose-p:my-0.5 prose-ul:my-0.5 prose-li:my-0">
+                        <ReactMarkdown>{ed.description}</ReactMarkdown>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -154,7 +181,9 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
                         <h3 className="font-semibold text-slate-800">{proj.name}</h3>
                         {proj.link && <a href={proj.link} target="_blank" rel="noreferrer" className="text-blue-500 text-[9px]">{t('tools.cvBuilder.projects.link')}</a>}
                       </div>
-                      <p className="text-slate-600 whitespace-pre-wrap">{proj.description}</p>
+                      <div className="text-slate-600 prose prose-sm max-w-none prose-p:my-0.5 prose-ul:my-0.5 prose-li:my-0">
+                        <ReactMarkdown>{proj.description}</ReactMarkdown>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -209,12 +238,28 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
       <PrintHeader />
       
       <div className="text-center mb-6">
+        {data.personal.picture && (
+          <div className="flex justify-center mb-4">
+            <img src={data.personal.picture} alt="Profile" className="w-24 h-24 rounded-full object-cover border border-slate-200" />
+          </div>
+        )}
         <h1 className="text-3xl font-normal mb-2 text-slate-900">{data.personal.fullName || t('tools.cvBuilder.yourName')}</h1>
         <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1 text-slate-600 text-[10px]">
           {data.personal.location && <span>{data.personal.location}</span>}
           {data.personal.phone && <span>• {data.personal.phone}</span>}
           {data.personal.email && <span>• {data.personal.email}</span>}
-          {data.personal.website && <span>• {data.personal.website}</span>}
+          {data.personal.gender && <span>• {data.personal.gender === 'Male' ? (t('tools.cvBuilder.personal.male') || 'Male') : data.personal.gender === 'Female' ? (t('tools.cvBuilder.personal.female') || 'Female') : (t('tools.cvBuilder.personal.other') || 'Other')}</span>}
+          
+          {data.socialLinks && data.socialLinks.length > 0 ? (
+            data.socialLinks.map(link => (
+              <span key={link.id}>• <a href={link.url} target="_blank" rel="noreferrer" className="hover:text-slate-800">{link.platform}</a></span>
+            ))
+          ) : (
+            <>
+              {data.personal.website && <span>• {data.personal.website}</span>}
+              {data.personal.linkedIn && <span>• {data.personal.linkedIn}</span>}
+            </>
+          )}
         </div>
       </div>
 
@@ -222,7 +267,9 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
         {data.personal.summary && (
           <div>
             <h2 className="text-[13px] font-semibold text-slate-800 border-b border-slate-300 mb-2 uppercase tracking-widest">{t('tools.cvBuilder.personal.summary')}</h2>
-            <p className="text-slate-700">{data.personal.summary}</p>
+            <div className="text-slate-700 prose prose-sm max-w-none prose-p:my-1 prose-headings:my-2">
+              <ReactMarkdown>{data.personal.summary}</ReactMarkdown>
+            </div>
           </div>
         )}
 
@@ -237,7 +284,9 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
                     <span className="font-normal text-slate-600">{ed.startDate} – {ed.endDate}</span>
                   </div>
                   <div className="italic text-slate-700 mb-1">{ed.degree}</div>
-                  <p className="text-slate-700 whitespace-pre-wrap">{ed.description}</p>
+                  <div className="text-slate-700 prose prose-sm max-w-none prose-p:my-0.5 prose-ul:my-0.5 prose-li:my-0">
+                    <ReactMarkdown>{ed.description}</ReactMarkdown>
+                  </div>
                 </div>
               ))}
             </div>
@@ -255,7 +304,9 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
                     <span className="font-normal text-slate-600">{exp.startDate} – {exp.endDate}</span>
                   </div>
                   <div className="italic text-slate-700 mb-1">{exp.company} {exp.location && `, ${exp.location}`}</div>
-                  <p className="text-slate-700 whitespace-pre-wrap">{exp.description}</p>
+                  <div className="text-slate-700 prose prose-sm max-w-none prose-p:my-0.5 prose-ul:my-0.5 prose-li:my-0">
+                    <ReactMarkdown>{exp.description}</ReactMarkdown>
+                  </div>
                 </div>
               ))}
             </div>
@@ -272,7 +323,9 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
                     <span>{proj.name}</span>
                     {proj.link && <a href={proj.link} target="_blank" rel="noreferrer" className="font-normal text-blue-600">{t('tools.cvBuilder.projects.link')}</a>}
                   </div>
-                  <p className="text-slate-700 whitespace-pre-wrap">{proj.description}</p>
+                  <div className="text-slate-700 prose prose-sm max-w-none prose-p:my-0.5 prose-ul:my-0.5 prose-li:my-0">
+                    <ReactMarkdown>{proj.description}</ReactMarkdown>
+                  </div>
                 </div>
               ))}
             </div>

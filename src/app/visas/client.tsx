@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, DollarSign, Calendar, ArrowRight, Plane, FileText, CheckCircle2, MapPin, ListChecks, ChevronLeft, ChevronRight } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SectionHeading } from '@/components/site/section-heading';
@@ -194,7 +196,11 @@ function VisaDetail({ visa, t }: { visa: Visa; t: (k: string) => string }) {
         <div className="grid gap-6 md:grid-cols-3">
           <div className="md:col-span-2">
             <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-primary">{t('common.overview')}</h3>
-            <div dir="auto" className="prose prose-sm max-w-none text-muted-foreground prose-p:leading-relaxed" dangerouslySetInnerHTML={{ __html: description }} />
+            {description && (
+              <div dir="auto" className="prose prose-sm max-w-none text-muted-foreground prose-p:leading-relaxed">
+                <ReactMarkdown rehypePlugins={[rehypeRaw]}>{description}</ReactMarkdown>
+              </div>
+            )}
             
             {requirements.length > 0 && (
               <div className="mt-8 rounded-2xl border border-primary/20 bg-primary/5 p-5 sm:p-6">

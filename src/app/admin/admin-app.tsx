@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { Label } from '@/components/ui/label';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
@@ -733,11 +734,10 @@ function FieldInput({ field, value, item, model, statusOptions, onChange }: { fi
     <div className={isLong ? 'sm:col-span-2' : ''}>
       <Label className="mb-1.5 block text-sm font-medium">{getFieldLabel()}</Label>
       {isLong ? (
-        <Textarea 
+        <RichTextEditor 
           value={value || ''} 
-          onChange={(e) => onChange(e.target.value)} 
-          rows={4} 
-          className={`resize-y ${isRequired && !value ? 'border-orange-500 border-2' : ''}`}
+          onChange={(val) => onChange(val)} 
+          className={isRequired && !value ? 'border-orange-500 border-2 rounded-md' : ''}
         />
       ) : (
         <Input

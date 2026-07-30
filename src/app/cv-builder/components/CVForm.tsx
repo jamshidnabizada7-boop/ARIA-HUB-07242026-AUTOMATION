@@ -1,8 +1,9 @@
 import React from 'react';
 import { CVData, Education, Experience, Skill, Language, Certification, Project, Reference } from '../types';
 import { v4 as uuidv4 } from 'uuid';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Upload } from 'lucide-react';
 import { useT } from '@/hooks/use-t';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
 interface CVFormProps {
   data: CVData;
@@ -170,6 +171,39 @@ export function CVForm({ data, setData }: CVFormProps) {
     }));
   };
 
+  // Social Links
+  const addSocialLink = () => {
+    setData(prev => ({
+      ...prev,
+      socialLinks: [...prev.socialLinks, { id: uuidv4(), platform: '', url: '' }]
+    }));
+  };
+
+  const updateSocialLink = (id: string, field: 'platform' | 'url', value: string) => {
+    setData(prev => ({
+      ...prev,
+      socialLinks: prev.socialLinks.map(link => link.id === id ? { ...link, [field]: value } : link)
+    }));
+  };
+
+  const removeSocialLink = (id: string) => {
+    setData(prev => ({
+      ...prev,
+      socialLinks: prev.socialLinks.filter(link => link.id !== id)
+    }));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updatePersonal('picture', reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="space-y-8 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
       {/* Personal Info */}
@@ -180,10 +214,46 @@ export function CVForm({ data, setData }: CVFormProps) {
           <input type="email" placeholder={t('tools.cvBuilder.personal.email')} value={data.personal.email} onChange={e => updatePersonal('email', e.target.value)} className="form-input" />
           <input type="tel" placeholder={t('tools.cvBuilder.personal.phone')} value={data.personal.phone} onChange={e => updatePersonal('phone', e.target.value)} className="form-input" />
           <input type="text" placeholder={t('tools.cvBuilder.personal.location')} value={data.personal.location} onChange={e => updatePersonal('location', e.target.value)} className="form-input" />
-          <input type="url" placeholder={t('tools.cvBuilder.personal.linkedIn')} value={data.personal.linkedIn} onChange={e => updatePersonal('linkedIn', e.target.value)} className="form-input" />
-          <input type="url" placeholder={t('tools.cvBuilder.personal.website')} value={data.personal.website} onChange={e => updatePersonal('website', e.target.value)} className="form-input" />
+          <select value={data.personal.gender || ''} onChange={e => updatePersonal('gender', e.target.value)} className="form-input">
+            <option value="" disabled>{t('tools.cvBuilder.personal.gender') || 'Select Gender'}</option>
+            <option value="Male">{t('tools.cvBuilder.personal.male') || 'Male'}</option>
+            <option value="Female">{t('tools.cvBuilder.personal.female') || 'Female'}</option>
+            <option value="Other">{t('tools.cvBuilder.personal.other') || 'Other'}</option>
+          </select>
+          <div className="flex items-center space-x-2 rtl:space-x-reverse relative">
+            <label className="flex-1 form-input text-slate-400 cursor-pointer flex items-center overflow-hidden whitespace-nowrap">
+              <Upload className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0 shrink-0" />
+              {data.personal.picture ? (t('tools.cvBuilder.personal.pictureSelected') || 'Picture selected') : (t('tools.cvBuilder.personal.picture') || 'Upload Picture')}
+              <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+            </label>
+            {data.personal.picture && (
+              <button onClick={() => updatePersonal('picture', '')} className="p-2 text-red-500 hover:bg-red-50 rounded-md">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
-        <textarea placeholder={t('tools.cvBuilder.personal.summary')} value={data.personal.summary} onChange={e => updatePersonal('summary', e.target.value)} className="form-input w-full h-24" />
+        
+        {/* Dynamic Social Links inside Personal */}
+        <div className="pt-2">
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('tools.cvBuilder.personal.socials') || 'Social Media Links'}</label>
+            <button onClick={addSocialLink} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline gap-1">
+              <Plus className="w-4 h-4"/> {t('admin.form.add') || 'Add'}
+            </button>
+          </div>
+          <div className="space-y-2">
+            {data.socialLinks?.map(link => (
+              <div key={link.id} className="flex space-x-2 rtl:space-x-reverse items-center">
+                <input type="text" placeholder="Platform (e.g. LinkedIn)" value={link.platform} onChange={e => updateSocialLink(link.id, 'platform', e.target.value)} className="form-input w-1/3" />
+                <input type="url" placeholder="URL" value={link.url} onChange={e => updateSocialLink(link.id, 'url', e.target.value)} className="form-input flex-1" />
+                <button onClick={() => removeSocialLink(link.id)} className="text-slate-400 hover:text-red-500 p-2"><Trash2 className="w-4 h-4"/></button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <RichTextEditor placeholder={t('tools.cvBuilder.personal.summary')} value={data.personal.summary} onChange={val => updatePersonal('summary', val)} />
       </div>
 
       {/* Experience */}
@@ -199,12 +269,12 @@ export function CVForm({ data, setData }: CVFormProps) {
               <input type="text" placeholder={t('tools.cvBuilder.experience.role')} value={exp.role} onChange={e => updateExperience(exp.id, 'role', e.target.value)} className="form-input" />
               <input type="text" placeholder={t('tools.cvBuilder.experience.company')} value={exp.company} onChange={e => updateExperience(exp.id, 'company', e.target.value)} className="form-input" />
               <input type="text" placeholder={t('tools.cvBuilder.experience.location')} value={exp.location} onChange={e => updateExperience(exp.id, 'location', e.target.value)} className="form-input" />
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 rtl:space-x-reverse">
                 <input type="text" placeholder={t('tools.cvBuilder.experience.startDate')} value={exp.startDate} onChange={e => updateExperience(exp.id, 'startDate', e.target.value)} className="form-input w-1/2" />
                 <input type="text" placeholder={t('tools.cvBuilder.experience.endDate')} value={exp.endDate} onChange={e => updateExperience(exp.id, 'endDate', e.target.value)} className="form-input w-1/2" />
               </div>
             </div>
-            <textarea placeholder={t('tools.cvBuilder.experience.description')} value={exp.description} onChange={e => updateExperience(exp.id, 'description', e.target.value)} className="form-input w-full h-20" />
+            <RichTextEditor placeholder={t('tools.cvBuilder.experience.description')} value={exp.description} onChange={val => updateExperience(exp.id, 'description', val)} />
           </div>
         ))}
       </div>
@@ -222,12 +292,12 @@ export function CVForm({ data, setData }: CVFormProps) {
               <input type="text" placeholder={t('tools.cvBuilder.education.degree')} value={ed.degree} onChange={e => updateEducation(ed.id, 'degree', e.target.value)} className="form-input" />
               <input type="text" placeholder={t('tools.cvBuilder.education.institution')} value={ed.institution} onChange={e => updateEducation(ed.id, 'institution', e.target.value)} className="form-input" />
               <input type="text" placeholder={t('tools.cvBuilder.education.location')} value={ed.location} onChange={e => updateEducation(ed.id, 'location', e.target.value)} className="form-input" />
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 rtl:space-x-reverse">
                 <input type="text" placeholder={t('tools.cvBuilder.education.startDate')} value={ed.startDate} onChange={e => updateEducation(ed.id, 'startDate', e.target.value)} className="form-input w-1/2" />
                 <input type="text" placeholder={t('tools.cvBuilder.education.endDate')} value={ed.endDate} onChange={e => updateEducation(ed.id, 'endDate', e.target.value)} className="form-input w-1/2" />
               </div>
             </div>
-            <textarea placeholder={t('tools.cvBuilder.education.description')} value={ed.description} onChange={e => updateEducation(ed.id, 'description', e.target.value)} className="form-input w-full h-16" />
+            <RichTextEditor placeholder={t('tools.cvBuilder.education.description')} value={ed.description} onChange={val => updateEducation(ed.id, 'description', val)} />
           </div>
         ))}
       </div>
@@ -306,7 +376,7 @@ export function CVForm({ data, setData }: CVFormProps) {
               <input type="text" placeholder={t('tools.cvBuilder.projects.name')} value={proj.name} onChange={e => updateProject(proj.id, 'name', e.target.value)} className="form-input" />
               <input type="url" placeholder={t('tools.cvBuilder.projects.link')} value={proj.link} onChange={e => updateProject(proj.id, 'link', e.target.value)} className="form-input" />
             </div>
-            <textarea placeholder={t('tools.cvBuilder.projects.description')} value={proj.description} onChange={e => updateProject(proj.id, 'description', e.target.value)} className="form-input w-full h-16" />
+            <RichTextEditor placeholder={t('tools.cvBuilder.projects.description')} value={proj.description} onChange={val => updateProject(proj.id, 'description', val)} />
           </div>
         ))}
       </div>
