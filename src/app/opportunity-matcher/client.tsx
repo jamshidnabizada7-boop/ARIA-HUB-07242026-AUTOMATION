@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { getMatchedOpportunities } from './actions';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ArrowRight, CheckCircle2, Search, Briefcase, GraduationCap, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -62,28 +63,38 @@ export function OpportunityMatcherClient() {
     }
   };
 
-  const calculateResults = () => {
+  const calculateResults = async () => {
     setIsCalculating(true);
     setStep(5);
 
-    // Simulate API call and calculation
-    setTimeout(() => {
-      // Filter mock opportunities based on goal or just randomize for demo
-      const filtered = MOCK_OPPORTUNITIES.filter(opt =>
-        userData.goal ? opt.type === userData.goal : true
-      );
-
-      // Get 3 random if enough, otherwise pad with others
-      let selected = [...filtered].sort(() => 0.5 - Math.random()).slice(0, 3);
-      if (selected.length < 3) {
-        const others = MOCK_OPPORTUNITIES.filter(opt => opt.type !== userData.goal).sort(() => 0.5 - Math.random());
-        selected = [...selected, ...others.slice(0, 3 - selected.length)];
+    try {
+      // Small artificial delay for the UX of "calculating"
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const realMatches = await getMatchedOpportunities(userData);
+      
+      if (realMatches && realMatches.length > 0) {
+        setResults(realMatches as any);
+      } else {
+        // Fallback to intelligent mock data matching if DB is empty
+        let scored = MOCK_OPPORTUNITIES.map(opt => {
+          let score = 20;
+          if (opt.location === userData.targetCountry) score += 45;
+          if (opt.type === userData.goal) score += 25;
+          score += Math.floor(Math.random() * 10);
+          return { ...opt, match: Math.min(99, score) };
+        });
+        
+        const selected = scored.sort((a, b) => b.match - a.match).slice(0, 3);
+        setResults(selected);
       }
+    } catch (e) {
+      console.error(e);
+      setResults(MOCK_OPPORTUNITIES.slice(0, 3));
+    }
 
-      setResults(selected);
-      setIsCalculating(false);
-      setStep(6);
-    }, 2500);
+    setIsCalculating(false);
+    setStep(6);
   };
 
   const isStepValid = () => {
