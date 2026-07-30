@@ -921,6 +921,31 @@ function SettingsPanel() {
         <Textarea value={settings.mapEmbed || ''} onChange={(e) => set('mapEmbed', e.target.value)} rows={3} placeholder={t('admin.settings.mapEmbedPlaceholder')} />
       </section>
 
+      {/* Database Operations */}
+      <section className="space-y-4 rounded-2xl border border-destructive/20 bg-destructive/5 p-5">
+        <h3 className="text-sm font-bold text-destructive">Database Operations</h3>
+        <p className="text-sm text-muted-foreground">Run the database seed script to insert default data and missing &quot;Tools&quot; menus (CV Builder, Opportunity Matcher).</p>
+        <Button 
+          type="button" 
+          variant="destructive" 
+          onClick={async () => {
+            if(!confirm("Are you sure you want to run the database seed? This will insert missing menus.")) return;
+            toast({ title: 'Seeding database...' });
+            try {
+              const res = await fetch('/api/admin/seed');
+              const data = await res.json();
+              if (res.ok) toast({ title: 'Database Seeded Successfully! Refreshing...' });
+              else throw new Error(data.error);
+              setTimeout(() => window.location.reload(), 1500);
+            } catch (e: any) {
+              toast({ title: e.message || 'Seed failed', variant: 'destructive' });
+            }
+          }}
+        >
+          Run Database Seed
+        </Button>
+      </section>
+
       <Button type="submit" disabled={saving} className="bg-gradient-to-r from-primary to-chart-2">
         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {t('admin.settings.saveSettings')}
