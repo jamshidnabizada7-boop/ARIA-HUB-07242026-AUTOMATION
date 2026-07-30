@@ -159,6 +159,45 @@ function MobileMenuItem({ item, depth = 0, onNavigate }: { item: MenuItem; depth
 }
 
 export function Navbar({ menu, languages, siteName, logoUrl }: NavbarProps) {
+  const toolsMenu: MenuItem = {
+    id: 'tools',
+    label: 'Tools',
+    labelI18n: { "fa": "ابزارها", "en": "Tools", "ar": "أدوات" },
+    url: null,
+    parentId: null,
+    icon: null,
+    order: 99,
+    visible: true,
+    openInNewTab: false,
+    children: [
+      {
+        id: 'cv-builder',
+        label: 'CV Builder',
+        labelI18n: { "fa": "رزومه ساز", "en": "CV Builder", "ar": "منشئ السيرة الذاتية" },
+        url: '/cv-builder',
+        parentId: 'tools',
+        icon: null,
+        order: 1,
+        visible: true,
+        openInNewTab: false,
+        children: []
+      },
+      {
+        id: 'opp-matcher',
+        label: 'Opportunity Matcher',
+        labelI18n: { "fa": "فرصت یاب", "en": "Opportunity Matcher", "ar": "الباحث عن الفرص" },
+        url: '/opportunity-matcher',
+        parentId: 'tools',
+        icon: null,
+        order: 2,
+        visible: true,
+        openInNewTab: false,
+        children: []
+      }
+    ]
+  };
+  const augmentedMenu = [...menu, toolsMenu];
+
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -238,7 +277,7 @@ export function Navbar({ menu, languages, siteName, logoUrl }: NavbarProps) {
 
             {/* Desktop nav */}
             <nav className="hidden items-center lg:flex">
-              {menu.map((item) => (
+              {augmentedMenu.map((item) => (
                 <DesktopMenuItem key={item.id} item={item} />
               ))}
             </nav>
@@ -320,7 +359,7 @@ export function Navbar({ menu, languages, siteName, logoUrl }: NavbarProps) {
                     </Button>
                   </div>
                   <nav className="space-y-1 p-3">
-                    {menu.map((item) => (
+                    {augmentedMenu.map((item) => (
                       <MobileMenuItem key={item.id} item={item} onNavigate={() => setMobileOpen(false)} />
                     ))}
                   </nav>
