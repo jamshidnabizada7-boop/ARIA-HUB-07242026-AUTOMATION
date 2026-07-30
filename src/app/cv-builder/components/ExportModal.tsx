@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useT } from '@/hooks/use-t';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -10,6 +11,8 @@ interface ExportModalProps {
 }
 
 export function ExportModal({ isOpen, onClose, onConfirm }: ExportModalProps) {
+  const t = useT();
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -37,17 +40,15 @@ export function ExportModal({ isOpen, onClose, onConfirm }: ExportModalProps) {
                 </button>
               </div>
               
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">Export CV as PDF</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 leading-relaxed">
-                We will use your browser's built-in print functionality. When the print dialog opens, select <strong>"Save as PDF"</strong> as the destination and ensure <strong>"Background graphics"</strong> is checked for the best result.
-              </p>
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">{t('tools.cvBuilder.export.title') || 'Export CV as PDF'}</h3>
+              <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 leading-relaxed" dangerouslySetInnerHTML={{ __html: t('tools.cvBuilder.export.desc') || 'We will use your browser\'s built-in print functionality. When the print dialog opens, select <strong>"Save as PDF"</strong> as the destination and ensure <strong>"Background graphics"</strong> is checked for the best result.' }} />
               
               <div className="flex space-x-3 w-full">
                 <Button variant="outline" onClick={onClose} className="flex-1">
-                  Cancel
+                  {t('tools.cvBuilder.export.cancel') || 'Cancel'}
                 </Button>
                 <Button onClick={onConfirm} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
-                  Continue to Print
+                  {t('tools.cvBuilder.export.confirm') || 'Continue to Print'}
                 </Button>
               </div>
             </div>

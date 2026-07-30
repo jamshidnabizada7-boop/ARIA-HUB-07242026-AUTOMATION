@@ -511,6 +511,10 @@ export const translations: Record<string, Record<string, string>> = {
     // Tools - CV Builder
     'tools.cvBuilder.title': 'Edit Your Details',
     'tools.cvBuilder.export': 'Export PDF',
+    'tools.cvBuilder.export.title': 'Export CV as PDF',
+    'tools.cvBuilder.export.desc': 'We will use your browser\\'s built-in print functionality. When the print dialog opens, select <strong>"Save as PDF"</strong> as the destination and ensure <strong>"Background graphics"</strong> is checked for the best result.',
+    'tools.cvBuilder.export.cancel': 'Cancel',
+    'tools.cvBuilder.export.confirm': 'Continue to Print',
     'tools.cvBuilder.templatePro': 'Professional Migrant',
     'tools.cvBuilder.templateScholar': 'Global Scholar',
     'tools.cvBuilder.personal.title': 'Personal Information',
@@ -1069,6 +1073,10 @@ export const translations: Record<string, Record<string, string>> = {
     // Tools - CV Builder
     'tools.cvBuilder.title': 'ویرایش اطلاعات شما',
     'tools.cvBuilder.export': 'صادرات PDF',
+    'tools.cvBuilder.export.title': 'خروجی CV به صورت PDF',
+    'tools.cvBuilder.export.desc': 'ما از قابلیت چاپ مرورگر شما استفاده می‌کنیم. در پنجره چاپ، گزینه <strong>«ذخیره به عنوان PDF»</strong> را انتخاب کنید و مطمئن شوید که <strong>«گرافیک پس‌زمینه»</strong> تیک خورده باشد.',
+    'tools.cvBuilder.export.cancel': 'لغو',
+    'tools.cvBuilder.export.confirm': 'ادامه به چاپ',
     'tools.cvBuilder.templatePro': 'مهاجر حرفه‌ای',
     'tools.cvBuilder.templateScholar': 'دانشجوی جهانی',
     'tools.cvBuilder.personal.title': 'اطلاعات شخصی',
@@ -1627,6 +1635,10 @@ export const translations: Record<string, Record<string, string>> = {
     // Tools - CV Builder
     'tools.cvBuilder.title': 'خپل معلومات سم کړئ',
     'tools.cvBuilder.export': 'د PDF صادرول',
+    'tools.cvBuilder.export.title': 'CV د PDF په توګه صادر کړئ',
+    'tools.cvBuilder.export.desc': 'موږ به ستاسو د براوزر د چاپ کولو ځانګړتیا وکاروو. د چاپ په کړکۍ کې، د منزل په توګه <strong>«د PDF په توګه خوندي کړئ»</strong> وټاکئ او ډاډ ترلاسه کړئ چې د غوره پایلې لپاره <strong>«د شالید ګرافیک»</strong> فعال دی.',
+    'tools.cvBuilder.export.cancel': 'لغوه کول',
+    'tools.cvBuilder.export.confirm': 'چاپولو ته دوام ورکړئ',
     'tools.cvBuilder.templatePro': 'مسلکي مهاجر',
     'tools.cvBuilder.templateScholar': 'نړیوال محصل',
     'tools.cvBuilder.personal.title': 'شخصي معلومات',
