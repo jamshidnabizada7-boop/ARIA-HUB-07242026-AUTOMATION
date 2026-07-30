@@ -8,6 +8,7 @@ import { CVPreview } from './components/CVPreview';
 import { ExportModal } from './components/ExportModal';
 import { Button } from '@/components/ui/button';
 import { Printer } from 'lucide-react';
+import { useT } from '@/hooks/use-t';
 
 const initialData: CVData = {
   personal: {
@@ -22,9 +23,14 @@ const initialData: CVData = {
   education: [],
   experience: [],
   skills: [],
+  languages: [],
+  certifications: [],
+  projects: [],
+  references: [],
 };
 
-export function CVBuilderClient() {
+export function CVBuilderClient({ settings }: { settings: any }) {
+  const t = useT();
   const [data, setData] = useState<CVData>(initialData);
   const [template, setTemplate] = useState<TemplateType>('professional');
   const [showExportModal, setShowExportModal] = useState(false);
@@ -51,14 +57,14 @@ export function CVBuilderClient() {
 
               <div className="flex justify-between items-center mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
                  <h2 className="text-2xl font-semibold text-slate-900 dark:text-white font-sans">
-                   Edit Your Details
+                   {t('tools.cvBuilder.title')}
                  </h2>
                  <Button
                    onClick={handleExport}
                    className="bg-gradient-to-r from-[#3b82f6] to-[#0ea5e9] text-white hover:opacity-90 transition-opacity border-0 shadow-lg font-medium"
                  >
                    <Printer className="w-4 h-4 mr-2" />
-                   Export PDF
+                   {t('tools.cvBuilder.export')}
                  </Button>
               </div>
 
@@ -71,7 +77,7 @@ export function CVBuilderClient() {
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'
                   }`}
                 >
-                  Professional Migrant
+                  {t('tools.cvBuilder.templatePro')}
                 </button>
                 <button
                   onClick={() => setTemplate('scholar')}
@@ -81,7 +87,7 @@ export function CVBuilderClient() {
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'
                   }`}
                 >
-                  Global Scholar
+                  {t('tools.cvBuilder.templateScholar')}
                 </button>
               </div>
 
@@ -93,7 +99,7 @@ export function CVBuilderClient() {
       {/* Preview Column - Full width on Print */}
       <div className="print:w-full print:m-0 print:p-0">
         <div className="sticky top-6 print:static">
-          <CVPreview data={data} template={template} />
+          <CVPreview data={data} template={template} settings={settings} />
         </div>
       </div>
 

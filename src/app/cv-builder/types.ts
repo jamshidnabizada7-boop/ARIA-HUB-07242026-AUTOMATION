@@ -13,6 +13,10 @@ export interface CVData {
   education: Education[];
   experience: Experience[];
   skills: Skill[];
+  languages: Language[];
+  certifications: Certification[];
+  projects: Project[];
+  references: Reference[];
 }
 
 export interface Education {
@@ -39,4 +43,31 @@ export interface Skill {
   id: string;
   name: string;
   level: string; // e.g., 'Beginner', 'Intermediate', 'Expert'
+}
+
+export interface Language {
+  id: string;
+  name: string;
+  proficiency: string; // e.g., 'Native', 'Fluent', 'Intermediate', 'Beginner'
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  link: string;
+}
+
+export interface Reference {
+  id: string;
+  name: string;
+  company: string;
+  contact: string;
 }

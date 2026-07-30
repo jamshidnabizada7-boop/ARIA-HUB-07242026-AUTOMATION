@@ -1,7 +1,8 @@
 import React from 'react';
-import { CVData, Education, Experience, Skill } from '../types';
+import { CVData, Education, Experience, Skill, Language, Certification, Project, Reference } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { Plus, Trash2 } from 'lucide-react';
+import { useT } from '@/hooks/use-t';
 
 interface CVFormProps {
   data: CVData;
@@ -9,6 +10,8 @@ interface CVFormProps {
 }
 
 export function CVForm({ data, setData }: CVFormProps) {
+  const t = useT();
+
   const updatePersonal = (field: keyof CVData['personal'], value: string) => {
     setData(prev => ({
       ...prev,
@@ -79,41 +82,129 @@ export function CVForm({ data, setData }: CVFormProps) {
     }));
   };
 
+  // Languages
+  const addLanguage = () => {
+    setData(prev => ({
+      ...prev,
+      languages: [...prev.languages, { id: uuidv4(), name: '', proficiency: 'Fluent' }]
+    }));
+  };
+
+  const updateLanguage = (id: string, field: keyof Language, value: string) => {
+    setData(prev => ({
+      ...prev,
+      languages: prev.languages.map(lang => lang.id === id ? { ...lang, [field]: value } : lang)
+    }));
+  };
+
+  const removeLanguage = (id: string) => {
+    setData(prev => ({
+      ...prev,
+      languages: prev.languages.filter(lang => lang.id !== id)
+    }));
+  };
+
+  // Certifications
+  const addCertification = () => {
+    setData(prev => ({
+      ...prev,
+      certifications: [...prev.certifications, { id: uuidv4(), name: '', issuer: '', date: '' }]
+    }));
+  };
+
+  const updateCertification = (id: string, field: keyof Certification, value: string) => {
+    setData(prev => ({
+      ...prev,
+      certifications: prev.certifications.map(cert => cert.id === id ? { ...cert, [field]: value } : cert)
+    }));
+  };
+
+  const removeCertification = (id: string) => {
+    setData(prev => ({
+      ...prev,
+      certifications: prev.certifications.filter(cert => cert.id !== id)
+    }));
+  };
+
+  // Projects
+  const addProject = () => {
+    setData(prev => ({
+      ...prev,
+      projects: [...prev.projects, { id: uuidv4(), name: '', description: '', link: '' }]
+    }));
+  };
+
+  const updateProject = (id: string, field: keyof Project, value: string) => {
+    setData(prev => ({
+      ...prev,
+      projects: prev.projects.map(proj => proj.id === id ? { ...proj, [field]: value } : proj)
+    }));
+  };
+
+  const removeProject = (id: string) => {
+    setData(prev => ({
+      ...prev,
+      projects: prev.projects.filter(proj => proj.id !== id)
+    }));
+  };
+
+  // References
+  const addReference = () => {
+    setData(prev => ({
+      ...prev,
+      references: [...prev.references, { id: uuidv4(), name: '', company: '', contact: '' }]
+    }));
+  };
+
+  const updateReference = (id: string, field: keyof Reference, value: string) => {
+    setData(prev => ({
+      ...prev,
+      references: prev.references.map(ref => ref.id === id ? { ...ref, [field]: value } : ref)
+    }));
+  };
+
+  const removeReference = (id: string) => {
+    setData(prev => ({
+      ...prev,
+      references: prev.references.filter(ref => ref.id !== id)
+    }));
+  };
+
   return (
     <div className="space-y-8 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
       {/* Personal Info */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200 border-b pb-2">Personal Details</h3>
+        <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200 border-b pb-2">{t('tools.cvBuilder.personal.title')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input type="text" placeholder="Full Name" value={data.personal.fullName} onChange={e => updatePersonal('fullName', e.target.value)} className="form-input" />
-          <input type="email" placeholder="Email" value={data.personal.email} onChange={e => updatePersonal('email', e.target.value)} className="form-input" />
-          <input type="tel" placeholder="Phone" value={data.personal.phone} onChange={e => updatePersonal('phone', e.target.value)} className="form-input" />
-          <input type="text" placeholder="Location" value={data.personal.location} onChange={e => updatePersonal('location', e.target.value)} className="form-input" />
-          <input type="url" placeholder="LinkedIn URL" value={data.personal.linkedIn} onChange={e => updatePersonal('linkedIn', e.target.value)} className="form-input" />
-          <input type="url" placeholder="Website / Portfolio" value={data.personal.website} onChange={e => updatePersonal('website', e.target.value)} className="form-input" />
+          <input type="text" placeholder={t('tools.cvBuilder.personal.fullName')} value={data.personal.fullName} onChange={e => updatePersonal('fullName', e.target.value)} className="form-input" />
+          <input type="email" placeholder={t('tools.cvBuilder.personal.email')} value={data.personal.email} onChange={e => updatePersonal('email', e.target.value)} className="form-input" />
+          <input type="tel" placeholder={t('tools.cvBuilder.personal.phone')} value={data.personal.phone} onChange={e => updatePersonal('phone', e.target.value)} className="form-input" />
+          <input type="text" placeholder={t('tools.cvBuilder.personal.location')} value={data.personal.location} onChange={e => updatePersonal('location', e.target.value)} className="form-input" />
+          <input type="url" placeholder={t('tools.cvBuilder.personal.linkedIn')} value={data.personal.linkedIn} onChange={e => updatePersonal('linkedIn', e.target.value)} className="form-input" />
+          <input type="url" placeholder={t('tools.cvBuilder.personal.website')} value={data.personal.website} onChange={e => updatePersonal('website', e.target.value)} className="form-input" />
         </div>
-        <textarea placeholder="Professional Summary" value={data.personal.summary} onChange={e => updatePersonal('summary', e.target.value)} className="form-input w-full h-24" />
+        <textarea placeholder={t('tools.cvBuilder.personal.summary')} value={data.personal.summary} onChange={e => updatePersonal('summary', e.target.value)} className="form-input w-full h-24" />
       </div>
 
       {/* Experience */}
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2">
-          <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">Experience</h3>
-          <button onClick={addExperience} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> Add</button>
+          <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.experience.title')}</h3>
+          <button onClick={addExperience} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
         </div>
         {data.experience.map(exp => (
           <div key={exp.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg space-y-3 relative group">
             <button onClick={() => removeExperience(exp.id)} className="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-4 h-4"/></button>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <input type="text" placeholder="Job Title" value={exp.role} onChange={e => updateExperience(exp.id, 'role', e.target.value)} className="form-input" />
-              <input type="text" placeholder="Company" value={exp.company} onChange={e => updateExperience(exp.id, 'company', e.target.value)} className="form-input" />
-              <input type="text" placeholder="Location" value={exp.location} onChange={e => updateExperience(exp.id, 'location', e.target.value)} className="form-input" />
+              <input type="text" placeholder={t('tools.cvBuilder.experience.role')} value={exp.role} onChange={e => updateExperience(exp.id, 'role', e.target.value)} className="form-input" />
+              <input type="text" placeholder={t('tools.cvBuilder.experience.company')} value={exp.company} onChange={e => updateExperience(exp.id, 'company', e.target.value)} className="form-input" />
+              <input type="text" placeholder={t('tools.cvBuilder.experience.location')} value={exp.location} onChange={e => updateExperience(exp.id, 'location', e.target.value)} className="form-input" />
               <div className="flex space-x-2">
-                <input type="text" placeholder="Start Date" value={exp.startDate} onChange={e => updateExperience(exp.id, 'startDate', e.target.value)} className="form-input w-1/2" />
-                <input type="text" placeholder="End Date" value={exp.endDate} onChange={e => updateExperience(exp.id, 'endDate', e.target.value)} className="form-input w-1/2" />
+                <input type="text" placeholder={t('tools.cvBuilder.experience.startDate')} value={exp.startDate} onChange={e => updateExperience(exp.id, 'startDate', e.target.value)} className="form-input w-1/2" />
+                <input type="text" placeholder={t('tools.cvBuilder.experience.endDate')} value={exp.endDate} onChange={e => updateExperience(exp.id, 'endDate', e.target.value)} className="form-input w-1/2" />
               </div>
             </div>
-            <textarea placeholder="Description / Achievements" value={exp.description} onChange={e => updateExperience(exp.id, 'description', e.target.value)} className="form-input w-full h-20" />
+            <textarea placeholder={t('tools.cvBuilder.experience.description')} value={exp.description} onChange={e => updateExperience(exp.id, 'description', e.target.value)} className="form-input w-full h-20" />
           </div>
         ))}
       </div>
@@ -121,22 +212,22 @@ export function CVForm({ data, setData }: CVFormProps) {
       {/* Education */}
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2">
-          <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">Education</h3>
-          <button onClick={addEducation} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> Add</button>
+          <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.education.title')}</h3>
+          <button onClick={addEducation} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
         </div>
         {data.education.map(ed => (
           <div key={ed.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg space-y-3 relative group">
             <button onClick={() => removeEducation(ed.id)} className="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-4 h-4"/></button>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <input type="text" placeholder="Degree / Major" value={ed.degree} onChange={e => updateEducation(ed.id, 'degree', e.target.value)} className="form-input" />
-              <input type="text" placeholder="Institution" value={ed.institution} onChange={e => updateEducation(ed.id, 'institution', e.target.value)} className="form-input" />
-              <input type="text" placeholder="Location" value={ed.location} onChange={e => updateEducation(ed.id, 'location', e.target.value)} className="form-input" />
+              <input type="text" placeholder={t('tools.cvBuilder.education.degree')} value={ed.degree} onChange={e => updateEducation(ed.id, 'degree', e.target.value)} className="form-input" />
+              <input type="text" placeholder={t('tools.cvBuilder.education.institution')} value={ed.institution} onChange={e => updateEducation(ed.id, 'institution', e.target.value)} className="form-input" />
+              <input type="text" placeholder={t('tools.cvBuilder.education.location')} value={ed.location} onChange={e => updateEducation(ed.id, 'location', e.target.value)} className="form-input" />
               <div className="flex space-x-2">
-                <input type="text" placeholder="Start Year" value={ed.startDate} onChange={e => updateEducation(ed.id, 'startDate', e.target.value)} className="form-input w-1/2" />
-                <input type="text" placeholder="End Year" value={ed.endDate} onChange={e => updateEducation(ed.id, 'endDate', e.target.value)} className="form-input w-1/2" />
+                <input type="text" placeholder={t('tools.cvBuilder.education.startDate')} value={ed.startDate} onChange={e => updateEducation(ed.id, 'startDate', e.target.value)} className="form-input w-1/2" />
+                <input type="text" placeholder={t('tools.cvBuilder.education.endDate')} value={ed.endDate} onChange={e => updateEducation(ed.id, 'endDate', e.target.value)} className="form-input w-1/2" />
               </div>
             </div>
-            <textarea placeholder="Additional Info (Thesis, Honors, etc.)" value={ed.description} onChange={e => updateEducation(ed.id, 'description', e.target.value)} className="form-input w-full h-16" />
+            <textarea placeholder={t('tools.cvBuilder.education.description')} value={ed.description} onChange={e => updateEducation(ed.id, 'description', e.target.value)} className="form-input w-full h-16" />
           </div>
         ))}
       </div>
@@ -144,22 +235,98 @@ export function CVForm({ data, setData }: CVFormProps) {
       {/* Skills */}
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2">
-          <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">Skills</h3>
-          <button onClick={addSkill} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> Add</button>
+          <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.skills.title')}</h3>
+          <button onClick={addSkill} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {data.skills.map(skill => (
             <div key={skill.id} className="flex space-x-2 items-center">
-              <input type="text" placeholder="Skill Name" value={skill.name} onChange={e => updateSkill(skill.id, 'name', e.target.value)} className="form-input flex-1" />
+              <input type="text" placeholder={t('tools.cvBuilder.skills.name')} value={skill.name} onChange={e => updateSkill(skill.id, 'name', e.target.value)} className="form-input flex-1" />
               <select value={skill.level} onChange={e => updateSkill(skill.id, 'level', e.target.value)} className="form-input w-32">
-                <option>Beginner</option>
-                <option>Intermediate</option>
-                <option>Expert</option>
+                <option value="Beginner">{t('tools.cvBuilder.skills.beginner')}</option>
+                <option value="Intermediate">{t('tools.cvBuilder.skills.intermediate')}</option>
+                <option value="Expert">{t('tools.cvBuilder.skills.expert')}</option>
               </select>
               <button onClick={() => removeSkill(skill.id)} className="text-slate-400 hover:text-red-500 p-2"><Trash2 className="w-4 h-4"/></button>
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Languages */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center border-b pb-2">
+          <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.languages.title')}</h3>
+          <button onClick={addLanguage} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {data.languages.map(lang => (
+            <div key={lang.id} className="flex space-x-2 items-center">
+              <input type="text" placeholder={t('tools.cvBuilder.languages.name')} value={lang.name} onChange={e => updateLanguage(lang.id, 'name', e.target.value)} className="form-input flex-1" />
+              <select value={lang.proficiency} onChange={e => updateLanguage(lang.id, 'proficiency', e.target.value)} className="form-input w-32">
+                <option value="Native">{t('tools.cvBuilder.languages.native')}</option>
+                <option value="Fluent">{t('tools.cvBuilder.languages.fluent')}</option>
+                <option value="Intermediate">{t('tools.cvBuilder.languages.intermediate')}</option>
+                <option value="Basic">{t('tools.cvBuilder.languages.basic')}</option>
+              </select>
+              <button onClick={() => removeLanguage(lang.id)} className="text-slate-400 hover:text-red-500 p-2"><Trash2 className="w-4 h-4"/></button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Certifications */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center border-b pb-2">
+          <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.certifications.title')}</h3>
+          <button onClick={addCertification} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+        </div>
+        {data.certifications.map(cert => (
+          <div key={cert.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg space-y-3 relative group">
+            <button onClick={() => removeCertification(cert.id)} className="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-4 h-4"/></button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <input type="text" placeholder={t('tools.cvBuilder.certifications.name')} value={cert.name} onChange={e => updateCertification(cert.id, 'name', e.target.value)} className="form-input" />
+              <input type="text" placeholder={t('tools.cvBuilder.certifications.issuer')} value={cert.issuer} onChange={e => updateCertification(cert.id, 'issuer', e.target.value)} className="form-input" />
+              <input type="text" placeholder={t('tools.cvBuilder.certifications.date')} value={cert.date} onChange={e => updateCertification(cert.id, 'date', e.target.value)} className="form-input" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Projects */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center border-b pb-2">
+          <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.projects.title')}</h3>
+          <button onClick={addProject} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+        </div>
+        {data.projects.map(proj => (
+          <div key={proj.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg space-y-3 relative group">
+            <button onClick={() => removeProject(proj.id)} className="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-4 h-4"/></button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <input type="text" placeholder={t('tools.cvBuilder.projects.name')} value={proj.name} onChange={e => updateProject(proj.id, 'name', e.target.value)} className="form-input" />
+              <input type="url" placeholder={t('tools.cvBuilder.projects.link')} value={proj.link} onChange={e => updateProject(proj.id, 'link', e.target.value)} className="form-input" />
+            </div>
+            <textarea placeholder={t('tools.cvBuilder.projects.description')} value={proj.description} onChange={e => updateProject(proj.id, 'description', e.target.value)} className="form-input w-full h-16" />
+          </div>
+        ))}
+      </div>
+
+      {/* References */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center border-b pb-2">
+          <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.references.title')}</h3>
+          <button onClick={addReference} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+        </div>
+        {data.references.map(ref => (
+          <div key={ref.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg space-y-3 relative group">
+            <button onClick={() => removeReference(ref.id)} className="absolute top-2 right-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-4 h-4"/></button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <input type="text" placeholder={t('tools.cvBuilder.references.name')} value={ref.name} onChange={e => updateReference(ref.id, 'name', e.target.value)} className="form-input" />
+              <input type="text" placeholder={t('tools.cvBuilder.references.company')} value={ref.company} onChange={e => updateReference(ref.id, 'company', e.target.value)} className="form-input" />
+              <input type="text" placeholder={t('tools.cvBuilder.references.contact')} value={ref.contact} onChange={e => updateReference(ref.id, 'contact', e.target.value)} className="form-input" />
+            </div>
+          </div>
+        ))}
       </div>
       
       <style dangerouslySetInnerHTML={{__html: `

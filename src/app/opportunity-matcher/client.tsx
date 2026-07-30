@@ -9,8 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import Link from 'next/link';
+import { useT } from '@/hooks/use-t';
 
 type Goal = 'Scholarship' | 'Internship' | 'Work Visa';
 
@@ -26,10 +27,6 @@ const COUNTRIES = [
   'France', 'Netherlands', 'Sweden', 'Italy', 'Spain'
 ];
 
-const EDUCATION_LEVELS = [
-  'High School', "Bachelor's Degree", "Master's Degree", 'PhD', 'Other'
-];
-
 const MOCK_OPPORTUNITIES = [
   { id: 1, title: 'DAAD Scholarship in Germany', type: 'Scholarship', location: 'Germany', match: 98 },
   { id: 2, title: 'Tech Start Internship', type: 'Internship', location: 'Canada', match: 92 },
@@ -40,6 +37,7 @@ const MOCK_OPPORTUNITIES = [
 ];
 
 export function OpportunityMatcherClient() {
+  const t = useT();
   const [step, setStep] = useState(1);
   const [userData, setUserData] = useState<UserData>({
     age: '',
@@ -50,6 +48,14 @@ export function OpportunityMatcherClient() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [results, setResults] = useState<typeof MOCK_OPPORTUNITIES>([]);
   const [mounted, setMounted] = useState(false);
+
+  const EDUCATION_LEVELS = [
+    t('tools.oppMatcher.edu.highSchool'), 
+    t('tools.oppMatcher.edu.bachelors'), 
+    t('tools.oppMatcher.edu.masters'), 
+    t('tools.oppMatcher.edu.phd'), 
+    t('tools.oppMatcher.edu.other')
+  ];
 
   useEffect(() => {
     setMounted(true);
@@ -123,19 +129,19 @@ export function OpportunityMatcherClient() {
         {step === 1 && (
           <motion.div key="step1" variants={containerVariants} initial="hidden" animate="visible" exit="exit">
             <GlassCard>
-              <StepHeader step={1} title="Tell us about yourself" subtitle="What is your current age?" />
+              <StepHeader step={1} title={t('tools.oppMatcher.step1.title')} subtitle={t('tools.oppMatcher.step1.subtitle')} />
               <div className="my-8">
-                <Label htmlFor="age" className="text-lg mb-2 block text-slate-700 dark:text-slate-300">Age</Label>
+                <Label htmlFor="age" className="text-lg mb-2 block text-slate-700 dark:text-slate-300">{t('tools.oppMatcher.step1.label')}</Label>
                 <Input
                   id="age"
                   type="number"
-                  placeholder="e.g. 24"
+                  placeholder={t('tools.oppMatcher.step1.placeholder')}
                   value={userData.age}
                   onChange={(e) => setUserData({...userData, age: e.target.value})}
                   className="text-xl p-6 bg-white/50 dark:bg-black/50 border-white/30 focus-visible:ring-blue-500"
                 />
               </div>
-              <StepFooter onNext={handleNext} isValid={isStepValid()} />
+              <StepFooter onNext={handleNext} isValid={isStepValid()} nextText={t('common.next')} />
             </GlassCard>
           </motion.div>
         )}
@@ -144,12 +150,12 @@ export function OpportunityMatcherClient() {
         {step === 2 && (
           <motion.div key="step2" variants={containerVariants} initial="hidden" animate="visible" exit="exit">
             <GlassCard>
-              <StepHeader step={2} title="Destination" subtitle="Where do you want to go?" />
+              <StepHeader step={2} title={t('tools.oppMatcher.step2.title')} subtitle={t('tools.oppMatcher.step2.subtitle')} />
               <div className="my-8">
-                 <Label className="text-lg mb-2 block text-slate-700 dark:text-slate-300">Target Country</Label>
+                 <Label className="text-lg mb-2 block text-slate-700 dark:text-slate-300">{t('tools.oppMatcher.step2.label')}</Label>
                  <Select value={userData.targetCountry} onValueChange={(val) => setUserData({...userData, targetCountry: val})}>
                   <SelectTrigger className="text-xl p-6 h-auto bg-white/50 dark:bg-black/50 border-white/30 focus:ring-blue-500">
-                    <SelectValue placeholder="Select a country" />
+                    <SelectValue placeholder={t('tools.oppMatcher.step2.placeholder')} />
                   </SelectTrigger>
                   <SelectContent className="bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl border-white/20">
                     {COUNTRIES.map(country => (
@@ -158,7 +164,7 @@ export function OpportunityMatcherClient() {
                   </SelectContent>
                 </Select>
               </div>
-              <StepFooter onNext={handleNext} isValid={isStepValid()} onBack={() => setStep(1)} />
+              <StepFooter onNext={handleNext} isValid={isStepValid()} onBack={() => setStep(1)} nextText={t('common.next')} backText={t('common.back')} />
             </GlassCard>
           </motion.div>
         )}
@@ -167,7 +173,7 @@ export function OpportunityMatcherClient() {
         {step === 3 && (
           <motion.div key="step3" variants={containerVariants} initial="hidden" animate="visible" exit="exit">
             <GlassCard>
-              <StepHeader step={3} title="Background" subtitle="What is your current education level?" />
+              <StepHeader step={3} title={t('tools.oppMatcher.step3.title')} subtitle={t('tools.oppMatcher.step3.subtitle')} />
               <div className="my-8">
                 <RadioGroup value={userData.education} onValueChange={(val) => setUserData({...userData, education: val})} className="space-y-3">
                   {EDUCATION_LEVELS.map(level => (
@@ -178,7 +184,7 @@ export function OpportunityMatcherClient() {
                   ))}
                 </RadioGroup>
               </div>
-              <StepFooter onNext={handleNext} isValid={isStepValid()} onBack={() => setStep(2)} />
+              <StepFooter onNext={handleNext} isValid={isStepValid()} onBack={() => setStep(2)} nextText={t('common.next')} backText={t('common.back')} />
             </GlassCard>
           </motion.div>
         )}
@@ -187,28 +193,28 @@ export function OpportunityMatcherClient() {
         {step === 4 && (
           <motion.div key="step4" variants={containerVariants} initial="hidden" animate="visible" exit="exit">
             <GlassCard>
-              <StepHeader step={4} title="Your Goal" subtitle="What kind of opportunity are you seeking?" />
+              <StepHeader step={4} title={t('tools.oppMatcher.step4.title')} subtitle={t('tools.oppMatcher.step4.subtitle')} />
               <div className="my-8 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <GoalOption
                   icon={<GraduationCap className="w-8 h-8 mb-2" />}
-                  title="Scholarship"
+                  title={t('tools.oppMatcher.goal.scholarship')}
                   selected={userData.goal === 'Scholarship'}
                   onClick={() => setUserData({...userData, goal: 'Scholarship'})}
                 />
                 <GoalOption
                   icon={<Globe className="w-8 h-8 mb-2" />}
-                  title="Internship"
+                  title={t('tools.oppMatcher.goal.internship')}
                   selected={userData.goal === 'Internship'}
                   onClick={() => setUserData({...userData, goal: 'Internship'})}
                 />
                 <GoalOption
                   icon={<Briefcase className="w-8 h-8 mb-2" />}
-                  title="Work Visa"
+                  title={t('tools.oppMatcher.goal.workVisa')}
                   selected={userData.goal === 'Work Visa'}
                   onClick={() => setUserData({...userData, goal: 'Work Visa'})}
                 />
               </div>
-              <StepFooter onNext={handleNext} isValid={isStepValid()} onBack={() => setStep(3)} nextText="Find Matches" />
+              <StepFooter onNext={handleNext} isValid={isStepValid()} onBack={() => setStep(3)} nextText={t('tools.oppMatcher.findMatches')} backText={t('common.back')} />
             </GlassCard>
           </motion.div>
         )}
@@ -223,8 +229,8 @@ export function OpportunityMatcherClient() {
                   <div className="absolute inset-4 border-b-4 border-[#d4af37] border-solid rounded-full animate-spin"></div>
                   <Search className="absolute inset-0 m-auto text-blue-500 w-8 h-8" />
                 </div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent mb-2">Analyzing Profile...</h3>
-                <p className="text-slate-500 dark:text-slate-400">Matching your background with global opportunities globally.</p>
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent mb-2">{t('tools.oppMatcher.loading.title')}</h3>
+                <p className="text-slate-500 dark:text-slate-400">{t('tools.oppMatcher.loading.subtitle')}</p>
              </GlassCard>
           </motion.div>
         )}
@@ -236,8 +242,8 @@ export function OpportunityMatcherClient() {
                <div className="inline-flex items-center justify-center p-3 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full mb-4">
                  <CheckCircle2 className="w-8 h-8" />
                </div>
-               <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">Your Top Matches</h2>
-               <p className="text-slate-600 dark:text-slate-300">Based on your profile, here are the best opportunities for you.</p>
+               <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">{t('tools.oppMatcher.results.title')}</h2>
+               <p className="text-slate-600 dark:text-slate-300">{t('tools.oppMatcher.results.subtitle')}</p>
              </div>
 
              <div className="space-y-4 mb-8">
@@ -265,7 +271,7 @@ export function OpportunityMatcherClient() {
                         </div>
                         <div className="bg-slate-50 dark:bg-slate-800/50 p-6 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700 w-full md:w-auto h-full">
                            <div className="text-3xl font-bold text-[#d4af37]">{result.match}%</div>
-                           <div className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Match Rating</div>
+                           <div className="text-xs text-slate-500 font-semibold uppercase tracking-wider">{t('tools.oppMatcher.results.matchRating')}</div>
                         </div>
                       </div>
                    </Card>
@@ -274,16 +280,16 @@ export function OpportunityMatcherClient() {
              </div>
 
              <GlassCard className="text-center p-8 border-blue-500/30">
-               <h3 className="text-2xl font-bold mb-4">Need Help Applying?</h3>
-               <p className="text-slate-600 dark:text-slate-300 mb-6">Our experts can guide you through the entire process to maximize your chances of success.</p>
+               <h3 className="text-2xl font-bold mb-4">{t('tools.oppMatcher.results.ctaTitle')}</h3>
+               <p className="text-slate-600 dark:text-slate-300 mb-6">{t('tools.oppMatcher.results.ctaDesc')}</p>
                <Button asChild size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white font-bold px-8 py-6 rounded-xl shadow-lg hover:shadow-blue-500/25 transition-all text-lg">
                  <Link href="/services">
-                   Get Application Help <ArrowRight className="ml-2 w-5 h-5" />
+                   {t('tools.oppMatcher.results.ctaBtn')} <ArrowRight className="ml-2 w-5 h-5" />
                  </Link>
                </Button>
                <div className="mt-4">
                  <Button variant="ghost" onClick={() => { setStep(1); setUserData({age:'', targetCountry:'', education:'', goal:''}); }} className="text-slate-500">
-                   Start Over
+                   {t('tools.oppMatcher.results.startOver')}
                  </Button>
                </div>
              </GlassCard>
@@ -305,10 +311,11 @@ function GlassCard({ children, className = '' }: { children: React.ReactNode, cl
 }
 
 function StepHeader({ step, title, subtitle }: { step: number, title: string, subtitle: string }) {
+  const t = useT();
   return (
     <div className="text-center mb-8">
       <div className="inline-block px-4 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold text-sm mb-4">
-        Step {step} of 4
+        {t('tools.oppMatcher.step')} {step} {t('tools.oppMatcher.of')} 4
       </div>
       <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">{title}</h2>
       <p className="text-slate-600 dark:text-slate-400">{subtitle}</p>
@@ -316,11 +323,11 @@ function StepHeader({ step, title, subtitle }: { step: number, title: string, su
   );
 }
 
-function StepFooter({ onNext, onBack, isValid, nextText = 'Next' }: { onNext: () => void, onBack?: () => void, isValid: boolean, nextText?: string }) {
+function StepFooter({ onNext, onBack, isValid, nextText = 'Next', backText = 'Back' }: { onNext: () => void, onBack?: () => void, isValid: boolean, nextText?: string, backText?: string }) {
   return (
     <div className="flex justify-between items-center mt-8 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
       {onBack ? (
-        <Button variant="ghost" onClick={onBack} className="text-slate-600 dark:text-slate-400">Back</Button>
+        <Button variant="ghost" onClick={onBack} className="text-slate-600 dark:text-slate-400">{backText}</Button>
       ) : <div></div>}
 
       <Button
