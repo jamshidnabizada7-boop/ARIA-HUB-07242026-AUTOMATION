@@ -2,7 +2,7 @@ import React from 'react';
 import { CVData, TemplateType } from '../types';
 import { Mail, Phone, MapPin, Linkedin, Globe, User, Link as LinkIcon } from 'lucide-react';
 import { useT } from '@/hooks/use-t';
-import { useLangStore } from '@/store/lang';
+import { useLangStore } from '@/lib/lang-store';
 import ReactMarkdown from 'react-markdown';
 
 interface CVPreviewProps {
