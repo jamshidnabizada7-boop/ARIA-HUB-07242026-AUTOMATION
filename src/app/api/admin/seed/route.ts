@@ -46,6 +46,46 @@ export async function GET() {
     });
     logs.push('Settings seeded.');
 
+    // ── Tools Menu ──────────────────────────────────────────────
+    const existingTools = await db.menuItem.findFirst({ where: { url: null, label: 'Tools' } });
+    if (!existingTools) {
+      const toolsMenu = await db.menuItem.create({
+        data: {
+          label: 'Tools',
+          labelI18n: { en: 'Tools', fa: 'ابزارها', ps: 'وسیلې' },
+          url: null,
+          order: 99,
+          visible: true,
+          openInNewTab: false,
+        }
+      });
+      
+      await db.menuItem.create({
+        data: {
+          label: 'CV Builder',
+          labelI18n: { en: 'CV Builder', fa: 'رزومه ساز', ps: 'سی وي جوړونکی' },
+          url: '/cv-builder',
+          parentId: toolsMenu.id,
+          order: 1,
+          visible: true,
+        }
+      });
+
+      await db.menuItem.create({
+        data: {
+          label: 'Opportunity Matcher',
+          labelI18n: { en: 'Opportunity Matcher', fa: 'فرصت یاب', ps: 'د فرصت موندونکی' },
+          url: '/opportunity-matcher',
+          parentId: toolsMenu.id,
+          order: 2,
+          visible: true,
+        }
+      });
+      logs.push('Tools menu seeded.');
+    } else {
+      logs.push('Tools menu already exists.');
+    }
+
     return NextResponse.json({ success: true, logs });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message, stack: error.stack });
