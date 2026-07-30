@@ -54,3 +54,7 @@ server.log
 /skills/
 .vercel
 .env*
+\n# Playwright
+playwright-report/
+test-results/
+playwright/.cache/
