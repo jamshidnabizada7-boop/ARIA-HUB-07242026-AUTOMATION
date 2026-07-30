@@ -24,7 +24,7 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
   const address = (settings?.addressI18n as any)?.[lang] || settings?.address || 'Kabul, Afghanistan';
 
   const PrintFooter = () => (
-    <div className="hidden print:flex flex-row items-center justify-between border-t-2 border-slate-200 pt-4 mt-8 w-full gap-4 page-break-inside-avoid" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="hidden print:flex flex-row items-center justify-between border-t-2 border-slate-200 pt-4 mt-auto w-full gap-4 page-break-inside-avoid" dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="flex flex-col text-xs text-slate-600 text-start whitespace-nowrap">
         <p className="m-0 font-medium">{address}</p>
         <p className="m-0">{settings?.email || 'info@ariahub.com'}</p>
@@ -46,7 +46,7 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
 
   if (template === 'professional') {
     return (
-      <div className="w-full min-h-[1414px] bg-white text-slate-900 shadow-2xl overflow-hidden relative text-[11px] leading-relaxed p-0 print:p-8">
+      <div className="w-full min-h-[1414px] flex flex-col bg-white text-slate-900 shadow-2xl overflow-hidden relative text-[11px] leading-relaxed p-0 print:p-8">
         {isEmpty && (
           <div className="absolute inset-0 bg-slate-100/80 flex items-center justify-center z-50 print:hidden">
             <span className="text-slate-400 font-medium text-base">{t('tools.cvBuilder.previewPlaceholder')}</span>
@@ -55,7 +55,7 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
         
 
 
-        <div className="flex h-full">
+        <div className="flex flex-1 h-full">
           {/* Left Column - Dark Blue */}
           <div className="w-1/3 bg-[#0f172a] text-white p-6 flex flex-col print:bg-[#0f172a] print:text-white" style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
             {data.personal.picture && (
@@ -237,7 +237,7 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
 
   // Scholar Template
   return (
-    <div className="w-full min-h-[1414px] bg-white text-slate-900 shadow-2xl overflow-hidden relative font-serif text-[11px] leading-relaxed p-10 print:p-10">
+    <div className="w-full min-h-[1414px] flex flex-col bg-white text-slate-900 shadow-2xl overflow-hidden relative font-serif text-[11px] leading-relaxed p-10 print:p-10">
       {isEmpty && (
         <div className="absolute inset-0 bg-slate-100/80 flex items-center justify-center z-50 print:hidden font-sans">
           <span className="text-slate-400 font-medium text-base">{t('tools.cvBuilder.previewPlaceholder')}</span>
@@ -246,7 +246,8 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
       
 
       
-      <div className="text-center mb-6">
+      <div className="flex-1 space-y-5">
+        <div className="text-center mb-6">
         {data.personal.picture && (
           <div className="flex justify-center mb-4">
             <img src={data.personal.picture} alt="Profile" className="w-24 h-24 rounded-full object-cover border border-slate-200" />
@@ -390,8 +391,9 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
             </div>
           )}
         </div>
+      </div>
 
-        <PrintFooter />
+      <PrintFooter />
 
       </div>
     </div>
