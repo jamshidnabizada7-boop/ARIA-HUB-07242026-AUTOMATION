@@ -512,7 +512,7 @@ export const translations: Record<string, Record<string, string>> = {
     'tools.cvBuilder.title': 'Edit Your Details',
     'tools.cvBuilder.export': 'Export PDF',
     'tools.cvBuilder.export.title': 'Export CV as PDF',
-    'tools.cvBuilder.export.desc': 'We will use your browser\\'s built-in print functionality. When the print dialog opens, select <strong>"Save as PDF"</strong> as the destination and ensure <strong>"Background graphics"</strong> is checked for the best result.',
+    'tools.cvBuilder.export.desc': 'We will use your browsers built-in print functionality. When the print dialog opens, select <strong>"Save as PDF"</strong> as the destination and ensure <strong>"Background graphics"</strong> is checked for the best result.',
     'tools.cvBuilder.export.cancel': 'Cancel',
     'tools.cvBuilder.export.confirm': 'Continue to Print',
     'tools.cvBuilder.templatePro': 'Professional Migrant',
