@@ -19,22 +19,26 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
   // If all fields are empty, show a placeholder overlay
   const isEmpty = !data.personal.fullName && data.education.length === 0 && data.experience.length === 0 && data.skills.length === 0;
 
-  const PrintHeader = () => (
-    <div className="hidden print:flex flex-row items-center justify-between border-b-2 border-slate-200 pb-4 mb-6 w-full gap-4" dir="ltr">
-      <div className="flex flex-col text-xs text-slate-600 text-left whitespace-nowrap">
-        <p className="m-0 font-medium">{settings?.address || 'Kabul, Afghanistan'}</p>
+  const siteName = (settings?.siteNameI18n as any)?.[lang] || settings?.siteName || 'ARIA HUB';
+  const description = (settings?.descriptionI18n as any)?.[lang] || settings?.description || 'Your Gateway to Global Opportunities';
+  const address = (settings?.addressI18n as any)?.[lang] || settings?.address || 'Kabul, Afghanistan';
+
+  const PrintFooter = () => (
+    <div className="hidden print:flex flex-row items-center justify-between border-t-2 border-slate-200 pt-4 mt-8 w-full gap-4 page-break-inside-avoid" dir={isRtl ? 'rtl' : 'ltr'}>
+      <div className="flex flex-col text-xs text-slate-600 text-start whitespace-nowrap">
+        <p className="m-0 font-medium">{address}</p>
         <p className="m-0">{settings?.email || 'info@ariahub.com'}</p>
-        <p className="m-0">{settings?.phone || '+93 123 456 789'}</p>
+        <p className="m-0" dir="ltr">{settings?.phone || '+93 123 456 789'}</p>
       </div>
-      <div className="flex flex-row items-center gap-4">
-        <div className="flex flex-col text-right">
-          <h2 className="text-xl font-bold text-slate-800 m-0 leading-tight">{settings?.siteName || 'ARIA HUB'}</h2>
-          <p className="text-xs text-slate-500 max-w-[300px] m-0 leading-snug whitespace-pre-wrap">{settings?.description || 'Your Gateway to Global Opportunities'}</p>
+      <div className="flex flex-row items-center gap-4 text-end">
+        <div className="flex flex-col text-end">
+          <h2 className="text-xl font-bold text-slate-800 m-0 leading-tight">{siteName}</h2>
+          <p className="text-xs text-slate-500 max-w-[300px] m-0 leading-snug whitespace-pre-wrap">{description}</p>
         </div>
         {settings?.logoUrl ? (
-          <img src={settings.logoUrl} alt={settings?.siteName || 'ARIA HUB'} className="h-14 w-auto object-contain shrink-0" />
+          <img src={settings.logoUrl} alt={siteName} className="h-14 w-auto object-contain shrink-0" />
         ) : (
-          <div className="text-2xl font-bold text-slate-800 shrink-0">{settings?.siteName || 'ARIA HUB'}</div>
+          <div className="text-2xl font-bold text-slate-800 shrink-0">{siteName}</div>
         )}
       </div>
     </div>
@@ -49,7 +53,7 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
           </div>
         )}
         
-        <PrintHeader />
+
 
         <div className="flex h-full">
           {/* Left Column - Dark Blue */}
@@ -226,6 +230,7 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
             </div>
           </div>
         </div>
+        <PrintFooter />
       </div>
     );
   }
@@ -239,7 +244,7 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
         </div>
       )}
       
-      <PrintHeader />
+
       
       <div className="text-center mb-6">
         {data.personal.picture && (
@@ -385,6 +390,8 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
             </div>
           )}
         </div>
+
+        <PrintFooter />
 
       </div>
     </div>

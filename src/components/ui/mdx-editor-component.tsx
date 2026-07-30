@@ -17,7 +17,8 @@ import {
   linkDialogPlugin,
   ListsToggle,
 } from '@mdxeditor/editor';
-import React from 'react';
+import { useTheme } from 'next-themes';
+import React, { useEffect, useState } from 'react';
 
 export interface EditorProps {
   markdown: string;
@@ -26,9 +27,19 @@ export interface EditorProps {
 }
 
 export default function Editor({ markdown, onChange, placeholder }: EditorProps) {
+  const { theme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = theme === 'system' ? systemTheme : theme;
+  const isDark = mounted && currentTheme === 'dark';
+
   return (
     <MDXEditor
-      className="dark-theme border rounded-md min-h-[150px] bg-white dark:bg-slate-900"
+      className={`${isDark ? 'dark-theme' : ''} border rounded-md min-h-[150px] bg-white dark:bg-slate-900 transition-colors duration-200`}
       markdown={markdown}
       onChange={onChange}
       contentEditableClassName="prose prose-sm sm:prose dark:prose-invert max-w-none px-4 py-3 min-h-[150px] focus:outline-none"
