@@ -260,7 +260,7 @@ export function CVForm({ data, setData }: CVFormProps) {
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2">
           <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.experience.title')}</h3>
-          <button onClick={addExperience} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+          <button onClick={addExperience} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.form.add')}</button>
         </div>
         {data.experience.map(exp => (
           <div key={exp.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg space-y-3 relative group">
@@ -283,7 +283,7 @@ export function CVForm({ data, setData }: CVFormProps) {
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2">
           <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.education.title')}</h3>
-          <button onClick={addEducation} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+          <button onClick={addEducation} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.form.add')}</button>
         </div>
         {data.education.map(ed => (
           <div key={ed.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg space-y-3 relative group">
@@ -306,7 +306,7 @@ export function CVForm({ data, setData }: CVFormProps) {
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2">
           <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.skills.title')}</h3>
-          <button onClick={addSkill} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+          <button onClick={addSkill} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.form.add')}</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {data.skills.map(skill => (
@@ -327,7 +327,7 @@ export function CVForm({ data, setData }: CVFormProps) {
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2">
           <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.languages.title')}</h3>
-          <button onClick={addLanguage} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+          <button onClick={addLanguage} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.form.add')}</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {data.languages.map(lang => (
@@ -349,7 +349,7 @@ export function CVForm({ data, setData }: CVFormProps) {
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2">
           <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.certifications.title')}</h3>
-          <button onClick={addCertification} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+          <button onClick={addCertification} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.form.add')}</button>
         </div>
         {data.certifications.map(cert => (
           <div key={cert.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg space-y-3 relative group">
@@ -367,7 +367,7 @@ export function CVForm({ data, setData }: CVFormProps) {
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2">
           <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.projects.title')}</h3>
-          <button onClick={addProject} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+          <button onClick={addProject} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.form.add')}</button>
         </div>
         {data.projects.map(proj => (
           <div key={proj.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg space-y-3 relative group">
@@ -385,7 +385,7 @@ export function CVForm({ data, setData }: CVFormProps) {
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2">
           <h3 className="text-lg font-medium text-slate-800 dark:text-slate-200">{t('tools.cvBuilder.references.title')}</h3>
-          <button onClick={addReference} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.button.add')}</button>
+          <button onClick={addReference} className="text-sm text-blue-600 dark:text-blue-400 flex items-center hover:underline"><Plus className="w-4 h-4 mr-1"/> {t('admin.form.add')}</button>
         </div>
         {data.references.map(ref => (
           <div key={ref.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg space-y-3 relative group">
@@ -401,7 +401,7 @@ export function CVForm({ data, setData }: CVFormProps) {
       
       <style dangerouslySetInnerHTML={{__html: `
         .form-input {
-          @apply w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors;
+          @apply w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-900 dark:text-slate-100 transition-colors;
         }
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;

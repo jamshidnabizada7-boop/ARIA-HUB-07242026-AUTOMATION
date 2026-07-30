@@ -43,15 +43,15 @@ export default function Editor({ markdown, onChange, placeholder }: EditorProps)
         linkDialogPlugin(),
         toolbarPlugin({
           toolbarContents: () => (
-            <div className="flex items-center gap-1 flex-wrap p-1 border-b bg-slate-50 dark:bg-slate-800/50">
+            <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap scrollbar-hide p-2 border-b bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10">
               <UndoRedo />
-              <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-1" />
+              <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-1 shrink-0" />
               <BlockTypeSelect />
-              <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-1" />
+              <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-1 shrink-0" />
               <BoldItalicUnderlineToggles />
-              <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-1" />
+              <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-1 shrink-0" />
               <ListsToggle />
-              <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-1" />
+              <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-1 shrink-0" />
               <CreateLink />
             </div>
           )

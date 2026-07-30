@@ -16,19 +16,19 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
   const isEmpty = !data.personal.fullName && data.education.length === 0 && data.experience.length === 0 && data.skills.length === 0;
 
   const PrintHeader = () => (
-    <div className="hidden print:flex flex-row items-center justify-between border-b-2 border-slate-200 pb-4 mb-6 w-full gap-4">
-      <div className="flex flex-row items-center gap-4 ltr:text-left rtl:text-right">
+    <div className="hidden print:flex flex-row items-center justify-between border-b-2 border-slate-200 pb-4 mb-6 w-full gap-4" dir={isRtl ? 'rtl' : 'ltr'}>
+      <div className="flex flex-row items-center gap-4 text-start">
         {settings?.logoUrl ? (
           <img src={settings.logoUrl} alt={settings?.siteName || 'ARIA HUB'} className="h-14 w-auto object-contain shrink-0" />
         ) : (
           <div className="text-2xl font-bold text-slate-800 shrink-0">{settings?.siteName || 'ARIA HUB'}</div>
         )}
-        <div className="flex flex-col">
+        <div className="flex flex-col text-start">
           <h2 className="text-xl font-bold text-slate-800 m-0 leading-tight">{settings?.siteName || 'ARIA HUB'}</h2>
-          <p className="text-xs text-slate-500 max-w-[300px] m-0">{settings?.description || 'Your Gateway to Global Opportunities'}</p>
+          <p className="text-xs text-slate-500 max-w-[300px] m-0 leading-snug">{settings?.description || 'Your Gateway to Global Opportunities'}</p>
         </div>
       </div>
-      <div className="flex flex-col text-xs text-slate-600 ltr:text-right rtl:text-left whitespace-nowrap">
+      <div className="flex flex-col text-xs text-slate-600 text-end whitespace-nowrap">
         <p className="m-0 font-medium">{settings?.address || 'Kabul, Afghanistan'}</p>
         <p className="m-0">{settings?.email || 'info@ariahub.com'}</p>
         <p className="m-0">{settings?.phone || '+93 123 456 789'}</p>
