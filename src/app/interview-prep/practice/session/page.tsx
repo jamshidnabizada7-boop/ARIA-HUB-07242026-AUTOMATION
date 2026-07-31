@@ -18,16 +18,54 @@ function InterviewSessionContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const mode = searchParams.get('mode') || 'voice';
+  const type = searchParams.get('type') || 'mock';
+  const major = searchParams.get('major') || 'Computer Science';
+  const targetCountry = searchParams.get('country') || 'USA';
+  const scholarshipType = searchParams.get('scholarship') || 'Fulbright';
   
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState("Loading your first personalized question...");
+  const [previousQuestions, setPreviousQuestions] = useState<string[]>([]);
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(true);
   const [feedback, setFeedback] = useState<any>(null);
   
   const recognitionRef = useRef<any>(null);
 
+  const fetchQuestion = async () => {
+    setIsGeneratingQuestion(true);
+    try {
+      const res = await fetch('/api/interviews/generate-question', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          targetCountry,
+          major,
+          scholarshipType,
+          currentIndex: questionIndex,
+          previousQuestions
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.question) {
+        setCurrentQuestion(data.question);
+        setPreviousQuestions(prev => [...prev, data.question]);
+      } else {
+        setCurrentQuestion("Tell me about yourself and why you are applying for this scholarship."); // Fallback
+      }
+    } catch (error) {
+      console.error(error);
+      setCurrentQuestion("Tell me about yourself and why you are applying for this scholarship."); // Fallback
+    } finally {
+      setIsGeneratingQuestion(false);
+    }
+  };
+
   useEffect(() => {
+    fetchQuestion();
+    
     // Initialize SpeechRecognition if supported
     if (typeof window !== 'undefined') {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -80,7 +118,7 @@ function InterviewSessionContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           transcript,
-          questionText: SAMPLE_QUESTIONS[questionIndex]
+          questionText: currentQuestion
         })
       });
       
@@ -101,8 +139,11 @@ function InterviewSessionContent() {
   const nextQuestion = () => {
     setTranscript('');
     setFeedback(null);
-    if (questionIndex < SAMPLE_QUESTIONS.length - 1) {
+    const maxQuestions = type === 'random' ? 1 : (type === 'mock' ? 5 : 3);
+    
+    if (questionIndex < maxQuestions - 1) {
       setQuestionIndex(prev => prev + 1);
+      fetchQuestion();
     } else {
       alert("Session completed! Great job.");
       router.push('/interview-prep');
@@ -115,20 +156,29 @@ function InterviewSessionContent() {
         
         {/* Progress Header */}
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Interactive Session</h1>
+          <h1 className="text-2xl font-bold">Interactive AI Coach</h1>
           <div className="text-sm font-medium text-muted-foreground">
-            Question {questionIndex + 1} of {SAMPLE_QUESTIONS.length}
+            Question {questionIndex + 1}
           </div>
         </div>
 
         {/* Question Card */}
-        <Card className="mb-6 border-primary/20 bg-primary/5">
+        <Card className="mb-6 border-primary/20 bg-primary/5 relative overflow-hidden">
+          {isGeneratingQuestion && (
+             <div className="absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm z-10 flex flex-col items-center justify-center">
+               <Loader2 className="w-8 h-8 text-primary animate-spin" />
+               <p className="mt-2 text-sm font-medium text-primary">Generating personalized question...</p>
+             </div>
+          )}
           <CardHeader>
-            <CardTitle className="text-xl text-primary">AI Interviewer</CardTitle>
+            <CardTitle className="text-xl text-primary flex justify-between">
+              <span>AI Interviewer</span>
+              <span className="text-sm font-normal text-muted-foreground bg-white dark:bg-slate-900 px-3 py-1 rounded-full shadow-sm">Profile: {major} | {targetCountry}</span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-medium leading-relaxed">
-              "{SAMPLE_QUESTIONS[questionIndex]}"
+              "{currentQuestion}"
             </p>
           </CardContent>
         </Card>
@@ -145,7 +195,7 @@ function InterviewSessionContent() {
                     variant={isRecording ? 'destructive' : 'default'}
                     size="icon"
                     onClick={toggleRecording}
-                    disabled={isEvaluating}
+                    disabled={isEvaluating || isGeneratingQuestion}
                     className="rounded-full"
                   >
                     {isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
@@ -156,86 +206,93 @@ function InterviewSessionContent() {
             <CardContent>
               {mode === 'text' ? (
                 <textarea
-                  className="h-48 w-full resize-none rounded-md border p-3 focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full h-48 p-3 border rounded-md dark:bg-slate-900 dark:border-slate-800 focus:ring-2 focus:ring-primary outline-none resize-none"
                   placeholder="Type your answer here..."
                   value={transcript}
                   onChange={(e) => setTranscript(e.target.value)}
-                  disabled={isEvaluating}
+                  disabled={isEvaluating || isGeneratingQuestion}
                 />
               ) : (
-                <div className="h-48 overflow-y-auto rounded-md border bg-muted/30 p-4">
+                <div className="h-48 rounded-md border bg-slate-100 p-4 dark:bg-slate-900/50 overflow-y-auto">
                   {transcript ? (
-                    <p className="text-foreground">{transcript}</p>
+                    <p className="text-slate-700 dark:text-slate-300">{transcript}</p>
                   ) : (
-                    <p className="text-muted-foreground italic">
-                      {isRecording ? 'Listening...' : 'Click the microphone to start speaking...'}
+                    <p className="text-muted-foreground italic flex h-full items-center justify-center">
+                      {isRecording ? "Listening..." : "Click the microphone to start speaking"}
                     </p>
                   )}
                 </div>
               )}
             </CardContent>
-            <CardFooter className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setTranscript('')} disabled={!transcript || isEvaluating || isRecording}>
-                <RefreshCcw className="mr-2 h-4 w-4" /> Reset
+            <CardFooter className="flex justify-between">
+              <Button 
+                variant="outline" 
+                onClick={() => setTranscript('')}
+                disabled={!transcript || isEvaluating || isRecording}
+              >
+                Clear
               </Button>
-              <Button onClick={submitAnswer} disabled={!transcript || isEvaluating || isRecording}>
-                {isEvaluating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                {isEvaluating ? 'Evaluating...' : 'Submit Answer'}
+              <Button 
+                onClick={submitAnswer}
+                disabled={!transcript || isEvaluating || isRecording}
+              >
+                {isEvaluating ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Evaluating...</>
+                ) : 'Submit Answer'}
               </Button>
             </CardFooter>
           </Card>
 
-          {/* AI Feedback Area */}
-          <Card className={feedback ? 'border-green-500/30 bg-green-500/5' : ''}>
+          {/* Feedback Area */}
+          <Card className={!feedback ? "opacity-50" : ""}>
             <CardHeader>
-              <CardTitle className="text-lg">AI Feedback</CardTitle>
+              <CardTitle className="text-lg">AI Evaluation</CardTitle>
             </CardHeader>
-            <CardContent>
-              {!feedback && !isEvaluating && (
+            <CardContent className="space-y-6">
+              {!feedback ? (
                 <div className="flex h-48 flex-col items-center justify-center text-center text-muted-foreground">
-                  <p>Submit your answer to receive detailed AI feedback on your performance.</p>
+                  <RefreshCcw className="mb-2 h-8 w-8 opacity-20" />
+                  <p>Submit your answer to receive detailed AI feedback</p>
                 </div>
-              )}
-              {isEvaluating && (
-                <div className="flex h-48 flex-col items-center justify-center text-center">
-                  <Loader2 className="mb-4 h-8 w-8 animate-spin text-primary" />
-                  <p className="animate-pulse font-medium text-primary">Analyzing your response...</p>
-                </div>
-              )}
-              {feedback && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="rounded-lg border bg-card p-2">
-                      <div className="text-2xl font-black text-primary">{feedback.confidenceScore}%</div>
-                      <div className="text-[10px] font-semibold uppercase text-muted-foreground">Confidence</div>
+              ) : (
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20 text-center">
+                      <div className="text-sm font-medium text-blue-600 dark:text-blue-400">Confidence</div>
+                      <div className="text-3xl font-bold text-blue-700 dark:text-blue-300">{feedback.confidenceScore}/100</div>
                     </div>
-                    <div className="rounded-lg border bg-card p-2">
-                      <div className="text-2xl font-black text-primary">{feedback.fluencyScore}%</div>
-                      <div className="text-[10px] font-semibold uppercase text-muted-foreground">Fluency</div>
-                    </div>
-                    <div className="rounded-lg border bg-card p-2">
-                      <div className="text-2xl font-black text-primary">{feedback.grammarScore}%</div>
-                      <div className="text-[10px] font-semibold uppercase text-muted-foreground">Grammar</div>
+                    <div className="rounded-lg bg-purple-50 p-4 dark:bg-purple-900/20 text-center">
+                      <div className="text-sm font-medium text-purple-600 dark:text-purple-400">Content</div>
+                      <div className="text-3xl font-bold text-purple-700 dark:text-purple-300">{feedback.contentStrengthScore || feedback.fluencyScore || 85}/100</div>
                     </div>
                   </div>
+                  
                   <div>
-                    <h4 className="font-semibold text-foreground">Overall Feedback</h4>
-                    <p className="mt-1 text-sm text-muted-foreground">{feedback.overallFeedback}</p>
+                    <h4 className="font-semibold mb-1">Feedback</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{feedback.overallFeedback}</p>
                   </div>
+                  
                   <div>
-                    <h4 className="font-semibold text-foreground">Tips for Improvement</h4>
-                    <ul className="mt-1 list-inside list-disc text-sm text-muted-foreground">
+                    <h4 className="font-semibold mb-1">Tips to Improve</h4>
+                    <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-1">
                       {feedback.tipsForImprovement?.map((tip: string, i: number) => (
                         <li key={i}>{tip}</li>
                       ))}
                     </ul>
                   </div>
+
+                  {feedback.idealAnswer && (
+                    <div className="mt-4 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/30">
+                      <h4 className="font-semibold text-green-700 dark:text-green-400 mb-1">Ideal Answer Example</h4>
+                      <p className="text-sm text-green-800 dark:text-green-300 italic">"{feedback.idealAnswer}"</p>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>
             {feedback && (
-              <CardFooter className="flex justify-end">
-                <Button onClick={nextQuestion} className="w-full sm:w-auto">
+              <CardFooter>
+                <Button className="w-full" onClick={nextQuestion}>
                   Next Question <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
@@ -250,7 +307,7 @@ function InterviewSessionContent() {
 
 export default function InterviewSessionPage() {
   return (
-    <Suspense fallback={<div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
       <InterviewSessionContent />
     </Suspense>
   );

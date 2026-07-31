@@ -2,11 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { transcript, questionText } = await request.json();
-
-    if (!transcript || !questionText) {
-      return NextResponse.json({ error: 'Missing transcript or questionText' }, { status: 400 });
-    }
+    const { targetCountry, major, scholarshipType, currentIndex, previousQuestions } = await request.json();
 
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
@@ -14,18 +10,19 @@ export async function POST(request: Request) {
     }
 
     const prompt = `
-You are an expert scholarship interview coach. Evaluate the following interview response based on the question asked.
-Question: "${questionText}"
-Candidate's Response: "${transcript}"
+You are a strict but fair scholarship committee member for a ${scholarshipType} in ${targetCountry}. The candidate is majoring in ${major}.
+You are currently on question ${currentIndex + 1} of the interview.
+Previous questions asked: ${previousQuestions.length > 0 ? previousQuestions.join(" | ") : "None"}.
 
-Provide a JSON output evaluating the candidate's response. Include the following fields:
-- confidenceScore: integer (0-100) based on confidence indicators, hesitation (um, uh).
-- contentStrengthScore: integer (0-100) based on flow, structure, relevance, vocabulary, and grammar.
-- overallFeedback: string (2-3 sentences of constructive feedback, what was good, what to improve).
-- tipsForImprovement: array of strings (1-3 actionable tips).
-- idealAnswer: string (An example of a perfect, highly-professional answer to this question).
+Generate exactly ONE challenging, realistic interview question that is tailored to their profile (${major} in ${targetCountry} for a ${scholarshipType}). 
+Do not ask a question you have already asked.
+Make it sound conversational but professional.
 
 Return ONLY valid JSON without any markdown formatting.
+Format:
+{
+  "question": "The generated question text here"
+}
 `;
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -38,7 +35,7 @@ Return ONLY valid JSON without any markdown formatting.
         model: 'llama-3.1-8b-instant',
         messages: [{ role: 'user', content: prompt }],
         response_format: { type: 'json_object' },
-        temperature: 0.3
+        temperature: 0.7
       })
     });
 
@@ -53,7 +50,7 @@ Return ONLY valid JSON without any markdown formatting.
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Evaluate API Error:', error);
+    console.error('Generate Question API Error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

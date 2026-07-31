@@ -32,7 +32,43 @@ export default function PracticeSetupPage() {
 
         <div className="space-y-8">
           <section>
-            <h2 className="mb-4 text-xl font-semibold">1. Choose Input Mode</h2>
+            <h2 className="mb-4 text-xl font-semibold">1. Your Profile</h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium">Major / Field of Study</label>
+                <input 
+                  type="text" 
+                  id="major"
+                  className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900" 
+                  placeholder="e.g. Computer Science"
+                  defaultValue="Computer Science"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium">Target Country</label>
+                <input 
+                  type="text" 
+                  id="targetCountry"
+                  className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900" 
+                  placeholder="e.g. USA"
+                  defaultValue="USA"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium">Scholarship Type</label>
+                <input 
+                  type="text" 
+                  id="scholarshipType"
+                  className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900" 
+                  placeholder="e.g. Fulbright"
+                  defaultValue="Fulbright"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="mb-4 text-xl font-semibold">2. Choose Input Mode</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <ModeCard
                 icon={Mic}
@@ -59,7 +95,7 @@ export default function PracticeSetupPage() {
           </section>
 
           <section>
-            <h2 className="mb-4 text-xl font-semibold">2. Choose Session Type</h2>
+            <h2 className="mb-4 text-xl font-semibold">3. Choose Session Type</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <ModeCard
                 icon={CheckCircle2}
@@ -86,7 +122,15 @@ export default function PracticeSetupPage() {
           </section>
 
           <div className="flex justify-center pt-8">
-            <Button size="lg" onClick={startSession} disabled={loading} className="w-full sm:w-auto min-w-[200px]">
+            <Button size="lg" onClick={() => {
+              setLoading(true);
+              const major = (document.getElementById('major') as HTMLInputElement)?.value || 'Computer Science';
+              const targetCountry = (document.getElementById('targetCountry') as HTMLInputElement)?.value || 'USA';
+              const scholarshipType = (document.getElementById('scholarshipType') as HTMLInputElement)?.value || 'Fulbright';
+              setTimeout(() => {
+                router.push(`/interview-prep/practice/session?mode=${mode}&type=${type}&major=${encodeURIComponent(major)}&country=${encodeURIComponent(targetCountry)}&scholarship=${encodeURIComponent(scholarshipType)}`);
+              }, 500);
+            }} disabled={loading} className="w-full sm:w-auto min-w-[200px]">
               {loading ? 'Starting...' : 'Start Session'}
             </Button>
           </div>
