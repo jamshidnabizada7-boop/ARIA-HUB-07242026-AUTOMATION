@@ -46,10 +46,12 @@ function DesktopMenuItem({ item }: { item: MenuItem }) {
   // Get localized label - correct parameter order: (baseValue, i18nValue, lang)
   const label = getLocalizedContent(item.label, item.labelI18n, code);
 
+  const href = item.url?.startsWith('#') ? `/${item.url}` : (item.url || '#');
+
   if (!hasChildren) {
     return (
       <a
-        href={item.url || '#'}
+        href={href}
         target={item.openInNewTab ? '_blank' : undefined}
         className="group relative flex items-center gap-1 px-3 py-2 text-sm font-medium text-foreground/75 transition-colors hover:text-foreground"
       >
@@ -82,10 +84,12 @@ function NestedMenuItem({ item }: { item: MenuItem }) {
   const hasChildren = item.children && item.children.length > 0;
   const label = getLocalizedContent(item.label, item.labelI18n, code);
   
+  const href = item.url?.startsWith('#') ? `/${item.url}` : (item.url || '#');
+  
   if (!hasChildren) {
     return (
       <a
-        href={item.url || '#'}
+        href={href}
         target={item.openInNewTab ? '_blank' : undefined}
         className="block rounded-xl px-3 py-2 text-sm text-foreground/70 transition-colors hover:bg-accent hover:text-foreground"
       >
@@ -117,10 +121,12 @@ function MobileMenuItem({ item, depth = 0, onNavigate }: { item: MenuItem; depth
   const hasChildren = item.children && item.children.length > 0;
   const label = getLocalizedContent(item.label, item.labelI18n, code);
   
+  const href = item.url?.startsWith('#') ? `/${item.url}` : (item.url || '#');
+  
   if (!hasChildren) {
     return (
       <a
-        href={item.url || '#'}
+        href={href}
         target={item.openInNewTab ? '_blank' : undefined}
         onClick={() => onNavigate?.()}
         className="block rounded-xl px-3 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:bg-accent"
