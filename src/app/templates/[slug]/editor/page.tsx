@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Sparkles, Save, Download, ArrowLeft, Languages, CheckCheck, RefreshCw, Briefcase, FileText } from 'lucide-react';
+import { Sparkles, Save, Download, ArrowLeft, Languages, CheckCheck, RefreshCw, Briefcase, FileText, FileDown, Printer } from 'lucide-react';
+import { marked } from 'marked';
 
 export default function TemplateEditorPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
   const [loading, setLoading] = useState(true);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiAction, setAiAction] = useState('');
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
   useEffect(() => {
     async function fetchTemplate() {
@@ -72,6 +74,48 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
     }
   };
 
+  const handleExportWord = async () => {
+    setExportMenuOpen(false);
+    const htmlContent = await marked.parse(content);
+    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+    const footer = "</body></html>";
+    const sourceHTML = header + htmlContent + footer;
+    const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+    const fileDownload = document.createElement("a");
+    document.body.appendChild(fileDownload);
+    fileDownload.href = source;
+    fileDownload.download = `${slug}-document.doc`;
+    fileDownload.click();
+    document.body.removeChild(fileDownload);
+  };
+
+  const handleExportPDF = async () => {
+    setExportMenuOpen(false);
+    const htmlContent = await marked.parse(content);
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>${template?.title || 'Document'}</title>
+            <style>
+              body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 40px; }
+              h1, h2, h3 { color: #111; }
+              ul { padding-left: 20px; }
+            </style>
+          </head>
+          <body>
+            ${htmlContent}
+            <script>
+              window.onload = function() { window.print(); window.close(); }
+            </script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+  };
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>;
   }
@@ -101,20 +145,33 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
           >
             <Save className="w-4 h-4" /> Save Draft
           </button>
-          <button 
-            onClick={() => {
-              const blob = new Blob([content], { type: 'text/plain' });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = `${slug}-draft.txt`;
-              a.click();
-              URL.revokeObjectURL(url);
-            }}
-            className="flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            <Download className="w-4 h-4" /> Export
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setExportMenuOpen(!exportMenuOpen)}
+              className="flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              <Download className="w-4 h-4" /> Export
+            </button>
+            
+            {exportMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden z-50">
+                <button 
+                  onClick={handleExportWord}
+                  className="flex items-center gap-3 w-full px-4 py-3 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                >
+                  <FileDown className="w-4 h-4 text-blue-600 dark:text-blue-400" /> 
+                  Word (.doc)
+                </button>
+                <button 
+                  onClick={handleExportPDF}
+                  className="flex items-center gap-3 w-full px-4 py-3 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                >
+                  <Printer className="w-4 h-4 text-rose-600 dark:text-rose-400" /> 
+                  PDF (Print)
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
