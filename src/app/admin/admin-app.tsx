@@ -7,7 +7,7 @@ import {
   Building2, BarChart3, HelpCircle, Image, CreditCard, Share2, Link2,
   Building, MapPin, ListChecks, Tag, Users, GitCompare, Megaphone,
   Menu as MenuIcon, Settings, LogOut, Plus, Pencil, Trash2, X, Search,
-  TrendingUp, Mail, UserPlus, Eye, Loader2, Globe, Layers, Download, KeyRound,
+  TrendingUp, Mail, UserPlus, Eye, Loader2, Globe, Layers, Download, KeyRound, FileText,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
