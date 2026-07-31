@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Sparkles, Save, Download, ArrowLeft, Languages, CheckCheck, RefreshCw, Briefcase, FileText, FileDown, Printer } from 'lucide-react';
 import { marked } from 'marked';
+import { useT } from '@/hooks/use-t';
 
 export default function TemplateEditorPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
   const [aiAction, setAiAction] = useState('');
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [siteSettings, setSiteSettings] = useState<any>(null);
+  const t = useT();
 
   useEffect(() => {
     async function fetchTemplate() {
@@ -183,14 +185,14 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
             }}
             className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2 rounded-lg font-medium transition-colors"
           >
-            <Save className="w-4 h-4" /> Save Draft
+            <Save className="w-4 h-4" /> {t('templates.saveDraft')}
           </button>
           <div className="relative">
             <button 
               onClick={() => setExportMenuOpen(!exportMenuOpen)}
               className="flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 px-4 py-2 rounded-lg font-medium transition-colors"
             >
-              <Download className="w-4 h-4" /> Export
+              <Download className="w-4 h-4" /> {t('templates.export')}
             </button>
             
             {exportMenuOpen && (
@@ -221,7 +223,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
         {/* Left Toolbar (AI Tools) */}
         <div className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 flex flex-col gap-2 overflow-y-auto hidden md:flex">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-2 flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-blue-500" /> AI Assistant
+            <Sparkles className="w-3.5 h-3.5 text-blue-500" /> {t('templates.aiAssistant')}
           </h3>
           
           <button 
@@ -233,7 +235,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
               <RefreshCw className={`w-4 h-4 ${aiAction === 'rewrite' ? 'animate-spin' : ''}`} />
             </div>
             <div className="flex-1">
-              <div className="font-semibold text-sm">Rewrite</div>
+              <div className="font-semibold text-sm">{t('templates.rewrite')}</div>
               <div className="text-xs text-slate-500">Make it sound professional</div>
             </div>
           </button>
@@ -247,7 +249,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
               <CheckCheck className={`w-4 h-4 ${aiAction === 'improve_grammar' ? 'animate-pulse' : ''}`} />
             </div>
             <div className="flex-1">
-              <div className="font-semibold text-sm">Improve Grammar</div>
+              <div className="font-semibold text-sm">{t('templates.improveGrammar')}</div>
               <div className="text-xs text-slate-500">Fix typos & readability</div>
             </div>
           </button>
@@ -261,7 +263,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
               <FileText className={`w-4 h-4 ${aiAction === 'personalize' ? 'animate-pulse' : ''}`} />
             </div>
             <div className="flex-1">
-              <div className="font-semibold text-sm">Personalize</div>
+              <div className="font-semibold text-sm">{t('templates.personalize')}</div>
               <div className="text-xs text-slate-500">Add your own details</div>
             </div>
           </button>
@@ -275,7 +277,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
               <Languages className={`w-4 h-4 ${aiAction === 'translate' ? 'animate-pulse' : ''}`} />
             </div>
             <div className="flex-1">
-              <div className="font-semibold text-sm">Translate</div>
+              <div className="font-semibold text-sm">{t('templates.translate')}</div>
               <div className="text-xs text-slate-500">Convert language</div>
             </div>
           </button>
@@ -289,7 +291,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
               <Briefcase className={`w-4 h-4 ${aiAction === 'optimize' ? 'animate-pulse' : ''}`} />
             </div>
             <div className="flex-1">
-              <div className="font-semibold text-sm">ATS Optimize</div>
+              <div className="font-semibold text-sm">{t('templates.atsOptimize')}</div>
               <div className="text-xs text-slate-500">For CVs / Resumes</div>
             </div>
           </button>

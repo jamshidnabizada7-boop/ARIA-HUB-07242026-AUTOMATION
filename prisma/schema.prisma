@@ -846,3 +846,86 @@ model TemplateBookmark {
 
   @@unique([templateId, userId])
 }
+
+// ─── Interview Preparation Center ────────────────────────────────────────────
+
+model InterviewCategory {
+  id          String              @id @default(cuid())
+  name        String
+  nameI18n    Json?
+  slug        String              @unique
+  icon        String?
+  description String?
+  descriptionI18n Json?
+  order       Int                 @default(0)
+  questions   InterviewQuestion[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+model InterviewQuestion {
+  id                String             @id @default(cuid())
+  question          String
+  questionI18n      Json?
+  categoryId        String?
+  category          InterviewCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  difficulty        String             @default("medium") // beginner | medium | hard
+  filters           Json?              // { scholarship: "...", university: "...", country: "...", degree: "..." }
+  sampleAnswer      String?
+  sampleAnswerI18n  Json?
+  strongExample     String?
+  strongExampleI18n Json?
+  weakExample       String?
+  weakExampleI18n   Json?
+  tips              String?
+  tipsI18n          Json?
+  commonMistakes    Json?              // array of strings
+  commonMistakesI18n Json?
+  followUpQuestions Json?              // array of strings
+  followUpQuestionsI18n Json?
+  expectedDuration  String?            // e.g. "2-3 mins"
+  status            String             @default("published")
+  featured          Boolean            @default(false)
+  order             Int                @default(0)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([categoryId])
+  @@index([difficulty])
+  @@index([status])
+}
+
+model InterviewSession {
+  id          String   @id @default(cuid())
+  userId      String?  // Can be null if practicing anonymously
+  mode        String   @default("practice") // mock | practice | timed
+  status      String   @default("in_progress") // in_progress | completed | abandoned
+  questions   Json?    // Array of Question IDs for this session
+  responses   Json?    // Array of { questionId, transcript, audioUrl, confidenceScore, fluencyScore, grammarScore, aiFeedback }
+  score       Int?     // Overall score out of 100
+  duration    Int?     // Duration in seconds
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model InterviewExperience {
+  id              String   @id @default(cuid())
+  userId          String?
+  studentName     String?
+  studentNameI18n Json?
+  scholarshipName String?
+  university      String?
+  country         String?
+  degree          String?
+  content         String
+  contentI18n     Json?
+  rating          Int      @default(5) // Difficulty rating 1-5
+  status          String   @default("pending") // pending | published | rejected
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+}
+

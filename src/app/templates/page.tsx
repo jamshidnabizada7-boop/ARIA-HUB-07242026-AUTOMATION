@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Search, Filter, BookOpen, Star, Download, Bookmark, FileText } from 'lucide-react';
+import { useT } from '@/hooks/use-t';
 
 interface Template {
   id: string;
@@ -20,6 +21,7 @@ export default function TemplatesLibraryPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const t = useT();
 
   useEffect(() => {
     async function fetchTemplates() {
@@ -54,10 +56,10 @@ export default function TemplatesLibraryPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
-            Document Template Library
+            {t('templates.title')}
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Thousands of professionally written templates to help you prepare high-quality application documents for scholarships, universities, visas, and jobs.
+            {t('templates.subtitle')}
           </p>
         </div>
 
@@ -67,7 +69,7 @@ export default function TemplatesLibraryPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <input 
               type="text"
-              placeholder="Search templates (e.g. Stanford SOP, DAAD Cover Letter)..."
+              placeholder={t('placeholder.search')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border-none focus:ring-2 focus:ring-primary outline-none transition-all"
@@ -85,11 +87,11 @@ export default function TemplatesLibraryPage() {
                     : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
-                {cat}
+                {cat === 'All' ? t('templates.filters.all') : cat}
               </button>
             ))}
             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-              <Filter className="w-4 h-4" /> More Filters
+              <Filter className="w-4 h-4" /> {t('templates.filters.type')}
             </button>
           </div>
         </div>
@@ -102,8 +104,7 @@ export default function TemplatesLibraryPage() {
         ) : filteredTemplates.length === 0 ? (
           <div className="text-center py-20">
             <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">No templates found</h3>
-            <p className="text-slate-500">Try adjusting your search or filters.</p>
+            <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">{t('search.noResults')}</h3>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -139,9 +140,9 @@ export default function TemplatesLibraryPage() {
                   
                   {/* Stats & Metadata */}
                   <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center gap-1.5" title="Success Rate">
+                    <div className="flex items-center gap-1.5" title={t('templates.successRate')}>
                       <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                      <span className="font-medium">{template.successRate || 85}% Success</span>
+                      <span className="font-medium">{template.successRate || 85}%</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="flex items-center gap-1"><Bookmark className="w-3.5 h-3.5" /> {template._count.bookmarks}</span>
@@ -155,12 +156,12 @@ export default function TemplatesLibraryPage() {
                       href={`/templates/${template.slug}`}
                       className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2.5 rounded-xl text-sm font-semibold transition-colors"
                     >
-                      View Details
+                      {t('common.viewDetails')}
                     </Link>
                     <Link 
                       href={`/templates/${template.slug}/editor`}
                       className="flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-white px-4 rounded-xl transition-colors"
-                      title="AI Editor"
+                      title={t('templates.aiAssistant')}
                     >
                       <BookOpen className="w-4 h-4" />
                     </Link>

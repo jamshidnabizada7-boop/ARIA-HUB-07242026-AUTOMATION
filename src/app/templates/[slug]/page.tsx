@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { PrismaClient } from '@prisma/client';
 import { BookOpen, Copy, Download, Share2, Sparkles, CheckCircle, AlertTriangle, Lightbulb, Bookmark } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { TranslatedText } from '@/components/ui/translated-text';
 
 const prisma = new PrismaClient();
 
@@ -37,7 +38,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
         {/* Breadcrumb & Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 text-sm text-slate-500 mb-4">
-            <Link href="/templates" className="hover:text-blue-600 transition-colors">Library</Link>
+            <Link href="/templates" className="hover:text-blue-600 transition-colors"><TranslatedText tKey="templates.title" /></Link>
             <span>/</span>
             {template.category && (
               <>
@@ -62,7 +63,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
                 href={`/templates/${template.slug}/editor`}
                 className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
               >
-                <Sparkles className="w-5 h-5" /> Open in AI Editor
+                <Sparkles className="w-5 h-5" /> <TranslatedText tKey="templates.aiAssistant" />
               </Link>
             </div>
           </div>
@@ -74,7 +75,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
               <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-                <h3 className="font-semibold text-slate-800 dark:text-slate-200">Template Preview</h3>
+                <h3 className="font-semibold text-slate-800 dark:text-slate-200"><TranslatedText tKey="templates.preview" /></h3>
                 <div className="flex gap-2">
                   <button className="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Copy Text">
                     <Copy className="w-4 h-4" />
@@ -93,7 +94,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
             
             {/* Community Comments */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Community Discussion</h3>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6"><TranslatedText tKey="templates.community" /></h3>
               
               <div className="space-y-6">
                 {template.comments.length > 0 ? (
@@ -146,7 +147,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
             {requiredFields.length > 0 && (
               <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
-                  <CheckCircle className="w-5 h-5 text-blue-600" /> Required Information
+                  <CheckCircle className="w-5 h-5 text-blue-600" /> <TranslatedText tKey="templates.requiredInfo" />
                 </h3>
                 <ul className="space-y-3">
                   {requiredFields.map((field, i) => (
@@ -163,7 +164,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
             {writingTips.length > 0 && (
               <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/30 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-sm p-6">
                 <h3 className="font-bold text-indigo-900 dark:text-indigo-300 flex items-center gap-2 mb-4">
-                  <Lightbulb className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Expert Tips
+                  <Lightbulb className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> <TranslatedText tKey="templates.expertTips" />
                 </h3>
                 <ul className="space-y-3">
                   {writingTips.map((tip, i) => (
@@ -180,7 +181,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
             {commonMistakes.length > 0 && (
               <div className="bg-white dark:bg-slate-900 rounded-2xl border border-red-100 dark:border-red-900/30 shadow-sm p-6">
                 <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
-                  <AlertTriangle className="w-5 h-5 text-red-500" /> Common Mistakes
+                  <AlertTriangle className="w-5 h-5 text-red-500" /> <TranslatedText tKey="templates.commonMistakes" />
                 </h3>
                 <ul className="space-y-3">
                   {commonMistakes.map((mistake, i) => (
@@ -197,15 +198,15 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
             <div className="bg-slate-900 dark:bg-slate-800 rounded-2xl shadow-lg p-6 text-center text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-blue-500 rounded-full blur-3xl opacity-30"></div>
               <Sparkles className="w-8 h-8 mx-auto mb-3 text-blue-400" />
-              <h3 className="text-xl font-bold mb-2">Need a custom version?</h3>
+              <h3 className="text-xl font-bold mb-2"><TranslatedText tKey="templates.needCustom" /></h3>
               <p className="text-slate-300 text-sm mb-6">
-                Let our AI personalize this template with your details, optimize it for ATS, or translate it.
+                <TranslatedText tKey="templates.customDesc" />
               </p>
               <Link 
                 href={`/templates/${template.slug}/editor`}
                 className="block w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-semibold transition-colors shadow-lg shadow-blue-900/20"
               >
-                Personalize with AI
+                <TranslatedText tKey="templates.aiAssistant" />
               </Link>
             </div>
             

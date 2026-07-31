@@ -59,6 +59,9 @@ const NAV = [
   { key: 'newsCategory', labelKey: 'admin.nav.newsCategories', icon: Briefcase },
   { key: 'documentCategory', labelKey: 'admin.nav.docCategories', icon: Briefcase },
   { key: 'documentTemplate', labelKey: 'admin.nav.docTemplates', icon: FileText },
+  { key: 'interviewCategory', labelKey: 'admin.nav.interviewCategories', icon: Briefcase },
+  { key: 'interviewQuestion', labelKey: 'admin.nav.interviewQuestions', icon: FileText },
+  { key: 'interviewExperience', labelKey: 'admin.nav.interviewExperiences', icon: Star },
   { key: 'autoImport', labelKey: 'admin.nav.autoImport', icon: Download },
   { key: 'settings', labelKey: 'admin.nav.siteSettings', icon: Settings },
 ];
