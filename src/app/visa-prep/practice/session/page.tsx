@@ -27,6 +27,7 @@ function VisaSessionContent() {
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(true);
   const [feedback, setFeedback] = useState<any>(null);
+  const [speechError, setSpeechError] = useState<string | null>(null);
   const [targetCountryName, setTargetCountryName] = useState('General');
   const [visaTypeName, setVisaTypeName] = useState('General');
   
@@ -87,12 +88,8 @@ function VisaSessionContent() {
   };
 
   useEffect(() => {
-    if (targetCountryName !== 'General' || !countryId) {
-      fetchQuestion();
-    }
-  }, [targetCountryName, visaTypeName, difficulty]);
+    fetchQuestion();
 
-  useEffect(() => {
     // Initialize SpeechRecognition if supported
     if (typeof window !== 'undefined') {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -103,6 +100,7 @@ function VisaSessionContent() {
         recognitionRef.current.lang = 'en-US'; // Set to English for visa interviews
         
         recognitionRef.current.onresult = (event: any) => {
+          setSpeechError(null);
           let currentTranscript = '';
           for (let i = 0; i < event.results.length; i++) {
             currentTranscript += event.results[i][0].transcript;
@@ -112,6 +110,13 @@ function VisaSessionContent() {
         
         recognitionRef.current.onerror = (event: any) => {
           console.error("Speech recognition error", event.error);
+          if (event.error === 'no-speech') {
+            setSpeechError("No speech detected. Please try speaking closer to your microphone or check your microphone settings.");
+          } else if (event.error === 'not-allowed') {
+            setSpeechError("Microphone access denied. Please allow microphone permissions in your browser.");
+          } else {
+            setSpeechError(`Microphone error: ${event.error}`);
+          }
           setIsRecording(false);
         };
         
@@ -126,7 +131,7 @@ function VisaSessionContent() {
         recognitionRef.current.stop();
       }
     };
-  }, []);
+  }, [mode]);
 
   const toggleRecording = () => {
     if (!recognitionRef.current) {
@@ -140,11 +145,13 @@ function VisaSessionContent() {
     } else {
       setTranscript('');
       setFeedback(null);
+      setSpeechError(null);
       try {
         recognitionRef.current?.start();
         setIsRecording(true);
       } catch (e) {
         console.error(e);
+        setSpeechError("Failed to start microphone. Please refresh and try again.");
         setIsRecording(false);
       }
     }
@@ -207,8 +214,6 @@ function VisaSessionContent() {
     );
   }
 
-  const currentQ = questions[questionIndex];
-
   return (
     <div className="min-h-screen bg-slate-50 py-12 dark:bg-slate-950">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -256,7 +261,7 @@ function VisaSessionContent() {
                   variant={isRecording ? 'destructive' : 'default'}
                   size="icon"
                   onClick={toggleRecording}
-                  disabled={isEvaluating}
+                  disabled={isEvaluating || isGeneratingQuestion}
                   className="rounded-full shadow-sm"
                 >
                   {isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
@@ -264,6 +269,11 @@ function VisaSessionContent() {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              {speechError && (
+                <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400 border border-red-200 dark:border-red-800">
+                  {speechError}
+                </div>
+              )}
               <div className="h-64 overflow-y-auto rounded-xl border bg-muted/30 p-5 shadow-inner">
                 {transcript ? (
                   <p className="text-foreground leading-relaxed">{transcript}</p>
