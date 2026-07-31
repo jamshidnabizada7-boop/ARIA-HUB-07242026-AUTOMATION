@@ -2,7 +2,7 @@ import { TranslatedText } from '@/components/ui/translated-text';
 import { Button } from '@/components/ui/button';
 import { Globe, Plane, Map, ShieldAlert, FileText, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
+import { db as prisma } from '@/lib/db';
 import { getLang } from '@/lib/i18n-server';
 import { cookies } from 'next/headers';
 

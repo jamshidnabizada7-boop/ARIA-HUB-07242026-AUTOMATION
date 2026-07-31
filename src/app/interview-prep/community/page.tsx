@@ -1,7 +1,7 @@
 import { TranslatedText } from '@/components/ui/translated-text';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { prisma } from '@/lib/prisma';
+import { db as prisma } from '@/lib/db';
 import { getLang } from '@/lib/i18n-server';
 import { cookies } from 'next/headers';
 import { MessageSquare, Star, ArrowLeft } from 'lucide-react';

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import { db as prisma } from '@/lib/db';
 import { getLang } from '@/lib/i18n-server';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
