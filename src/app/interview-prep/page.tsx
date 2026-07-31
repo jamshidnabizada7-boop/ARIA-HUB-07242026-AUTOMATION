@@ -30,22 +30,22 @@ export default async function InterviewPrepPage() {
       <div className="bg-primary px-4 py-20 text-center text-primary-foreground md:py-32">
         <div className="mx-auto max-w-4xl space-y-6">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-            <TranslatedText k="interview.title" />
+            <TranslatedText tKey="interview.title" />
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-primary-foreground/80 sm:text-xl">
-            <TranslatedText k="interview.subtitle" />
+            <TranslatedText tKey="interview.subtitle" />
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Button asChild size="lg" variant="secondary" className="font-bold">
               <Link href="/interview-prep/practice">
                 <Mic className="mr-2 h-5 w-5" />
-                <TranslatedText k="interview.practice" />
+                <TranslatedText tKey="interview.practice" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="bg-transparent font-bold text-primary-foreground hover:bg-primary-foreground hover:text-primary border-primary-foreground/30 hover:border-primary-foreground">
               <Link href="/interview-prep/community">
                 <Users className="mr-2 h-5 w-5" />
-                <TranslatedText k="interview.community" />
+                <TranslatedText tKey="interview.community" />
               </Link>
             </Button>
           </div>
@@ -56,7 +56,7 @@ export default async function InterviewPrepPage() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            <TranslatedText k="interview.categories" />
+            <TranslatedText tKey="interview.categories" />
           </h2>
           <p className="mt-2 text-muted-foreground">Explore 1000+ questions across various topics</p>
         </div>

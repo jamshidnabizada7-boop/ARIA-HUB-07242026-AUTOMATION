@@ -35,20 +35,20 @@ export default async function VisaPrepPage() {
             <Plane className="mr-2 h-4 w-4" /> Global Visas
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-            <TranslatedText k="visaPrep.title" />
+            <TranslatedText tKey="visaPrep.title" />
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-primary-foreground/80 sm:text-xl">
-            <TranslatedText k="visaPrep.subtitle" />
+            <TranslatedText tKey="visaPrep.subtitle" />
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Button asChild size="lg" variant="secondary" className="font-bold">
               <Link href="/visa-prep/practice">
-                <TranslatedText k="visaPrep.practice" />
+                <TranslatedText tKey="visaPrep.practice" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="bg-transparent font-bold text-primary-foreground hover:bg-primary-foreground hover:text-primary border-primary-foreground/30 hover:border-primary-foreground">
               <Link href="/visa-prep/calculator">
-                <TranslatedText k="visaPrep.calculator" />
+                <TranslatedText tKey="visaPrep.calculator" />
               </Link>
             </Button>
           </div>
@@ -86,7 +86,7 @@ export default async function VisaPrepPage() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            <TranslatedText k="visaPrep.countries" />
+            <TranslatedText tKey="visaPrep.countries" />
           </h2>
           <p className="mt-2 text-muted-foreground">Select your destination country to get specific preparation materials.</p>
         </div>
