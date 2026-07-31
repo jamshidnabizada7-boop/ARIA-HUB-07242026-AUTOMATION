@@ -15,19 +15,29 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
   const [aiLoading, setAiLoading] = useState(false);
   const [aiAction, setAiAction] = useState('');
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const [siteSettings, setSiteSettings] = useState<any>(null);
 
   useEffect(() => {
     async function fetchTemplate() {
       try {
         const res = await fetch(`/api/templates/${slug}`);
-        const json = await res.json();
-        if (json.success) {
-          setTemplate(json.data);
-          // In a real implementation with @mdxeditor/editor or similar,
-          // you would parse HTML/Markdown. Here we just set text.
-          setContent(json.data.content || '');
-        } else {
+        if (!res.ok) {
           router.push('/templates');
+          return;
+        }
+        
+        const data = await res.json();
+        if (data.success && data.data) {
+          setTemplate(data.data);
+          setContent(data.data.content || '');
+        }
+
+        const siteRes = await fetch('/api/site');
+        if (siteRes.ok) {
+          const siteData = await siteRes.json();
+          if (siteData.settings) {
+            setSiteSettings(siteData.settings);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch:', error);
@@ -87,9 +97,9 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
             <img src="https://www.myariahub.com/images/logo-mark.webp" width="50" height="50" alt="ARIA HUB Logo" />
           </td>
           <td valign="middle">
-            <strong>ARIA HUB - Business & Visa Services</strong><br/>
-            Your gateway to international success.<br/>
-            Website: www.myariahub.com | Address: Kabul, Afghanistan
+            <strong>${siteSettings?.siteName || 'ARIA HUB'} - ${siteSettings?.tagline || 'Business & Visa Services'}</strong><br/>
+            ${siteSettings?.description || 'Your gateway to international success.'}<br/>
+            Website: www.myariahub.com | Address: ${siteSettings?.address || 'Online'}
           </td>
         </tr>
       </table>
@@ -126,11 +136,11 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
             ${htmlContent}
             
             <div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee; display: flex; align-items: center; gap: 15px; font-size: 12px; color: #666; page-break-inside: avoid;">
-              <img src="https://www.myariahub.com/images/logo-mark.webp" width="40" height="40" alt="ARIA HUB" style="border-radius: 8px;" />
+              <img src="https://www.myariahub.com/images/logo-mark.webp" width="40" height="40" alt="${siteSettings?.siteName || 'ARIA HUB'}" style="border-radius: 8px;" />
               <div>
-                <strong style="color: #333; font-size: 14px;">ARIA HUB - Business & Visa Services</strong><br/>
-                Your gateway to international success.<br/>
-                Website: www.myariahub.com | Address: Kabul, Afghanistan
+                <strong style="color: #333; font-size: 14px;">${siteSettings?.siteName || 'ARIA HUB'} - ${siteSettings?.tagline || 'Business & Visa Services'}</strong><br/>
+                ${siteSettings?.description || 'Your gateway to international success.'}<br/>
+                Website: www.myariahub.com | Address: ${siteSettings?.address || 'Online'}
               </div>
             </div>
 
