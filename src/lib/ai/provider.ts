@@ -53,8 +53,8 @@ let cachedProvider: AIProvider | null | undefined; // undefined = not checked ye
 export async function getAIProvider(): Promise<AIProvider | null> {
   if (cachedProvider !== undefined) return cachedProvider;
 
-  // Priority order: cerebras > gemini > nvidia > groq > cloudflare > openrouter
-  const provider = (process.env.AI_PROVIDER || 'cerebras').toLowerCase();
+  // Priority order: groq > cerebras > gemini > nvidia > cloudflare > openrouter
+  const provider = (process.env.AI_PROVIDER || 'groq').toLowerCase();
 
   try {
     switch (provider) {
