@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -14,7 +14,7 @@ const SAMPLE_QUESTIONS = [
   "Describe a time when you faced a significant challenge and how you overcame it."
 ];
 
-export default function InterviewSessionPage() {
+function InterviewSessionContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const mode = searchParams.get('mode') || 'voice';
@@ -245,5 +245,13 @@ export default function InterviewSessionPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function InterviewSessionPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+      <InterviewSessionContent />
+    </Suspense>
   );
 }

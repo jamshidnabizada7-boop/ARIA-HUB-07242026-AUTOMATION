@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Mic, Square, Loader2, ArrowRight, RefreshCcw, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-export default function VisaSessionPage() {
+function VisaSessionContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -307,5 +307,13 @@ export default function VisaSessionPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VisaSessionPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+      <VisaSessionContent />
+    </Suspense>
   );
 }
