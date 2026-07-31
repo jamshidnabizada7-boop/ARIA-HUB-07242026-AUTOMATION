@@ -62,6 +62,11 @@ const NAV = [
   { key: 'interviewCategory', labelKey: 'admin.nav.interviewCategories', icon: Briefcase },
   { key: 'interviewQuestion', labelKey: 'admin.nav.interviewQuestions', icon: FileText },
   { key: 'interviewExperience', labelKey: 'admin.nav.interviewExperiences', icon: Star },
+  { key: 'visaCountry', labelKey: 'admin.nav.visaCountries', icon: Globe },
+  { key: 'visaCategory', labelKey: 'admin.nav.visaCategories', icon: Briefcase },
+  { key: 'visaQuestion', labelKey: 'admin.nav.visaQuestions', icon: FileText },
+  { key: 'visaDocument', labelKey: 'admin.nav.visaDocuments', icon: FileText },
+  { key: 'visaExperience', labelKey: 'admin.nav.visaExperiences', icon: Star },
   { key: 'autoImport', labelKey: 'admin.nav.autoImport', icon: Download },
   { key: 'settings', labelKey: 'admin.nav.siteSettings', icon: Settings },
 ];

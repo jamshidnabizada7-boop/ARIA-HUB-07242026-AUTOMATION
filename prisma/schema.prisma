@@ -929,3 +929,107 @@ model InterviewExperience {
   @@index([status])
 }
 
+// ─── Visa Interview Preparation Center ────────────────────────────────────────
+
+model VisaCountry {
+  id              String         @id @default(cuid())
+  name            String         // USA, Canada, UK, etc.
+  nameI18n        Json?
+  code            String         @unique // US, CA, UK, AU, etc.
+  processingTime  String?        // "3-4 weeks"
+  costEstimate    String?        // "$160"
+  embassyInfo     String?
+  embassyInfoI18n Json?
+  successRate     String?        // "85%"
+  status          String         @default("published")
+  order           Int            @default(0)
+  questions       VisaQuestion[]
+  documents       VisaDocument[]
+  experiences     VisaExperience[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([status])
+}
+
+model VisaCategory {
+  id              String         @id @default(cuid())
+  name            String         // Student Visa, Tourist Visa, Work Visa, Family Visa
+  nameI18n        Json?
+  slug            String         @unique
+  icon            String?
+  description     String?
+  descriptionI18n Json?
+  order           Int            @default(0)
+  questions       VisaQuestion[]
+  documents       VisaDocument[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model VisaQuestion {
+  id                String         @id @default(cuid())
+  question          String
+  questionI18n      Json?
+  countryId         String?
+  country           VisaCountry?   @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  categoryId        String?
+  category          VisaCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  difficulty        String         @default("medium")
+  bestAnswer        String?
+  bestAnswerI18n    Json?
+  wrongAnswer       String?
+  wrongAnswerI18n   Json?
+  aiExplanation     String?
+  aiExplanationI18n Json?
+  confidenceTips    String?
+  confidenceTipsI18n Json?
+  followUpQuestions Json?          // array of strings
+  followUpQuestionsI18n Json?
+  status            String         @default("published")
+  featured          Boolean        @default(false)
+  order             Int            @default(0)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([countryId])
+  @@index([categoryId])
+  @@index([status])
+}
+
+model VisaDocument {
+  id              String         @id @default(cuid())
+  name            String
+  nameI18n        Json?
+  description     String?
+  descriptionI18n Json?
+  isRequired      Boolean        @default(true)
+  countryId       String?
+  country         VisaCountry?   @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  categoryId      String?
+  category        VisaCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  order           Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([countryId])
+  @@index([categoryId])
+}
+
+model VisaExperience {
+  id              String         @id @default(cuid())
+  studentName     String?
+  studentNameI18n Json?
+  countryId       String?
+  country         VisaCountry?   @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  status          String         @default("approved") // approved | rejected
+  content         String         @db.Text
+  contentI18n     Json?
+  rating          Int            @default(5)
+  publishedStatus String         @default("pending") // pending | published
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([countryId])
+  @@index([publishedStatus])
+}

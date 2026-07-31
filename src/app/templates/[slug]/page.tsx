@@ -26,10 +26,24 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
     notFound();
   }
 
-  // Parse JSON fields
-  const requiredFields = (template.requiredFields as string[]) || [];
-  const commonMistakes = (template.commonMistakes as string[]) || [];
-  const writingTips = (template.writingTips as string[]) || [];
+  // Safely parse JSON fields
+  const safeParseArray = (val: any) => {
+    if (!val) return [];
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'string') {
+      try {
+        const parsed = JSON.parse(val);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
+  };
+
+  const requiredFields = safeParseArray(template.requiredFields);
+  const commonMistakes = safeParseArray(template.commonMistakes);
+  const writingTips = safeParseArray(template.writingTips);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12" dir="ltr">

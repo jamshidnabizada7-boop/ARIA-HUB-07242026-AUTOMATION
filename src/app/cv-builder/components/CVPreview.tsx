@@ -33,7 +33,7 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
 
   const siteName = siteNameI18n?.[lang] || settings?.siteName || 'ARIA HUB';
   const description = descriptionI18n?.[lang] || settings?.description || 'Your Gateway to Global Opportunities';
-  const address = addressI18n?.[lang] || settings?.address || 'Kabul, Afghanistan';
+  const address = addressI18n?.[lang] || settings?.address || 'Sediqyar Square, Opposite of Balkh Medical Faculty, Mazar-e-Sharif, Afghanistan';
 
   const PrintFooter = () => (
     <div className="hidden print:flex flex-row items-center justify-between border-t-2 border-slate-200 pt-4 mt-auto w-full gap-4 page-break-inside-avoid" dir={isRtl ? 'rtl' : 'ltr'}>

@@ -29,7 +29,13 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
         }
         
         const data = await res.json();
-        if (data.success && data.data) {
+        const savedDraft = localStorage.getItem(`draft_${slug}`);
+        if (savedDraft) {
+          if (data.success && data.data) {
+            setTemplate(data.data);
+          }
+          setContent(savedDraft);
+        } else if (data.success && data.data) {
           setTemplate(data.data);
           setContent(data.data.content || '');
         }
@@ -101,7 +107,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
           <td valign="middle">
             <strong>${siteSettings?.siteName || 'ARIA HUB'} - ${siteSettings?.tagline || 'Business & Visa Services'}</strong><br/>
             ${siteSettings?.description || 'Your gateway to international success.'}<br/>
-            Website: www.myariahub.com | Address: ${siteSettings?.address || 'Online'}
+            Website: www.myariahub.com | Address: ${siteSettings?.address || 'Sediqyar Square, Opposite of Balkh Medical Faculty, Mazar-e-Sharif, Afghanistan'}
           </td>
         </tr>
       </table>
@@ -110,13 +116,17 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
     const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
     const footer = "</body></html>";
     const sourceHTML = header + htmlContent + brandingFooter + footer;
-    const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+    
+    // Create Blob to ensure it downloads as a true file and isn't opened as txt
+    const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
     const fileDownload = document.createElement("a");
     document.body.appendChild(fileDownload);
-    fileDownload.href = source;
+    fileDownload.href = url;
     fileDownload.download = `${slug}-document.doc`;
     fileDownload.click();
     document.body.removeChild(fileDownload);
+    URL.revokeObjectURL(url);
   };
 
   const handleExportPDF = async () => {
@@ -142,7 +152,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
               <div>
                 <strong style="color: #333; font-size: 14px;">${siteSettings?.siteName || 'ARIA HUB'} - ${siteSettings?.tagline || 'Business & Visa Services'}</strong><br/>
                 ${siteSettings?.description || 'Your gateway to international success.'}<br/>
-                Website: www.myariahub.com | Address: ${siteSettings?.address || 'Online'}
+                Website: www.myariahub.com | Address: ${siteSettings?.address || 'Sediqyar Square, Opposite of Balkh Medical Faculty, Mazar-e-Sharif, Afghanistan'}
               </div>
             </div>
 
