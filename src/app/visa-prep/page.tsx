@@ -61,22 +61,22 @@ export default async function VisaPrepPage() {
           <Link href="/visa-prep/calculator" className="flex items-center gap-4 rounded-xl bg-card p-6 shadow-md transition-transform hover:-translate-y-1">
             <div className="rounded-lg bg-emerald-500/10 p-3 text-emerald-500"><Map className="h-6 w-6" /></div>
             <div>
-              <h3 className="font-bold">Visa Cost Calculator</h3>
-              <p className="text-sm text-muted-foreground">Estimate your total application expenses.</p>
+              <h3 className="font-bold"><TranslatedText tKey="visaPrep.calculator" /></h3>
+              <p className="text-sm text-muted-foreground">{lang === 'fa' ? 'کل هزینه‌های درخواست خود را تخمین بزنید.' : lang === 'ps' ? 'د خپل غوښتنلیک ټول لګښت اټکل کړئ.' : 'Estimate your total application expenses.'}</p>
             </div>
           </Link>
-          <Link href="/visa-prep/community" className="flex items-center gap-4 rounded-xl bg-card p-6 shadow-md transition-transform hover:-translate-y-1">
+          <Link href="/interview-prep/community" className="flex items-center gap-4 rounded-xl bg-card p-6 shadow-md transition-transform hover:-translate-y-1">
             <div className="rounded-lg bg-blue-500/10 p-3 text-blue-500"><FileText className="h-6 w-6" /></div>
             <div>
-              <h3 className="font-bold">Success Stories</h3>
-              <p className="text-sm text-muted-foreground">Read real experiences from successful applicants.</p>
+              <h3 className="font-bold"><TranslatedText tKey="visaPrep.community" /></h3>
+              <p className="text-sm text-muted-foreground">{lang === 'fa' ? 'تجربیات واقعی متقاضیان موفق را بخوانید.' : lang === 'ps' ? 'د بریالي غوښتونکو ریښتیني تجربې ولولئ.' : 'Read real experiences from successful applicants.'}</p>
             </div>
           </Link>
-          <Link href="/visa-prep/rejections" className="flex items-center gap-4 rounded-xl bg-card p-6 shadow-md transition-transform hover:-translate-y-1">
+          <Link href="/interview-prep/community" className="flex items-center gap-4 rounded-xl bg-card p-6 shadow-md transition-transform hover:-translate-y-1">
             <div className="rounded-lg bg-red-500/10 p-3 text-red-500"><ShieldAlert className="h-6 w-6" /></div>
             <div>
-              <h3 className="font-bold">Rejection Reasons</h3>
-              <p className="text-sm text-muted-foreground">Learn what to avoid during your interview.</p>
+              <h3 className="font-bold">{lang === 'fa' ? 'دلایل ریجکتی' : lang === 'ps' ? 'د ردولو لاملونه' : 'Rejection Reasons'}</h3>
+              <p className="text-sm text-muted-foreground">{lang === 'fa' ? 'بیاموزید در طول مصاحبه از چه چیزهایی اجتناب کنید.' : lang === 'ps' ? 'زده کړئ چې د مرکې پرمهال له څه شی څخه مخنیوی وکړئ.' : 'Learn what to avoid during your interview.'}</p>
             </div>
           </Link>
         </div>

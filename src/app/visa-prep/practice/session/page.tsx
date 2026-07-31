@@ -100,6 +100,7 @@ function VisaSessionContent() {
         recognitionRef.current = new SpeechRecognition();
         recognitionRef.current.continuous = true;
         recognitionRef.current.interimResults = true;
+        recognitionRef.current.lang = 'en-US'; // Set to English for visa interviews
         
         recognitionRef.current.onresult = (event: any) => {
           let currentTranscript = '';
@@ -107,6 +108,15 @@ function VisaSessionContent() {
             currentTranscript += event.results[i][0].transcript;
           }
           setTranscript(currentTranscript);
+        };
+        
+        recognitionRef.current.onerror = (event: any) => {
+          console.error("Speech recognition error", event.error);
+          setIsRecording(false);
+        };
+        
+        recognitionRef.current.onend = () => {
+          setIsRecording(false);
         };
       }
     }
@@ -119,14 +129,24 @@ function VisaSessionContent() {
   }, []);
 
   const toggleRecording = () => {
+    if (!recognitionRef.current) {
+      alert("Your browser does not support voice recording, or microphone access was denied. Please type your answer or use a supported browser like Chrome.");
+      return;
+    }
+    
     if (isRecording) {
       recognitionRef.current?.stop();
       setIsRecording(false);
     } else {
       setTranscript('');
       setFeedback(null);
-      recognitionRef.current?.start();
-      setIsRecording(true);
+      try {
+        recognitionRef.current?.start();
+        setIsRecording(true);
+      } catch (e) {
+        console.error(e);
+        setIsRecording(false);
+      }
     }
   };
 
