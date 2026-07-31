@@ -6,9 +6,10 @@ import { BookOpen, Copy, Download, Share2, Sparkles, CheckCircle, AlertTriangle,
 
 const prisma = new PrismaClient();
 
-export default async function TemplateDetailPage({ params }: { params: { slug: string } }) {
+export default async function TemplateDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const template = await prisma.documentTemplate.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: {
       category: true,
       comments: {

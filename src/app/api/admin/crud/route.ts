@@ -26,6 +26,8 @@ const MODELS: Record<string, { delegate: any; fields: string[]; label: string; s
   ctaBanner: { label: 'CTA Banners', delegate: db.ctaBanner, fields: ['title', 'titleI18n', 'subtitle', 'subtitleI18n', 'buttonText', 'buttonTextI18n', 'buttonUrl', 'secondaryText', 'accent', 'order', 'status'], statusOptions: ['published', 'draft', 'archived'] },
   // menuItem: `key`/pageSlug intentionally NOT editable here — section keys drive the homepage layout.
   menuItem: { label: 'Menu Items', delegate: db.menuItem, fields: ['label', 'labelI18n', 'url', 'parentId', 'icon', 'order', 'visible', 'openInNewTab'] },
+  documentCategory: { label: 'Document Categories', delegate: db.documentCategory, fields: ['name', 'nameI18n', 'slug', 'description', 'descriptionI18n', 'icon', 'order'] },
+  documentTemplate: { label: 'Document Templates', delegate: db.documentTemplate, fields: ['title', 'slug', 'excerpt', 'content', 'status', 'isPremium', 'categoryId', 'requiredFields', 'writingTips', 'commonMistakes'], statusOptions: ['published', 'draft', 'archived'] },
   // section: `key` is NOT editable — renaming it would silently break the homepage sectionMap mapping.
   section: { label: 'Sections', delegate: db.section, fields: ['title', 'subtitle', 'enabled', 'order'] },
   language: { label: 'Languages', delegate: db.language, fields: ['code', 'name', 'nativeName', 'direction', 'enabled', 'isDefault', 'flag', 'order', 'translations'] },
@@ -70,6 +72,8 @@ function isRequiredField(model: string, field: string): boolean {
     comparisonRow: ['feature', 'ariaValue', 'othersValue', 'order', 'status'],
     ctaBanner: ['title', 'buttonText', 'buttonUrl', 'accent', 'order', 'status'],
     menuItem: ['label', 'order', 'visible', 'openInNewTab'],
+    documentCategory: ['name', 'slug', 'order'],
+    documentTemplate: ['title', 'slug', 'status'],
     section: ['enabled', 'order'],
     language: ['code', 'name', 'nativeName', 'direction', 'enabled', 'isDefault', 'order'],
     serviceCategory: ['name', 'slug', 'order'],

@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Sparkles, Save, Download, ArrowLeft, Languages, CheckCheck, RefreshCw, Briefcase, FileText } from 'lucide-react';
 
-export default function TemplateEditorPage({ params }: { params: { slug: string } }) {
+export default function TemplateEditorPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
+  const { slug } = React.use(params);
   const [template, setTemplate] = useState<any>(null);
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
@@ -16,7 +17,7 @@ export default function TemplateEditorPage({ params }: { params: { slug: string 
   useEffect(() => {
     async function fetchTemplate() {
       try {
-        const res = await fetch(`/api/templates/${params.slug}`);
+        const res = await fetch(`/api/templates/${slug}`);
         const json = await res.json();
         if (json.success) {
           setTemplate(json.data);
@@ -33,7 +34,7 @@ export default function TemplateEditorPage({ params }: { params: { slug: string 
       }
     }
     fetchTemplate();
-  }, [params.slug, router]);
+  }, [slug, router]);
 
   const handleAiAction = async (action: string, contextPrompt?: string) => {
     setAiLoading(true);
@@ -81,7 +82,7 @@ export default function TemplateEditorPage({ params }: { params: { slug: string 
       {/* Editor Top Bar */}
       <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="flex items-center gap-4">
-          <Link href={`/templates/${params.slug}`} className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+          <Link href={`/templates/${slug}`} className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
