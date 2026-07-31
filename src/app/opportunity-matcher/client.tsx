@@ -28,12 +28,12 @@ const COUNTRIES = [
 ];
 
 const MOCK_OPPORTUNITIES = [
-  { id: 1, title: 'DAAD Scholarship in Germany', type: 'Scholarship', location: 'Germany', match: 98 },
-  { id: 2, title: 'Tech Start Internship', type: 'Internship', location: 'Canada', match: 92 },
-  { id: 3, title: 'Skilled Worker Visa Program', type: 'Work Visa', location: 'Australia', match: 89 },
-  { id: 4, title: 'Global Excellence Scholarship', type: 'Scholarship', location: 'United Kingdom', match: 95 },
-  { id: 5, title: 'Engineering Graduate Program', type: 'Work Visa', location: 'United States', match: 87 },
-  { id: 6, title: 'European Union Tech Internship', type: 'Internship', location: 'Netherlands', match: 91 },
+  { id: 1, title: 'DAAD Scholarship in Germany', type: 'Scholarship', location: 'Germany', match: 98, chanceOfAcceptance: 'High', rationale: 'This scholarship aligns perfectly with your goals.' },
+  { id: 2, title: 'Tech Start Internship', type: 'Internship', location: 'Canada', match: 92, chanceOfAcceptance: 'High', rationale: 'A great match for your profile.' },
+  { id: 3, title: 'Skilled Worker Visa Program', type: 'Work Visa', location: 'Australia', match: 89, chanceOfAcceptance: 'Medium', rationale: 'Matches your selected target country and goals.' },
+  { id: 4, title: 'Global Excellence Scholarship', type: 'Scholarship', location: 'United Kingdom', match: 95, chanceOfAcceptance: 'High', rationale: 'Your education level makes you a strong candidate.' },
+  { id: 5, title: 'Engineering Graduate Program', type: 'Work Visa', location: 'United States', match: 87, chanceOfAcceptance: 'Medium', rationale: 'A solid opportunity based on your preferences.' },
+  { id: 6, title: 'European Union Tech Internship', type: 'Internship', location: 'Netherlands', match: 91, chanceOfAcceptance: 'High', rationale: 'Great fit for your background.' },
 ];
 
 export function OpportunityMatcherClient() {
@@ -255,23 +255,40 @@ export function OpportunityMatcherClient() {
                    transition={{ delay: idx * 0.2 }}
                  >
                    <Card className="bg-white/60 dark:bg-black/40 backdrop-blur-lg border-white/20 shadow-xl overflow-hidden group hover:shadow-2xl transition-all">
-                      <div className="flex flex-col md:flex-row items-center p-0">
+                      <div className="flex flex-col md:flex-row items-stretch p-0">
                         <div className="flex-1 p-6">
-                           <div className="flex items-center gap-2 mb-2">
+                           <div className="flex flex-wrap items-center gap-2 mb-3">
                              <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
                                {result.type}
                              </span>
                              <span className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
                                <Globe className="w-3 h-3"/> {result.location}
                              </span>
+                             {result.chanceOfAcceptance && (
+                               <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${
+                                 result.chanceOfAcceptance === 'High' ? 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-900/30 dark:text-green-400' :
+                                 result.chanceOfAcceptance === 'Medium' ? 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-400' :
+                                 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-800 dark:bg-rose-900/30 dark:text-rose-400'
+                               }`}>
+                                 {result.chanceOfAcceptance} Chance
+                               </span>
+                             )}
                            </div>
-                           <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1 group-hover:text-blue-500 transition-colors">
+                           <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-3 group-hover:text-blue-500 transition-colors">
                              {result.title}
                            </h3>
+                           {result.rationale && (
+                             <div className="mt-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/50">
+                               <p className="text-sm text-slate-600 dark:text-slate-300 italic">
+                                 <span className="font-semibold text-blue-600 dark:text-blue-400 not-italic mr-1">AI Match Rationale:</span> 
+                                 {result.rationale}
+                               </p>
+                             </div>
+                           )}
                         </div>
-                        <div className="bg-slate-50 dark:bg-slate-800/50 p-6 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700 w-full md:w-auto h-full">
+                        <div className="bg-slate-50 dark:bg-slate-800/80 p-6 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700 w-full md:w-32 h-auto shrink-0">
                            <div className="text-3xl font-bold text-[#d4af37]">{result.match}%</div>
-                           <div className="text-xs text-slate-500 font-semibold uppercase tracking-wider">{t('tools.oppMatcher.results.matchRating')}</div>
+                           <div className="text-xs text-slate-500 font-semibold uppercase tracking-wider text-center mt-1">{t('tools.oppMatcher.results.matchRating')}</div>
                         </div>
                       </div>
                    </Card>
