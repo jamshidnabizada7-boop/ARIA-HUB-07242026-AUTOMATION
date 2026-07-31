@@ -77,9 +77,27 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
   const handleExportWord = async () => {
     setExportMenuOpen(false);
     const htmlContent = await marked.parse(content);
+    
+    const brandingFooter = `
+      <br><br><br>
+      <hr style="border: 0; border-bottom: 1px solid #ccc; margin-bottom: 20px;" />
+      <table width="100%" style="font-family: Arial, sans-serif; color: #666; font-size: 12px;">
+        <tr>
+          <td width="60" valign="middle">
+            <img src="https://www.myariahub.com/images/logo-mark.webp" width="50" height="50" alt="ARIA HUB Logo" />
+          </td>
+          <td valign="middle">
+            <strong>ARIA HUB - Business & Visa Services</strong><br/>
+            Your gateway to international success.<br/>
+            Website: www.myariahub.com | Address: Kabul, Afghanistan
+          </td>
+        </tr>
+      </table>
+    `;
+
     const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
     const footer = "</body></html>";
-    const sourceHTML = header + htmlContent + footer;
+    const sourceHTML = header + htmlContent + brandingFooter + footer;
     const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
     const fileDownload = document.createElement("a");
     document.body.appendChild(fileDownload);
@@ -106,8 +124,20 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
           </head>
           <body>
             ${htmlContent}
+            
+            <div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee; display: flex; align-items: center; gap: 15px; font-size: 12px; color: #666; page-break-inside: avoid;">
+              <img src="https://www.myariahub.com/images/logo-mark.webp" width="40" height="40" alt="ARIA HUB" style="border-radius: 8px;" />
+              <div>
+                <strong style="color: #333; font-size: 14px;">ARIA HUB - Business & Visa Services</strong><br/>
+                Your gateway to international success.<br/>
+                Website: www.myariahub.com | Address: Kabul, Afghanistan
+              </div>
+            </div>
+
             <script>
-              window.onload = function() { window.print(); window.close(); }
+              window.onload = function() { 
+                setTimeout(() => { window.print(); window.close(); }, 500);
+              }
             </script>
           </body>
         </html>
