@@ -140,6 +140,38 @@ async function main() {
     }
   }
 
+  // 5. Add new Tools to Menu
+  const toolsMenu = await db.menuItem.findFirst({ where: { url: null, label: 'Tools' } });
+  if (toolsMenu) {
+    const existingInterview = await db.menuItem.findFirst({ where: { url: '/interview-prep' } });
+    if (!existingInterview) {
+      await db.menuItem.create({
+        data: {
+          label: 'Scholarship Interview',
+          labelI18n: { en: 'Scholarship Interview', fa: 'مصاحبه بورسیه', ps: 'د بورسونو مرکه' },
+          url: '/interview-prep',
+          parentId: toolsMenu.id,
+          order: 3,
+          visible: true,
+        }
+      });
+    }
+
+    const existingVisa = await db.menuItem.findFirst({ where: { url: '/visa-prep' } });
+    if (!existingVisa) {
+      await db.menuItem.create({
+        data: {
+          label: 'Visa Interview',
+          labelI18n: { en: 'Visa Interview', fa: 'مصاحبه ویزا', ps: 'د ویزې مرکه' },
+          url: '/visa-prep',
+          parentId: toolsMenu.id,
+          order: 4,
+          visible: true,
+        }
+      });
+    }
+  }
+
   console.log('✅ Translations seeded successfully!');
 }
 
