@@ -19,9 +19,21 @@ export function CVPreview({ data, template, settings }: CVPreviewProps) {
   // If all fields are empty, show a placeholder overlay
   const isEmpty = !data.personal.fullName && data.education.length === 0 && data.experience.length === 0 && data.skills.length === 0;
 
-  const siteName = (settings?.siteNameI18n as any)?.[lang] || settings?.siteName || 'ARIA HUB';
-  const description = (settings?.descriptionI18n as any)?.[lang] || settings?.description || 'Your Gateway to Global Opportunities';
-  const address = (settings?.addressI18n as any)?.[lang] || settings?.address || 'Kabul, Afghanistan';
+  const parseI18n = (val: any) => {
+    if (!val) return null;
+    if (typeof val === 'string') {
+      try { return JSON.parse(val); } catch (e) { return null; }
+    }
+    return val;
+  };
+
+  const siteNameI18n = parseI18n(settings?.siteNameI18n);
+  const descriptionI18n = parseI18n(settings?.descriptionI18n);
+  const addressI18n = parseI18n(settings?.addressI18n);
+
+  const siteName = siteNameI18n?.[lang] || settings?.siteName || 'ARIA HUB';
+  const description = descriptionI18n?.[lang] || settings?.description || 'Your Gateway to Global Opportunities';
+  const address = addressI18n?.[lang] || settings?.address || 'Kabul, Afghanistan';
 
   const PrintFooter = () => (
     <div className="hidden print:flex flex-row items-center justify-between border-t-2 border-slate-200 pt-4 mt-auto w-full gap-4 page-break-inside-avoid" dir={isRtl ? 'rtl' : 'ltr'}>

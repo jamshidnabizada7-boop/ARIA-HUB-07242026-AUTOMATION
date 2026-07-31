@@ -57,6 +57,11 @@ export async function PUT(req: NextRequest) {
       create: { id: 'singleton', ...clean },
     });
     await logAction({ userId: admin.id, action: 'update', entity: 'siteSetting', entityId: 'singleton', req });
+    
+    // Invalidate site cache so frontend reflects new settings immediately
+    const { revalidatePath } = require('next/cache');
+    revalidatePath('/', 'layout');
+    
     return NextResponse.json({ success: true, settings });
   } catch (e: any) {
     console.error('[settings] error:', e);
