@@ -1,0 +1,216 @@
+import React from 'react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { PrismaClient } from '@prisma/client';
+import { BookOpen, Copy, Download, Share2, Sparkles, CheckCircle, AlertTriangle, Lightbulb, Bookmark } from 'lucide-react';
+
+const prisma = new PrismaClient();
+
+export default async function TemplateDetailPage({ params }: { params: { slug: string } }) {
+  const template = await prisma.documentTemplate.findUnique({
+    where: { slug: params.slug },
+    include: {
+      category: true,
+      comments: {
+        include: { user: { select: { name: true, image: true } } },
+        orderBy: { createdAt: 'desc' }
+      },
+      _count: { select: { ratings: true, bookmarks: true } }
+    }
+  });
+
+  if (!template) {
+    notFound();
+  }
+
+  // Parse JSON fields
+  const requiredFields = (template.requiredFields as string[]) || [];
+  const commonMistakes = (template.commonMistakes as string[]) || [];
+  const writingTips = (template.writingTips as string[]) || [];
+
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12">
+      <div className="container mx-auto px-4 max-w-6xl">
+        
+        {/* Breadcrumb & Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2 text-sm text-slate-500 mb-4">
+            <Link href="/templates" className="hover:text-blue-600 transition-colors">Library</Link>
+            <span>/</span>
+            {template.category && (
+              <>
+                <span>{template.category.name}</span>
+                <span>/</span>
+              </>
+            )}
+            <span className="text-slate-900 dark:text-slate-200 font-medium">{template.title}</span>
+          </div>
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
+                {template.title}
+              </h1>
+              <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl">
+                {template.excerpt}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Link 
+                href={`/templates/${template.slug}/editor`}
+                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
+              >
+                <Sparkles className="w-5 h-5" /> Open in AI Editor
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Main Content: Template Preview */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                <h3 className="font-semibold text-slate-800 dark:text-slate-200">Template Preview</h3>
+                <div className="flex gap-2">
+                  <button className="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Copy Text">
+                    <Copy className="w-4 h-4" />
+                  </button>
+                  {template.filePdfUrl && (
+                    <a href={template.filePdfUrl} className="p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Download PDF" download>
+                      <Download className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
+              </div>
+              <div className="p-8 prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 min-h-[400px]">
+                {/* Normally we'd render Markdown or HTML here safely */}
+                <div dangerouslySetInnerHTML={{ __html: template.content || 'Template content not available.' }} />
+              </div>
+            </div>
+            
+            {/* Community Comments */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Community Discussion</h3>
+              
+              <div className="space-y-6">
+                {template.comments.length > 0 ? (
+                  template.comments.map((comment) => (
+                    <div key={comment.id} className="flex gap-4">
+                      <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 flex-shrink-0 overflow-hidden">
+                        {comment.user.image ? (
+                          <img src={comment.user.image} alt={comment.user.name || 'User'} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-500 font-bold">
+                            {(comment.user.name || 'U')[0]}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <div className="flex items-baseline gap-2 mb-1">
+                          <span className="font-semibold text-slate-800 dark:text-slate-200">{comment.user.name || 'Anonymous User'}</span>
+                          <span className="text-xs text-slate-500">{new Date(comment.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">
+                          {comment.content}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-slate-500 text-sm italic">No comments yet. Be the first to share your experience!</p>
+                )}
+              </div>
+              
+              <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <textarea 
+                  className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all resize-none"
+                  rows={3}
+                  placeholder="Share how this template worked for you..."
+                ></textarea>
+                <div className="flex justify-end mt-3">
+                  <button className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2 rounded-lg font-medium hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors">
+                    Post Comment
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar: Tips & Metadata */}
+          <div className="space-y-6">
+            
+            {/* Required Fields */}
+            {requiredFields.length > 0 && (
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
+                <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+                  <CheckCircle className="w-5 h-5 text-blue-600" /> Required Information
+                </h3>
+                <ul className="space-y-3">
+                  {requiredFields.map((field, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-1.5 flex-shrink-0" />
+                      {field}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Writing Tips */}
+            {writingTips.length > 0 && (
+              <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/30 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 shadow-sm p-6">
+                <h3 className="font-bold text-indigo-900 dark:text-indigo-300 flex items-center gap-2 mb-4">
+                  <Lightbulb className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Expert Tips
+                </h3>
+                <ul className="space-y-3">
+                  {writingTips.map((tip, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-indigo-800 dark:text-indigo-200">
+                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 flex-shrink-0" />
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Common Mistakes */}
+            {commonMistakes.length > 0 && (
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-red-100 dark:border-red-900/30 shadow-sm p-6">
+                <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+                  <AlertTriangle className="w-5 h-5 text-red-500" /> Common Mistakes
+                </h3>
+                <ul className="space-y-3">
+                  {commonMistakes.map((mistake, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 flex-shrink-0" />
+                      {mistake}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {/* AI Call to Action */}
+            <div className="bg-slate-900 dark:bg-slate-800 rounded-2xl shadow-lg p-6 text-center text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-blue-500 rounded-full blur-3xl opacity-30"></div>
+              <Sparkles className="w-8 h-8 mx-auto mb-3 text-blue-400" />
+              <h3 className="text-xl font-bold mb-2">Need a custom version?</h3>
+              <p className="text-slate-300 text-sm mb-6">
+                Let our AI personalize this template with your details, optimize it for ATS, or translate it.
+              </p>
+              <Link 
+                href={`/templates/${template.slug}/editor`}
+                className="block w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-semibold transition-colors shadow-lg shadow-blue-900/20"
+              >
+                Personalize with AI
+              </Link>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

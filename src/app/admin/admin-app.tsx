@@ -26,7 +26,7 @@ import { useT } from '@/hooks/use-t';
 import { cn } from '@/lib/utils';
 import { MultilingualInput } from '@/components/admin/multilingual-input';
 import { AutoImportPanel } from '@/components/admin/auto-import-panel';
-
+import { TemplatesPanel } from '@/components/admin/templates-panel';
 interface AdminUser { id: string; email: string; name: string; role: string; }
 
 // All manageable models with their icon and translation key
@@ -57,6 +57,8 @@ const NAV = [
   { key: 'serviceCategory', labelKey: 'admin.nav.serviceCategories', icon: Briefcase },
   { key: 'opportunityCategory', labelKey: 'admin.nav.opportunityCategories', icon: Briefcase },
   { key: 'newsCategory', labelKey: 'admin.nav.newsCategories', icon: Briefcase },
+  { key: 'documentCategory', labelKey: 'admin.nav.docCategories', icon: Briefcase },
+  { key: 'documentTemplate', labelKey: 'admin.nav.docTemplates', icon: FileText },
   { key: 'autoImport', labelKey: 'admin.nav.autoImport', icon: Download },
   { key: 'settings', labelKey: 'admin.nav.siteSettings', icon: Settings },
 ];
@@ -144,7 +146,7 @@ export function AdminApp({ admin }: { admin: AdminUser }) {
           </div>
         </header>
         <main className="flex-1 overflow-x-hidden p-4 lg:p-6">
-          {active === 'dashboard' ? <Dashboard /> : active === 'settings' ? <SettingsPanel /> : active === 'autoImport' ? <AutoImportPanel /> : <CrudTable model={active} />}
+          {active === 'dashboard' ? <Dashboard /> : active === 'settings' ? <SettingsPanel /> : active === 'autoImport' ? <AutoImportPanel /> : active === 'documentTemplate' ? <TemplatesPanel /> : <CrudTable model={active} />}
         </main>
       </div>
     </div>
