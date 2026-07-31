@@ -20,7 +20,7 @@ const getCategoryIcon = (name: string) => {
 };
 
 export default async function VisaCountryPage({ params }: { params: { country: string } }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const lang = cookieStore.get('NEXT_LOCALE')?.value || 'en';
   
   const country = await prisma.visaCountry.findUnique({

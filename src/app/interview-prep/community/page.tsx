@@ -14,7 +14,7 @@ export const metadata = {
 };
 
 export default async function InterviewCommunityPage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const lang = cookieStore.get('NEXT_LOCALE')?.value || 'en';
   
   // Fetch published interview experiences

@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 export default async function VisaPrepPage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const lang = cookieStore.get('NEXT_LOCALE')?.value || 'en';
   
   const countries = await prisma.visaCountry.findMany({

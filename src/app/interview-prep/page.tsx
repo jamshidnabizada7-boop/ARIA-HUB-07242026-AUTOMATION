@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 export default async function InterviewPrepPage() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const lang = cookieStore.get('NEXT_LOCALE')?.value || 'en';
   
   const categories = await prisma.interviewCategory.findMany({

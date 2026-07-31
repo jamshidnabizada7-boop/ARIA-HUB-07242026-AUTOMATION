@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 export default async function QuestionDetailPage({ params }: { params: { id: string } }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const lang = cookieStore.get('NEXT_LOCALE')?.value || 'en';
   
   const question = await prisma.interviewQuestion.findUnique({
