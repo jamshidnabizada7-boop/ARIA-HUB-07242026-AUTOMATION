@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PrismaClient } from '@prisma/client';
 import { BookOpen, Copy, Download, Share2, Sparkles, CheckCircle, AlertTriangle, Lightbulb, Bookmark } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 const prisma = new PrismaClient();
 
@@ -30,7 +31,7 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
   const writingTips = (template.writingTips as string[]) || [];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12" dir="ltr">
       <div className="container mx-auto px-4 max-w-6xl">
         
         {/* Breadcrumb & Header */}
@@ -85,9 +86,8 @@ export default async function TemplateDetailPage({ params }: { params: Promise<{
                   )}
                 </div>
               </div>
-              <div className="p-8 prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 min-h-[400px]">
-                {/* Normally we'd render Markdown or HTML here safely */}
-                <div dangerouslySetInnerHTML={{ __html: template.content || 'Template content not available.' }} />
+              <div className="p-8 prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 min-h-[400px]" dir="auto">
+                <ReactMarkdown>{template.content || 'Template content not available.'}</ReactMarkdown>
               </div>
             </div>
             

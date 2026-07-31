@@ -206,6 +206,7 @@ export default function TemplateEditorPage({ params }: { params: Promise<{ slug:
                 onChange={(e) => setContent(e.target.value)}
                 className="flex-1 w-full p-8 md:p-12 resize-none outline-none text-slate-700 dark:text-slate-300 bg-transparent leading-relaxed"
                 placeholder="Start typing your document here..."
+                dir="auto"
               ></textarea>
             </div>
           </div>

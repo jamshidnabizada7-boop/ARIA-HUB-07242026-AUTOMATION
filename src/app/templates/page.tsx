@@ -49,7 +49,7 @@ export default function TemplatesLibraryPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12" dir="ltr">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Header */}
         <div className="text-center mb-12">
