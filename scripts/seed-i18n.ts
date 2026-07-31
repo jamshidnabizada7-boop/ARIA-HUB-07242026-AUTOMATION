@@ -170,6 +170,20 @@ async function main() {
         }
       });
     }
+
+    const existingTemplates = await db.menuItem.findFirst({ where: { url: '/templates' } });
+    if (!existingTemplates) {
+      await db.menuItem.create({
+        data: {
+          label: 'Template Library',
+          labelI18n: { en: 'Template Library', fa: 'کتابخانه الگوها', ps: 'د الګوګانو کتابتون' },
+          url: '/templates',
+          parentId: toolsMenu.id,
+          order: 5,
+          visible: true,
+        }
+      });
+    }
   }
 
   console.log('✅ Translations seeded successfully!');
