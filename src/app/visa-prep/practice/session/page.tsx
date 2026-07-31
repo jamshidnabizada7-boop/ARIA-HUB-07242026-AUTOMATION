@@ -17,40 +17,80 @@ function VisaSessionContent() {
   const mode = searchParams.get('mode') || 'mock';
   
   const [questions, setQuestions] = useState<any[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState("Loading your first personalized visa question...");
+  const [previousQuestions, setPreviousQuestions] = useState<string[]>([]);
   const [loadingQuestions, setLoadingQuestions] = useState(true);
   
   const [questionIndex, setQuestionIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(true);
   const [feedback, setFeedback] = useState<any>(null);
+  const [targetCountryName, setTargetCountryName] = useState('General');
+  const [visaTypeName, setVisaTypeName] = useState('General');
   
   const recognitionRef = useRef<any>(null);
 
+  // Fetch Country and Category Names
   useEffect(() => {
-    // Fetch questions from API
-    const fetchQuestions = async () => {
+    const fetchMetadata = async () => {
       try {
-        const url = new URL('/api/visas/questions', window.location.origin);
-        if (countryId) url.searchParams.set('countryId', countryId);
-        if (categoryId && categoryId !== 'all') url.searchParams.set('categoryId', categoryId);
-        url.searchParams.set('difficulty', difficulty);
-        
-        const res = await fetch(url.toString());
+        const res = await fetch('/api/visas');
         if (res.ok) {
           const data = await res.json();
-          // if mode is single, maybe we only take 1, but let's just use the whole list
-          setQuestions(data.length > 0 ? data : [{ question: "Why are you traveling to this country?", country: { name: "General" }, category: { name: "General" } }]);
+          if (countryId) {
+            const country = data.find((c: any) => c.id === countryId);
+            if (country) {
+              setTargetCountryName(country.name);
+              if (categoryId && categoryId !== 'all') {
+                const cat = country.categories?.find((c: any) => c.id === categoryId);
+                if (cat) setVisaTypeName(cat.name);
+              }
+            }
+          }
         }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoadingQuestions(false);
-      }
+      } catch (err) {}
     };
-    
-    fetchQuestions();
-  }, [countryId, categoryId, difficulty]);
+    fetchMetadata();
+  }, [countryId, categoryId]);
+
+  const fetchQuestion = async () => {
+    setIsGeneratingQuestion(true);
+    setLoadingQuestions(true);
+    try {
+      const res = await fetch('/api/visas/generate-question', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          targetCountry: targetCountryName,
+          visaType: visaTypeName,
+          difficulty,
+          currentIndex: questionIndex,
+          previousQuestions
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.question) {
+        setCurrentQuestion(data.question);
+        setPreviousQuestions(prev => [...prev, data.question]);
+      } else {
+        setCurrentQuestion("Why do you want to travel to this country?");
+      }
+    } catch (error) {
+      console.error(error);
+      setCurrentQuestion("Why do you want to travel to this country?");
+    } finally {
+      setIsGeneratingQuestion(false);
+      setLoadingQuestions(false);
+    }
+  };
+
+  useEffect(() => {
+    if (targetCountryName !== 'General' || !countryId) {
+      fetchQuestion();
+    }
+  }, [targetCountryName, visaTypeName, difficulty]);
 
   useEffect(() => {
     // Initialize SpeechRecognition if supported
@@ -100,15 +140,14 @@ function VisaSessionContent() {
     }
 
     try {
-      const currentQ = questions[questionIndex];
       const res = await fetch('/api/visas/evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           transcript,
-          questionText: currentQ.question,
-          country: currentQ.country?.name || 'General',
-          category: currentQ.category?.name || 'General'
+          questionText: currentQuestion,
+          country: targetCountryName,
+          category: visaTypeName
         })
       });
       
@@ -129,15 +168,17 @@ function VisaSessionContent() {
   const nextQuestion = () => {
     setTranscript('');
     setFeedback(null);
-    if (questionIndex < questions.length - 1) {
+    const maxQuestions = mode === 'single' ? 1 : 10;
+    if (questionIndex < maxQuestions - 1) {
       setQuestionIndex(prev => prev + 1);
+      fetchQuestion();
     } else {
       alert("Session completed! Great job preparing for your visa interview.");
       router.push('/visa-prep');
     }
   };
 
-  if (loadingQuestions) {
+  if (loadingQuestions && questionIndex === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -156,24 +197,30 @@ function VisaSessionContent() {
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Visa Interview Session</h1>
           <div className="text-sm font-medium text-muted-foreground">
-            Question {questionIndex + 1} of {questions.length}
+            Question {questionIndex + 1} {mode === 'single' ? '' : 'of 10'}
           </div>
         </div>
 
         {/* Question Card */}
-        <Card className="mb-6 border-primary/20 bg-primary/5 shadow-md">
+        <Card className="mb-6 border-primary/20 bg-primary/5 shadow-md relative overflow-hidden">
+          {isGeneratingQuestion && (
+             <div className="absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm z-10 flex flex-col items-center justify-center">
+               <Loader2 className="w-8 h-8 text-primary animate-spin" />
+               <p className="mt-2 text-sm font-medium text-primary">Officer is thinking...</p>
+             </div>
+          )}
           <CardHeader className="pb-3">
             <CardTitle className="text-xl flex items-center justify-between">
               <span className="text-primary font-bold">Visa Officer</span>
               <div className="flex gap-2">
-                {currentQ?.country?.name && <Badge variant="outline">{currentQ.country.name}</Badge>}
-                {currentQ?.category?.name && <Badge variant="secondary">{currentQ.category.name}</Badge>}
+                <Badge variant="outline">{targetCountryName}</Badge>
+                {visaTypeName !== 'General' && <Badge variant="secondary">{visaTypeName}</Badge>}
               </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-medium leading-relaxed">
-              "{currentQ?.question}"
+              "{currentQuestion}"
             </p>
           </CardContent>
         </Card>
@@ -281,6 +328,22 @@ function VisaSessionContent() {
                     <p className="text-sm leading-relaxed text-muted-foreground">{feedback.overallFeedback}</p>
                   </div>
 
+                  {feedback.redFlags && feedback.redFlags.length > 0 && (
+                    <div className="bg-rose-50 dark:bg-rose-950/30 rounded-xl p-4 border border-rose-200 dark:border-rose-900 shadow-sm">
+                      <h4 className="font-bold text-rose-700 dark:text-rose-400 flex items-center gap-2 mb-2">
+                        <ShieldAlert className="w-4 h-4" /> Red Flags Detected
+                      </h4>
+                      <ul className="space-y-2 text-sm text-rose-800 dark:text-rose-300">
+                        {feedback.redFlags.map((flag: string, i: number) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <span className="font-bold">•</span> 
+                            <span>{flag}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   <div className="bg-background rounded-xl p-4 border shadow-sm">
                     <h4 className="font-bold text-foreground mb-2">Tips for Improvement</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
@@ -298,7 +361,7 @@ function VisaSessionContent() {
             {feedback && (
               <CardFooter className="flex justify-end border-t bg-muted/10 pt-4">
                 <Button onClick={nextQuestion} size="lg" className="w-full sm:w-auto shadow-sm">
-                  {questionIndex < questions.length - 1 ? 'Next Question' : 'Finish Session'} <ArrowRight className="ml-2 h-4 w-4" />
+                  {questionIndex < (mode === 'single' ? 1 : 10) - 1 ? 'Next Question' : 'Finish Session'} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
             )}

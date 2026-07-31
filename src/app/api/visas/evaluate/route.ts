@@ -25,6 +25,7 @@ Provide a JSON output evaluating the candidate's response. Include the following
 - fluencyScore: integer (0-100) based on flow, structure, and vocabulary.
 - grammarScore: integer (0-100) based on grammatical correctness.
 - passProbability: integer (0-100) based on whether this answer would satisfy a real visa officer (clarity of intent, ties to home country, financial readiness, etc.).
+- redFlags: array of strings. If the candidate shows any 'immigrant intent', fails to prove 'strong home ties', gives inconsistent information, or says anything that would cause a visa denial, list them here. If none, return an empty array.
 - overallFeedback: string (2-3 sentences of constructive feedback from a visa officer's perspective).
 - tipsForImprovement: array of strings (1-3 actionable tips).
 
