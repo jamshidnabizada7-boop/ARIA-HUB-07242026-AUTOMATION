@@ -179,7 +179,7 @@ export async function GET() {
     // Seed admin user
     const hashedPassword = await bcrypt.hash('admin123', 10);
     await client.execute({
-      sql: `INSERT INTO AdminUser (id, email, password, name, role) VALUES (?, ?, ?, ?, ?)`,
+      sql: `INSERT OR IGNORE INTO AdminUser (id, email, password, name, role) VALUES (?, ?, ?, ?, ?)`,
       args: ['admin-1', 'admin@ariahub.com', hashedPassword, 'ARIA HUB Administrator', 'admin']
     });
 
