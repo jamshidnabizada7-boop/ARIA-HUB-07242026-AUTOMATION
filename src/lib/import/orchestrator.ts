@@ -63,55 +63,58 @@ function toHandle(s: { id: string; name: string; type: string; scraperKey: strin
 }
 
 /**
- * Run the import pipeline. If sourceId is given, only that source is scraped;
- * otherwise all enabled sources are scraped.
+ * Run the import pipeline for a single source.
+ *
+ * If `sourceId` is given, that specific source is scraped.
+ * If `sourceId` is null, the **least-recently-run** enabled source is picked
+ * automatically. This avoids running ALL sources sequentially in a single
+ * HTTP request, which was causing 504 timeouts (3 sources × 45s each > 60s
+ * Vercel limit).
+ *
+ * To cycle through all sources, call this endpoint repeatedly (e.g. from a
+ * cron trigger or the admin UI "Run All" button that fires one request per
+ * source).
  */
 export async function runImport(opts: RunImportOptions = {}): Promise<RunSummary> {
   const { sourceId = null, type = null, triggeredBy = 'manual' } = opts;
   const startedAt = Date.now();
 
-  // Resolve sources to run
-  const where: Prisma.ImportSourceWhereInput = {};
-  if (sourceId) where.id = sourceId;
-  else { where.enabled = true; if (type) where.type = type; }
+  let source: any;
 
-  const sources = await db.importSource.findMany({ where });
-  if (!sources.length) {
-    throw new Error('No matching import sources found.');
+  if (sourceId) {
+    // Explicit source
+    source = await db.importSource.findUnique({ where: { id: sourceId } });
+    if (!source) throw new Error(`Import source "${sourceId}" not found.`);
+  } else {
+    // Auto-pick: the enabled source that was run least recently (or never)
+    const where: Prisma.ImportSourceWhereInput = { enabled: true };
+    if (type) where.type = type;
+
+    source = await db.importSource.findFirst({
+      where,
+      orderBy: [
+        { lastRunAt: { sort: 'asc', nulls: 'first' } },  // never-run sources first
+      ],
+    });
+    if (!source) throw new Error('No enabled import sources found.');
   }
 
-  // Create one ImportRun per source (so logs are per-source as designed)
-  const summaries: RunSummary[] = [];
-  for (const source of sources) {
-    if (inFlight.has(source.id)) {
-      console.warn(`[import] source "${source.name}" already running — skipping.`);
-      continue;
-    }
-    inFlight.add(source.id);
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      const summary = await runOneSource(db, source, triggeredBy);
-      summaries.push(summary);
-    } finally {
-      inFlight.delete(source.id);
-    }
+  // Guard against concurrent runs of the same source
+  if (inFlight.has(source.id)) {
+    return {
+      runId: '',
+      status: 'skipped',
+      found: 0, imported: 0, updated: 0, skipped: 0, duplicates: 0, failed: 0,
+      processingMs: Date.now() - startedAt,
+    };
   }
 
-  // Aggregate into a single summary (the "primary" run is the first)
-  const primary = summaries[0] || {
-    runId: '', status: 'ok', found: 0, imported: 0, updated: 0, skipped: 0, duplicates: 0, failed: 0, processingMs: Date.now() - startedAt,
-  };
-  if (summaries.length > 1) {
-    primary.found = summaries.reduce((a, s) => a + s.found, 0);
-    primary.imported = summaries.reduce((a, s) => a + s.imported, 0);
-    primary.updated = summaries.reduce((a, s) => a + s.updated, 0);
-    primary.skipped = summaries.reduce((a, s) => a + s.skipped, 0);
-    primary.duplicates = summaries.reduce((a, s) => a + s.duplicates, 0);
-    primary.failed = summaries.reduce((a, s) => a + s.failed, 0);
-    primary.processingMs = Date.now() - startedAt;
-    primary.status = summaries.some((s) => s.status === 'error') ? 'partial' : 'ok';
+  inFlight.add(source.id);
+  try {
+    return await runOneSource(db, source, triggeredBy);
+  } finally {
+    inFlight.delete(source.id);
   }
-  return primary;
 }
 
 /** Run the pipeline for a single source. */

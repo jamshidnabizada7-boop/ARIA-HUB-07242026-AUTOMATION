@@ -7,10 +7,10 @@ import { runImport } from '@/lib/import/orchestrator';
  */
 export async function GET() {
   try {
-    console.log('🚀 Starting import for all sources...');
+    console.log('🚀 Starting import (next source in rotation)...');
     
     const summary = await runImport({
-      sourceId: null, // null = run all sources
+      sourceId: null, // null = auto-pick the least-recently-run source
       type: null,
       triggeredBy: 'setup',
     });

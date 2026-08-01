@@ -35,6 +35,14 @@ const MODELS: Record<string, { delegate: any; fields: string[]; label: string; s
   opportunityCategory: { label: 'Opportunity Categories', delegate: db.opportunityCategory, fields: ['name', 'nameI18n', 'slug', 'icon', 'order'] },
   newsCategory: { label: 'News Categories', delegate: db.newsCategory, fields: ['name', 'slug'] },
   advertisement: { label: 'Advertisements', delegate: db.advertisement, fields: ['company', 'title', 'description', 'image', 'video', 'website', 'package', 'startDate', 'endDate', 'status', 'order'], statusOptions: ['pending', 'approved', 'rejected', 'expired'] },
+  interviewCategory: { label: 'Interview Categories', delegate: db.interviewCategory, fields: ['name', 'nameI18n', 'slug', 'icon', 'description', 'descriptionI18n', 'order'] },
+  interviewQuestion: { label: 'Interview Questions', delegate: db.interviewQuestion, fields: ['question', 'questionI18n', 'categoryId', 'difficulty', 'filters', 'sampleAnswer', 'sampleAnswerI18n', 'strongExample', 'strongExampleI18n', 'weakExample', 'weakExampleI18n', 'tips', 'tipsI18n', 'commonMistakes', 'commonMistakesI18n', 'followUpQuestions', 'followUpQuestionsI18n', 'expectedDuration', 'status', 'featured', 'order'], statusOptions: ['published', 'draft'] },
+  interviewExperience: { label: 'Interview Experiences', delegate: db.interviewExperience, fields: ['studentName', 'studentNameI18n', 'scholarshipName', 'university', 'country', 'degree', 'content', 'contentI18n', 'rating', 'status'], statusOptions: ['pending', 'published', 'rejected'] },
+  visaCountry: { label: 'Visa Countries', delegate: db.visaCountry, fields: ['name', 'nameI18n', 'code', 'processingTime', 'costEstimate', 'embassyInfo', 'embassyInfoI18n', 'successRate', 'status', 'order'], statusOptions: ['published', 'draft'] },
+  visaCategory: { label: 'Visa Categories', delegate: db.visaCategory, fields: ['name', 'nameI18n', 'slug', 'icon', 'description', 'descriptionI18n', 'order'] },
+  visaQuestion: { label: 'Visa Questions', delegate: db.visaQuestion, fields: ['question', 'questionI18n', 'countryId', 'categoryId', 'difficulty', 'bestAnswer', 'bestAnswerI18n', 'wrongAnswer', 'wrongAnswerI18n', 'aiExplanation', 'aiExplanationI18n', 'confidenceTips', 'confidenceTipsI18n', 'followUpQuestions', 'followUpQuestionsI18n', 'status', 'featured', 'order'], statusOptions: ['published', 'draft'] },
+  visaDocument: { label: 'Visa Documents', delegate: db.visaDocument, fields: ['name', 'nameI18n', 'description', 'descriptionI18n', 'isRequired', 'countryId', 'categoryId', 'order'] },
+  visaExperience: { label: 'Visa Experiences', delegate: db.visaExperience, fields: ['studentName', 'studentNameI18n', 'countryId', 'status', 'content', 'contentI18n', 'rating', 'publishedStatus'], statusOptions: ['approved', 'rejected'] },
 };
 
 /** Map Prisma errors to clean HTTP responses without leaking schema details. */
@@ -80,6 +88,14 @@ function isRequiredField(model: string, field: string): boolean {
     opportunityCategory: ['name', 'slug', 'order'],
     newsCategory: ['name', 'slug'],
     advertisement: ['company', 'title', 'description', 'package', 'startDate', 'endDate', 'status', 'order'],
+    interviewCategory: ['name', 'slug'],
+    interviewQuestion: ['question', 'status', 'order'],
+    interviewExperience: ['content', 'status'],
+    visaCountry: ['name', 'code', 'status', 'order'],
+    visaCategory: ['name', 'slug'],
+    visaQuestion: ['question', 'status', 'order'],
+    visaDocument: ['name'],
+    visaExperience: ['content', 'rating'],
   };
   
   return requiredFields[model]?.includes(field) || false;
@@ -196,7 +212,8 @@ export async function GET(req: NextRequest) {
 
   const { delegate, fields } = MODELS[model];
   const include: any = {};
-  if (model === 'service' || model === 'opportunity' || model === 'news') include.category = true;
+  if (['service', 'opportunity', 'news', 'interviewQuestion', 'visaQuestion', 'visaDocument'].includes(model)) include.category = true;
+  if (['visaQuestion', 'visaDocument', 'visaExperience'].includes(model)) include.country = true;
 
   const sortField = fields.includes('order') ? 'order' : fields.includes('sort') ? 'sort' : 'createdAt';
   // Pagination: default 100 rows, max 500 to protect memory
