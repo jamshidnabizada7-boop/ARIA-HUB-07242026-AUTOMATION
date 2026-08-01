@@ -9,10 +9,12 @@
 import type { BaseScraper } from './base-scraper';
 import { WazifahaScraper } from './scrapers/wazifaha';
 import { ScholarshipsAfScraper } from './scrapers/scholarships-af';
+import { AcbarScraper } from './scrapers/acbar';
 
 export const SCRAPERS: Record<string, new (...args: ConstructorParameters<typeof BaseScraper>) => BaseScraper> = {
   wazifaha: WazifahaScraper,
   scholarshipsAf: ScholarshipsAfScraper,
+  acbar: AcbarScraper,
 };
 
 /**
