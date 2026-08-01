@@ -2,7 +2,6 @@ import React from 'react';
 import { db as prisma } from '@/lib/db';
 import { CalculatorClient } from './calculator-client';
 import { TranslatedText } from '@/components/ui/translated-text';
-import { getLang } from '@/lib/i18n-server';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';

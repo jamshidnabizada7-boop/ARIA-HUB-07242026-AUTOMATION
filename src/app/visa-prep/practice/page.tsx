@@ -1,5 +1,4 @@
 import { db as prisma } from '@/lib/db';
-import { getLang } from '@/lib/i18n-server';
 import { cookies } from 'next/headers';
 import VisaPracticeSetup from './setup-client';
 import { Suspense } from 'react';

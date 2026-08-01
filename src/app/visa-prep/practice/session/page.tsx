@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Mic, Square, Loader2, ArrowRight, RefreshCcw, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { Mic, Square, Loader2, ArrowRight, RefreshCcw, ShieldAlert, CheckCircle2, Video, VideoOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 function VisaSessionContent() {
@@ -14,7 +14,7 @@ function VisaSessionContent() {
   const countryId = searchParams.get('countryId');
   const categoryId = searchParams.get('categoryId');
   const difficulty = searchParams.get('difficulty') || 'medium';
-  const mode = searchParams.get('mode') || 'mock';
+  const mode = searchParams.get('mode') || 'mock'; // 'mock' or 'video'
   
   const [questions, setQuestions] = useState<any[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState("Loading your first personalized visa question...");
@@ -31,7 +31,11 @@ function VisaSessionContent() {
   const [targetCountryName, setTargetCountryName] = useState('General');
   const [visaTypeName, setVisaTypeName] = useState('General');
   
+  const [audioLevel, setAudioLevel] = useState(0);
+
   const recognitionRef = useRef<any>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   // Fetch Country and Category Names
   useEffect(() => {
@@ -90,14 +94,29 @@ function VisaSessionContent() {
   useEffect(() => {
     fetchQuestion();
 
-    // Initialize SpeechRecognition if supported
+    // Start Video if mode is video
+    if (mode === 'video') {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(stream => {
+                streamRef.current = stream;
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                }
+            })
+            .catch(err => {
+                console.error("Camera access denied or failed", err);
+                setSpeechError("Camera access denied. Video interview cannot display your camera.");
+            });
+    }
+
+    // Initialize SpeechRecognition
     if (typeof window !== 'undefined') {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         recognitionRef.current = new SpeechRecognition();
         recognitionRef.current.continuous = true;
         recognitionRef.current.interimResults = true;
-        recognitionRef.current.lang = 'en-US'; // Set to English for visa interviews
+        recognitionRef.current.lang = 'en-US';
         
         recognitionRef.current.onresult = (event: any) => {
           setSpeechError(null);
@@ -111,11 +130,9 @@ function VisaSessionContent() {
         recognitionRef.current.onerror = (event: any) => {
           console.error("Speech recognition error", event.error);
           if (event.error === 'no-speech') {
-            setSpeechError("No speech detected. Please try speaking closer to your microphone or check your microphone settings.");
+            setSpeechError("No speech detected. Please speak clearly into your microphone.");
           } else if (event.error === 'not-allowed') {
-            setSpeechError("Microphone access denied. Please allow microphone permissions in your browser.");
-          } else {
-            setSpeechError(`Microphone error: ${event.error}`);
+            setSpeechError("Microphone access denied. Please allow microphone permissions.");
           }
           setIsRecording(false);
         };
@@ -127,15 +144,29 @@ function VisaSessionContent() {
     }
     
     return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
+      if (recognitionRef.current) recognitionRef.current.stop();
+      if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
       }
     };
   }, [mode]);
 
+  // Audio level simulation for visual feedback when recording
+  useEffect(() => {
+      let interval: any;
+      if (isRecording) {
+          interval = setInterval(() => {
+              setAudioLevel(Math.random() * 100);
+          }, 200);
+      } else {
+          setAudioLevel(0);
+      }
+      return () => clearInterval(interval);
+  }, [isRecording]);
+
   const toggleRecording = () => {
     if (!recognitionRef.current) {
-      alert("Your browser does not support voice recording, or microphone access was denied. Please type your answer or use a supported browser like Chrome.");
+      alert("Your browser does not support voice recording. Please use Chrome/Edge.");
       return;
     }
     
@@ -150,8 +181,6 @@ function VisaSessionContent() {
         recognitionRef.current?.start();
         setIsRecording(true);
       } catch (e) {
-        console.error(e);
-        setSpeechError("Failed to start microphone. Please refresh and try again.");
         setIsRecording(false);
       }
     }
@@ -185,7 +214,6 @@ function VisaSessionContent() {
         alert(data.error || 'Evaluation failed');
       }
     } catch (error) {
-      console.error(error);
       alert('Network error during evaluation');
     } finally {
       setIsEvaluating(false);
@@ -216,7 +244,7 @@ function VisaSessionContent() {
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 dark:bg-slate-950">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         
         {/* Progress Header */}
         <div className="mb-8 flex items-center justify-between">
@@ -226,46 +254,77 @@ function VisaSessionContent() {
           </div>
         </div>
 
-        {/* Question Card */}
-        <Card className="mb-6 border-primary/20 bg-primary/5 shadow-md relative overflow-hidden">
-          {isGeneratingQuestion && (
-             <div className="absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm z-10 flex flex-col items-center justify-center">
-               <Loader2 className="w-8 h-8 text-primary animate-spin" />
-               <p className="mt-2 text-sm font-medium text-primary">Officer is thinking...</p>
-             </div>
-          )}
-          <CardHeader className="pb-3">
-            <CardTitle className="text-xl flex items-center justify-between">
-              <span className="text-primary font-bold">Visa Officer</span>
-              <div className="flex gap-2">
-                <Badge variant="outline">{targetCountryName}</Badge>
-                {visaTypeName !== 'General' && <Badge variant="secondary">{visaTypeName}</Badge>}
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-medium leading-relaxed">
-              "{currentQuestion}"
-            </p>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Question Card */}
+            <Card className="border-primary/20 bg-primary/5 shadow-md relative overflow-hidden flex flex-col">
+              {isGeneratingQuestion && (
+                 <div className="absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm z-10 flex flex-col items-center justify-center">
+                   <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                   <p className="mt-2 text-sm font-medium text-primary">Officer is thinking...</p>
+                 </div>
+              )}
+              <CardHeader className="pb-3">
+                <CardTitle className="text-xl flex items-center justify-between">
+                  <span className="text-primary font-bold">Visa Officer</span>
+                  <div className="flex gap-2">
+                    <Badge variant="outline">{targetCountryName}</Badge>
+                    {visaTypeName !== 'General' && <Badge variant="secondary">{visaTypeName}</Badge>}
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow flex items-center justify-center">
+                <p className="text-2xl font-medium leading-relaxed text-center">
+                  "{currentQuestion}"
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Video Feed (if mode is video) */}
+            {mode === 'video' && (
+                <Card className="overflow-hidden bg-black flex flex-col items-center justify-center relative aspect-video">
+                    <video 
+                        ref={videoRef} 
+                        autoPlay 
+                        muted 
+                        playsInline 
+                        className="w-full h-full object-cover"
+                    />
+                    {!streamRef.current && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-white/50 bg-slate-900">
+                            <VideoOff className="w-12 h-12 mb-2 opacity-50" />
+                            <p>Camera is disabled or loading</p>
+                        </div>
+                    )}
+                </Card>
+            )}
+        </div>
 
         {/* Input Area */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           
-          <Card className="shadow-sm">
+          <Card className="shadow-sm border-t-4 border-t-emerald-500">
             <CardHeader>
               <CardTitle className="flex items-center justify-between text-lg">
                 Your Answer
-                <Button
-                  variant={isRecording ? 'destructive' : 'default'}
-                  size="icon"
-                  onClick={toggleRecording}
-                  disabled={isEvaluating || isGeneratingQuestion}
-                  className="rounded-full shadow-sm"
-                >
-                  {isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                </Button>
+                <div className="flex items-center gap-3">
+                    {isRecording && (
+                        <div className="flex gap-1 items-center h-4">
+                            <div className="w-1 bg-red-500 rounded-full transition-all duration-75" style={{ height: `${Math.max(10, audioLevel)}%` }}></div>
+                            <div className="w-1 bg-red-500 rounded-full transition-all duration-75" style={{ height: `${Math.max(10, audioLevel * 0.8)}%` }}></div>
+                            <div className="w-1 bg-red-500 rounded-full transition-all duration-75" style={{ height: `${Math.max(10, audioLevel * 1.2)}%` }}></div>
+                            <div className="w-1 bg-red-500 rounded-full transition-all duration-75" style={{ height: `${Math.max(10, audioLevel * 0.5)}%` }}></div>
+                        </div>
+                    )}
+                    <Button
+                    variant={isRecording ? 'destructive' : 'default'}
+                    size="icon"
+                    onClick={toggleRecording}
+                    disabled={isEvaluating || isGeneratingQuestion}
+                    className="rounded-full shadow-sm"
+                    >
+                    {isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                    </Button>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -274,7 +333,7 @@ function VisaSessionContent() {
                   {speechError}
                 </div>
               )}
-              <div className="h-64 overflow-y-auto rounded-xl border bg-muted/30 p-5 shadow-inner">
+              <div className="h-48 overflow-y-auto rounded-xl border bg-muted/30 p-5 shadow-inner">
                 {transcript ? (
                   <p className="text-foreground leading-relaxed">{transcript}</p>
                 ) : (
@@ -289,10 +348,15 @@ function VisaSessionContent() {
               <Button variant="ghost" onClick={() => setTranscript('')} disabled={!transcript || isEvaluating || isRecording}>
                 <RefreshCcw className="mr-2 h-4 w-4" /> Reset
               </Button>
-              <Button onClick={submitAnswer} disabled={!transcript || isEvaluating || isRecording} size="lg" className="shadow-sm">
-                {isEvaluating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                {isEvaluating ? 'Evaluating...' : 'Submit Answer'}
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={nextQuestion} disabled={isEvaluating || isRecording}>
+                    Skip
+                </Button>
+                <Button onClick={submitAnswer} disabled={!transcript || isEvaluating || isRecording} className="shadow-sm">
+                    {isEvaluating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    {isEvaluating ? 'Evaluating...' : 'Submit Answer'}
+                </Button>
+              </div>
             </CardFooter>
           </Card>
 
@@ -310,7 +374,7 @@ function VisaSessionContent() {
             </CardHeader>
             <CardContent>
               {!feedback && !isEvaluating && (
-                <div className="flex h-64 flex-col items-center justify-center text-center text-muted-foreground p-6">
+                <div className="flex h-48 flex-col items-center justify-center text-center text-muted-foreground p-6">
                   <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
                     <ShieldAlert className="h-8 w-8 opacity-40" />
                   </div>
@@ -318,13 +382,13 @@ function VisaSessionContent() {
                 </div>
               )}
               {isEvaluating && (
-                <div className="flex h-64 flex-col items-center justify-center text-center">
+                <div className="flex h-48 flex-col items-center justify-center text-center">
                   <Loader2 className="mb-4 h-10 w-10 animate-spin text-primary" />
                   <p className="animate-pulse font-medium text-primary">The Visa Officer is analyzing your response...</p>
                 </div>
               )}
               {feedback && (
-                <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4">
+                <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 overflow-y-auto max-h-96 pr-2">
                   
                   {/* Pass Probability Hero */}
                   <div className="flex items-center justify-center p-4 bg-background rounded-xl border shadow-sm">

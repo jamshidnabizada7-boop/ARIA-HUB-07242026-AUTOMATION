@@ -31,19 +31,33 @@ export default async function OpportunitiesPage({
 
   const categories = await db.opportunityCategory.findMany({ orderBy: { order: 'asc' } });
   
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = { status: 'published' };
+  const AND: any[] = [];
+
   if (categoryParam !== 'all') {
-    where.category = { slug: categoryParam };
+    const singularCat = categoryParam.replace(/s$/, '');
+    AND.push({
+      OR: [
+        { category: { slug: categoryParam } },
+        { jobType: { contains: singularCat, mode: 'insensitive' } },
+        { jobType: { equals: categoryParam, mode: 'insensitive' } }
+      ]
+    });
   }
   if (location !== 'all') {
     where.country = location;
   }
   if (q) {
-    where.OR = [
-      { title: { contains: q, mode: 'insensitive' } },
-      { organization: { contains: q, mode: 'insensitive' } }
-    ];
+    AND.push({
+      OR: [
+        { title: { contains: q, mode: 'insensitive' } },
+        { organization: { contains: q, mode: 'insensitive' } }
+      ]
+    });
+  }
+  
+  if (AND.length > 0) {
+    where.AND = AND;
   }
 
   let orderBy: any = [{ sort: 'asc' }, { createdAt: 'desc' }];

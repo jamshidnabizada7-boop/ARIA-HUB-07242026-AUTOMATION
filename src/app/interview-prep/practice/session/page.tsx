@@ -31,8 +31,12 @@ function InterviewSessionContent() {
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(true);
   const [feedback, setFeedback] = useState<any>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [speechError, setSpeechError] = useState<string | null>(null);
   
   const recognitionRef = useRef<any>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const fetchQuestion = async () => {
     setIsGeneratingQuestion(true);
@@ -66,6 +70,21 @@ function InterviewSessionContent() {
   useEffect(() => {
     fetchQuestion();
     
+    // Setup video if mode is video
+    if (mode === 'video') {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(stream => {
+          streamRef.current = stream;
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        })
+        .catch(err => {
+          console.error("Camera error:", err);
+          setCameraError("Could not access your camera. Please check permissions.");
+        });
+    }
+
     // Initialize SpeechRecognition if supported
     if (typeof window !== 'undefined') {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -76,6 +95,7 @@ function InterviewSessionContent() {
         recognitionRef.current.lang = 'en-US'; // Set to English for interviews
         
         recognitionRef.current.onresult = (event: any) => {
+          setSpeechError(null);
           let currentTranscript = '';
           for (let i = 0; i < event.results.length; i++) {
             currentTranscript += event.results[i][0].transcript;
@@ -85,6 +105,13 @@ function InterviewSessionContent() {
         
         recognitionRef.current.onerror = (event: any) => {
           console.error("Speech recognition error", event.error);
+          if (event.error === 'no-speech') {
+            setSpeechError("No speech detected. Please try speaking closer to your microphone or check your microphone settings.");
+          } else if (event.error === 'not-allowed') {
+            setSpeechError("Microphone access denied. Please allow microphone permissions in your browser.");
+          } else {
+            setSpeechError(`Microphone error: ${event.error}`);
+          }
           setIsRecording(false);
         };
         
@@ -98,8 +125,11 @@ function InterviewSessionContent() {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
     };
-  }, []);
+  }, [mode]);
 
   const toggleRecording = () => {
     if (!recognitionRef.current) {
@@ -113,11 +143,13 @@ function InterviewSessionContent() {
     } else {
       setTranscript('');
       setFeedback(null);
+      setSpeechError(null);
       try {
         recognitionRef.current?.start();
         setIsRecording(true);
       } catch (e) {
         console.error(e);
+        setSpeechError("Failed to start microphone. Please refresh and try again.");
         setIsRecording(false);
       }
     }
@@ -210,7 +242,7 @@ function InterviewSessionContent() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between text-lg">
                 Your Answer
-                {mode === 'voice' && (
+                {mode !== 'text' && (
                   <Button
                     variant={isRecording ? 'destructive' : 'default'}
                     size="icon"
@@ -224,6 +256,23 @@ function InterviewSessionContent() {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              {mode === 'video' && (
+                <div className="mb-4 aspect-video w-full overflow-hidden rounded-md bg-slate-900 relative">
+                  {cameraError ? (
+                    <div className="flex h-full w-full items-center justify-center text-sm text-red-400 p-4 text-center">
+                      {cameraError}
+                    </div>
+                  ) : (
+                    <video 
+                      ref={videoRef} 
+                      autoPlay 
+                      muted 
+                      playsInline 
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                </div>
+              )}
               {mode === 'text' ? (
                 <textarea
                   className="w-full h-48 p-3 border rounded-md dark:bg-slate-900 dark:border-slate-800 focus:ring-2 focus:ring-primary outline-none resize-none"
@@ -233,14 +282,21 @@ function InterviewSessionContent() {
                   disabled={isEvaluating || isGeneratingQuestion}
                 />
               ) : (
-                <div className="h-48 rounded-md border bg-slate-100 p-4 dark:bg-slate-900/50 overflow-y-auto">
-                  {transcript ? (
-                    <p className="text-slate-700 dark:text-slate-300">{transcript}</p>
-                  ) : (
-                    <p className="text-muted-foreground italic flex h-full items-center justify-center">
-                      {isRecording ? "Listening..." : "Click the microphone to start speaking"}
-                    </p>
+                <div className="flex flex-col gap-2">
+                  {speechError && (
+                    <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400 border border-red-200 dark:border-red-800">
+                      {speechError}
+                    </div>
                   )}
+                  <div className={`${mode === 'video' ? 'h-32' : 'h-48'} rounded-md border bg-slate-100 p-4 dark:bg-slate-900/50 overflow-y-auto`}>
+                    {transcript ? (
+                      <p className="text-slate-700 dark:text-slate-300">{transcript}</p>
+                    ) : (
+                      <p className="text-muted-foreground italic flex h-full items-center justify-center">
+                        {isRecording ? "Listening..." : "Click the microphone to start speaking"}
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
             </CardContent>

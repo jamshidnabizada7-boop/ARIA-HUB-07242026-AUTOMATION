@@ -216,6 +216,11 @@ export async function GET() {
       args: ['source-2', 'Scholarships.af', 'scholarship', 'scholarshipsAf', 'https://scholarships.af', 1, 1, 360]
     });
 
+    await client.execute({
+      sql: `INSERT INTO ImportSource (id, name, type, scraperKey, baseUrl, enabled, autoPublish, scheduleMinutes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: ['source-3', 'ACBAR Jobs', 'job', 'acbar', 'https://www.acbar.org/en/jobs', 1, 1, 360]
+    });
+
     console.log('✅ Seed complete!');
 
     return NextResponse.json({

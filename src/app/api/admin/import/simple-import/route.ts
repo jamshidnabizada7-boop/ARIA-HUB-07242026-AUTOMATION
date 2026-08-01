@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { WazifahaScraper } from '@/lib/import/scrapers/wazifaha';
-import { ScholarshipsAfScraper } from '@/lib/import/scrapers/scholarships-af';
+import { getScraper } from '@/lib/import/registry';
 
 export const maxDuration = 60; // Max allowed for Vercel Hobby
 
@@ -43,12 +42,8 @@ export async function GET() {
           }
         };
 
-        let scraper;
-        if (source.scraperKey === 'wazifaha') {
-          scraper = new WazifahaScraper(sourceHandle);
-        } else if (source.scraperKey === 'scholarshipsAf') {
-          scraper = new ScholarshipsAfScraper(sourceHandle);
-        } else {
+        const scraper = getScraper(sourceHandle);
+        if (!scraper) {
           console.log(`⚠️ Unknown scraper: ${source.scraperKey}`);
           continue;
         }

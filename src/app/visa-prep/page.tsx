@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Globe, Plane, Map, ShieldAlert, FileText, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { db as prisma } from '@/lib/db';
-import { getLang } from '@/lib/i18n-server';
 import { cookies } from 'next/headers';
 
 export const metadata = {

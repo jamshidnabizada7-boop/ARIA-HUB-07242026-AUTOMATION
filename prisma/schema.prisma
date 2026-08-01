@@ -1033,3 +1033,21 @@ model VisaExperience {
   @@index([countryId])
   @@index([publishedStatus])
 }
+
+model SuccessStory {
+  id             String    @id @default(cuid())
+  title          String
+  country        String
+  visaType       String
+  year           Int
+  content        String    @db.Text
+  likes          Int       @default(0)
+  authorAlias    String?
+  status         String    @default("published")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([country, visaType])
+  @@index([createdAt])
+}
+
