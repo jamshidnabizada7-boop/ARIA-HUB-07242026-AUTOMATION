@@ -24,6 +24,7 @@ export function OpportunitiesClient({
   currentPage,
   totalPages,
   currentCategory,
+  locations,
   phone,
 }: {
   opportunities: Opportunity[];
