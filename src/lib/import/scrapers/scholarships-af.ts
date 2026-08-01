@@ -154,89 +154,58 @@ export class ScholarshipsAfScraper extends BaseScraper {
   }
 
   /** Enrich a listing with full detail-page content. */
-  protected async parseDetail(listing: RawListing): Promise<RawListing> {
+  public async parseDetail(listing: RawListing): Promise<RawListing> {
     try {
       const html = await this.fetchText(listing.sourceUrl);
       const $ = cheerio.load(html);
 
-      // Title from <title> tag (h1 is JS-rendered): "Name - Scholarships.af"
+      // ── Title ──────────────────────────────────────────────────────────────
       const pageTitle = $('title').text().trim();
       if (pageTitle) {
         listing.title = pageTitle.replace(/\s*[-–—]\s*Scholarships\.af\s*$/i, '').trim() || listing.title;
       }
 
-      // Organization
-      const org = this.text($('.careerfy-company-name a').first());
+      // ── Organization ───────────────────────────────────────────────────────
+      const org = $('.careerfy-company-name a').first().text().trim();
       if (org) listing.organization = org.replace(/^@\s*/i, '').trim();
 
-      // Service items (Gender, Level, Region, Medium, Field, Duration, ...)
+      // ── Service items (Gender, Level, Region, Medium, Field, Duration, etc.) ─
       const services = this.extractServices($);
+      listing.extractedData = { ...services };
+      
       if (services['Eligible Region/Countries']) {
         listing.eligibility = services['Eligible Region/Countries'];
       }
       if (services['Field of study']) {
         listing.category = services['Field of study'];
       }
-      if (services.Duration) {
-        listing.benefits = `Duration: ${services.Duration}`;
+
+      // ── Featured image / logo ──────────────────────────────────────────────
+      const logoSrc = $('.careerfy-joblisting-media img, .careerfy-services-text img').first().attr('src');
+      if (logoSrc) {
+        const url = resolveUrl(logoSrc, listing.sourceUrl);
+        if (!listing.imageUrl) listing.imageUrl = url;
+        if (!listing.logoUrl) listing.logoUrl = url;
       }
 
-      // Full description (strip ad scripts/ins)
+      // ── Description body — the main content area ───────────────────────────
+      // All rich content is inside .jobsearch-description as h2-delimited sections
       const descEl = $('.jobsearch-description').first().clone();
-      descEl.find('script, ins.adsbygoogle, .code-block').remove();
+      // Remove ads, scripts, sponsored blocks
+      descEl.find('script, ins.adsbygoogle, .code-block, .code-block-label').remove();
 
-      // Extract eligibility / benefits sections from headings in description (and remove them from descEl)
-      this.extractSections(descEl, listing);
+      // Parse h2-delimited sections from the description
+      this.parseDescriptionSections($, descEl, listing);
 
-      let descHtml = descEl.html() || '';
-      
-      // Defensively remove unwanted footer/related blocks if they get caught in the description
-      const stripAfter = [
-        'Frequently Asked Questions',
-        'Other Opportunities You May Like',
-        'Other Opportunities you may like',
-        'Follow Us:',
-        'Facebook',
-        'YouTube',
-        'Telegram',
-        'Instagram',
-        'WhatsApp',
-        'Scholarship for Afghanistan — Making Education',
-        'Scholarship for Afghanistan',
-        'scholarships.af · o4af.com',
-        'scholarships.af  o4af.com'
-      ];
-      for (const phrase of stripAfter) {
-        const idx = descHtml.indexOf(phrase);
-        if (idx !== -1) {
-          // Find the start of the current block (e.g., <p> or <div>) before the phrase
-          const blockStart = descHtml.lastIndexOf('<', idx);
-          descHtml = descHtml.substring(0, blockStart !== -1 ? blockStart : idx);
-        }
-      }
-
-      if (descHtml.trim()) {
-        listing.description = cleanHtmlWhitespace(descHtml.trim());
-      }
-
-      // Extract deadline + key details from description if not already set
+      // ── Deadline from Key Details or description text ──────────────────────
       if (!listing.deadline) {
-        listing.deadline = this.extractDeadlineFromText(descEl.text());
+        listing.deadline = this.extractDeadlineFromKeyDetails(listing.extractedData) ||
+                           this.extractDeadlineFromText(descEl.text());
       }
 
-      // Apply link — external URL in "Apply Now" button
+      // ── Apply link ─────────────────────────────────────────────────────────
       const applyUrl = this.findApplyLink($);
       if (applyUrl) listing.applyUrl = applyUrl;
-
-      // Featured image / logo — grab from related-listing media if present
-      if (!listing.imageUrl) {
-        const logoSrc = $('.careerfy-joblisting-media img, .careerfy-services-text img').first().attr('src');
-        if (logoSrc) {
-          const url = resolveUrl(logoSrc, listing.sourceUrl);
-          listing.imageUrl = url;
-          listing.logoUrl = url;
-        }
-      }
 
       return listing;
     } catch (e) {
@@ -245,29 +214,168 @@ export class ScholarshipsAfScraper extends BaseScraper {
     }
   }
 
+  /**
+   * Parse the .jobsearch-description into h2-delimited sections.
+   * Maps each section (Benefits, Eligibility, Required Documents, How to Apply, etc.)
+   * to the correct RawListing field. Non-matched sections become the main description.
+   */
+  private parseDescriptionSections(
+    $: cheerio.CheerioAPI,
+    descEl: any,
+    listing: RawListing,
+  ): void {
+    const descHtml = descEl.html() || '';
+    if (!descHtml.trim()) return;
+
+    // Split the description by <h2> headings into named sections
+    const sections: Array<{ heading: string; body: string }> = [];
+    // Regex to split by h2 tags, capturing the heading text
+    const h2Pattern = /<h2[^>]*>([\s\S]*?)<\/h2>/gi;
+    const parts = descHtml.split(h2Pattern);
+
+    // parts[0] = content before the first h2 (the main description)
+    // parts[1] = first h2 heading text, parts[2] = content after first h2
+    // parts[3] = second h2 heading text, parts[4] = content after second h2, etc.
+
+    const mainDescParts: string[] = [];
+    if (parts[0]?.trim()) {
+      mainDescParts.push(parts[0].trim());
+    }
+
+    for (let i = 1; i < parts.length; i += 2) {
+      const heading = stripHtml(parts[i] || '').trim().toLowerCase();
+      const bodyHtml = (parts[i + 1] || '').trim();
+      if (!heading || !bodyHtml) continue;
+
+      // Strip trailing ads/related blocks from body
+      const cleanBody = this.stripTrailingJunk(bodyHtml);
+      const bodyText = stripHtml(cleanBody);
+      if (!bodyText.trim()) continue;
+
+      // Map heading → RawListing field
+      if (heading.includes('key detail') || heading.includes('dates')) {
+        // Parse key details as structured data into extractedData
+        this.parseKeyDetails(cleanBody, listing);
+      } else if (heading.includes('benefit') || heading.includes('financial aid')) {
+        listing.benefits = bodyText;
+      } else if (heading.includes('eligib') || heading.includes('criteria')) {
+        listing.eligibility = listing.eligibility
+          ? `${listing.eligibility}\n\n${bodyText}` : bodyText;
+      } else if (heading.includes('required document')) {
+        listing.requirements = bodyText;
+      } else if (heading.includes('selection process')) {
+        // Store in extractedData as supplementary info
+        if (!listing.extractedData) listing.extractedData = {};
+        listing.extractedData['Selection Process'] = bodyText;
+        // Also append to requirements
+        listing.requirements = listing.requirements
+          ? `${listing.requirements}\n\nSelection Process:\n${bodyText}` : `Selection Process:\n${bodyText}`;
+      } else if (heading.includes('how to apply') || heading.includes('submission') || heading.includes('guideline')) {
+        listing.guidelines = bodyText;
+      } else if (heading.includes('check more') || heading.includes('related') ||
+                 heading.includes('other opportunit')) {
+        // Skip related links / footer sections entirely
+        continue;
+      } else {
+        // Any other section (e.g., "Opportunity Description") → main description
+        mainDescParts.push(`<h3>${stripHtml(parts[i] || '').trim()}</h3>\n${cleanBody}`);
+      }
+    }
+
+    // Assemble the main description from non-extracted parts
+    if (mainDescParts.length) {
+      listing.description = cleanHtmlWhitespace(mainDescParts.join('\n\n'));
+    }
+  }
+
+  /**
+   * Parse the "Key Details and Dates" section.
+   * This section contains structured bullet points like:
+   *   - Application Deadline: 2 May 2027
+   *   - Host Country: Sweden
+   *   - Study Level: Bachelor's and Master's
+   */
+  private parseKeyDetails(bodyHtml: string, listing: RawListing): void {
+    const $ = cheerio.load(`<div>${bodyHtml}</div>`);
+    if (!listing.extractedData) listing.extractedData = {};
+    
+    $('li').each(function () {
+      const text = $(this).text().trim();
+      // Try to split on colon or first bold text
+      const strong = $(this).find('strong, b').first().text().trim();
+      if (strong) {
+        const key = strong.replace(/:?\s*$/, '').trim();
+        const value = text.replace(strong, '').replace(/^[:\s]+/, '').trim();
+        if (key && value) {
+          listing.extractedData![key] = value;
+        }
+      }
+    });
+
+    // Map known key details to listing fields
+    const ed = listing.extractedData;
+    if (ed['Application Deadline'] || ed['Deadline']) {
+      listing.deadline = parseDate(ed['Application Deadline'] || ed['Deadline']) || null;
+    }
+    if (ed['Host Country']) {
+      listing.country = ed['Host Country'];
+    }
+    if (ed['Funding Type']) {
+      listing.scholarshipType = ed['Funding Type'];
+    }
+    if (ed['Duration']) {
+      // Prefer Key Details duration over services duration
+      ed['Duration'] = ed['Duration'];
+    }
+    if (ed['Study Level']) {
+      listing.educationReq = ed['Study Level'];
+    }
+    if (ed['Host Institution']) {
+      if (!listing.organization) listing.organization = stripHtml(ed['Host Institution']);
+    }
+    if (ed['Program Language']) {
+      // Store as extracted data (already there)
+    }
+  }
+
   /** Extract label-value pairs from `.careerfy-jobdetail-services li`. */
   private extractServices($: cheerio.CheerioAPI): Record<string, string> {
     const result: Record<string, string> = {};
     $('.careerfy-jobdetail-services li').each(function () {
       const label = $(this).find('.careerfy-services-text span').first().text().trim();
-      const valueEl = $(this).find('.careerfy-services-text small, .careerfy-services-text div').first();
-      const value = valueEl.text().trim();
-      if (label && value) result[label.replace(/:$/, '').trim()] = value;
+      // Collect ALL small values (e.g., Gender: Male, Female)
+      const smallValues: string[] = [];
+      $(this).find('.careerfy-services-text small').each(function () {
+        const v = $(this).text().trim();
+        if (v) smallValues.push(v);
+      });
+      // Also check for div content (e.g., Eligible Region/Countries uses a div)
+      const divValue = $(this).find('.careerfy-services-text > div').first().text().trim();
+      
+      const value = smallValues.length > 0
+        ? smallValues.join(', ')
+        : divValue || '';
+      
+      if (label && value) {
+        result[label.replace(/:?\s*$/, '').trim()] = value;
+      }
     });
     return result;
   }
 
-  /** Find the external apply URL (Apply Now button). */
+  /** Find the external apply URL (Apply Now button or external link). */
   private findApplyLink($: cheerio.CheerioAPI): string | null {
     let url: string | null = null;
+    // Priority 1: explicit apply button
     $('a').each(function () {
       const href = $(this).attr('href') || '';
       const text = $(this).text().trim().toLowerCase();
       const cls = $(this).attr('class') || '';
       if (
-        (text.includes('apply now') || text.includes('apply for') || cls.includes('apply')) &&
+        (text.includes('apply now') || text.includes('apply for') ||
+         cls.includes('apply') || text.includes('official') && text.includes('website')) &&
         href && !href.startsWith('javascript') && href !== '#' &&
-        !href.includes('scholarships.af') // external only
+        !href.includes('scholarships.af')
       ) {
         url = href;
         return false; // break
@@ -276,68 +384,49 @@ export class ScholarshipsAfScraper extends BaseScraper {
     return url;
   }
 
-  /** Pull a date out of description text mentioning "Deadline". */
+  /** Extract deadline from the Key Details extractedData. */
+  private extractDeadlineFromKeyDetails(data?: Record<string, unknown>): string | null {
+    if (!data) return null;
+    const raw = (data['Application Deadline'] || data['Deadline']) as string;
+    if (!raw) return null;
+    return parseDate(raw) || null;
+  }
+
+  /** Pull a date from description text mentioning "Deadline". */
   private extractDeadlineFromText(text: string): string | null {
-    const m = text.match(/deadline[^:]*:\s*([A-Za-z]+\s+\d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i);
-    if (m) return parseDate(m[1]) || m[1];
+    // Match patterns like "Application Deadline 2 May 2027" or "Deadline: Aug 15, 2026"
+    const patterns = [
+      /application\s*deadline[:\s]*(\d{1,2}\s+[A-Za-z]+\s+\d{4})/i,
+      /deadline[^:]*:\s*([A-Za-z]+\s+\d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2}|\d{1,2}\s+[A-Za-z]+\s+\d{4})/i,
+    ];
+    for (const pat of patterns) {
+      const m = text.match(pat);
+      if (m) return parseDate(m[1]) || null;
+    }
     return null;
   }
 
   /**
-   * Extract eligibility / requirements / benefits from sub-headings within
-   * the description body.
+   * Strip trailing junk from section body HTML (related listings, social links,
+   * "Check More Scholarships", etc.)
    */
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private extractSections(descEl: any, listing: RawListing): void {
-    const $desc = descEl;
-    const selectors = 'h2, h3, h4, p:has(strong), p:has(b), strong, b';
-    
-    // We must find elements in order and process them. Since we might mutate the DOM,
-    // we collect all matching headers first, but process them carefully.
-    $desc.find(selectors).each(function (this: any) {
-      const $h = $desc.find(this);
-      // Skip if this element was already removed or is a descendant of a matched header
-      if (!$h.closest('body').length && $desc.find($h).length === 0) return;
-      
-      const heading = $h.text().trim().toLowerCase();
-      if (!heading || heading.length > 80) return; // Ignore very long bold text
-
-      const $container = $h.parent().is('p') ? $h.parent() : $h;
-      const matched = $container.nextUntil(selectors);
-      const subBody = matched.toArray().map((el: any) => {
-        // use cheerios html on each element
-        const tag = (el.tagName || '').toLowerCase();
-        // If it's a text node or similar without prop/html, just use text
-        return $desc.find(el).prop('outerHTML') || $desc.find(el).html() || $desc.find(el).text();
-      }).join('<br>');
-      
-      if (!subBody.trim()) return;
-      const body = stripHtml(subBody);
-      let isExtracted = false;
-
-      if (heading.includes('eligib')) {
-        listing.eligibility = listing.eligibility ? `${listing.eligibility}\n\n${body}` : body;
-        isExtracted = true;
-      } else if (heading.includes('benefit') || heading.includes('funding') ||
-                 (heading.includes('cover') && heading.includes('what'))) {
-        listing.benefits = listing.benefits ? `${listing.benefits}\n\n${body}` : body;
-        isExtracted = true;
-      } else if (heading.includes('require') || heading.includes('document')) {
-        listing.requirements = listing.requirements ? `${listing.requirements}\n\n${body}` : body;
-        isExtracted = true;
-      } else if (heading.includes('responsib') || heading.includes('dut') || heading.includes('role')) {
-        listing.responsibilities = listing.responsibilities ? `${listing.responsibilities}\n\n${body}` : body;
-        isExtracted = true;
-      } else if (heading.includes('submission') || heading.includes('apply') || heading.includes('guideline')) {
-        listing.guidelines = listing.guidelines ? `${listing.guidelines}\n\n${body}` : body;
-        isExtracted = true;
+  private stripTrailingJunk(html: string): string {
+    const cutPhrases = [
+      'Check More Scholarships',
+      'Other Opportunities You May Like',
+      'Other Opportunities you may like',
+      'Related Opportunities',
+      'Frequently Asked Questions',
+    ];
+    let result = html;
+    for (const phrase of cutPhrases) {
+      const idx = result.indexOf(phrase);
+      if (idx !== -1) {
+        const blockStart = result.lastIndexOf('<', idx);
+        result = result.substring(0, blockStart !== -1 ? blockStart : idx);
       }
-
-      if (isExtracted) {
-        matched.remove();
-        $container.remove();
-      }
-    });
+    }
+    return result;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -345,3 +434,4 @@ export class ScholarshipsAfScraper extends BaseScraper {
     return el.text().trim() || '';
   }
 }
+
