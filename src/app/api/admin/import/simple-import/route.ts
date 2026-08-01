@@ -61,6 +61,9 @@ export async function GET() {
             .replace(/\s+/g, '-')
             .substring(0, 100) + '-' + Date.now();
 
+          const safeDeadline = listing.deadline ? new Date(listing.deadline) : null;
+          const validDeadline = safeDeadline && !isNaN(safeDeadline.getTime()) ? safeDeadline : null;
+
           // Upsert using Prisma
           // We use originalUrl or sourceUrl as the unique identifier logic
           const existing = await db.opportunity.findFirst({
@@ -85,7 +88,7 @@ export async function GET() {
                 salary: listing.salary,
                 experience: listing.experience,
                 educationReq: listing.educationReq,
-                deadline: listing.deadline,
+                deadline: validDeadline,
                 image: listing.imageUrl || listing.logoUrl,
                 applyUrl: listing.applyUrl || listing.originalUrl,
                 jobType: listing.jobType || source.type || 'job',
@@ -109,7 +112,7 @@ export async function GET() {
               salary: listing.salary,
               experience: listing.experience,
               educationReq: listing.educationReq,
-              deadline: listing.deadline,
+              deadline: validDeadline,
               image: listing.imageUrl || listing.logoUrl,
               applyUrl: listing.applyUrl || listing.originalUrl,
               sourceUrl: listing.sourceUrl,

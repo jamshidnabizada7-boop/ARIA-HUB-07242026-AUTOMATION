@@ -115,6 +115,8 @@ export class AcbarScraper extends BaseScraper {
             listing.experience = listing.experience || extracted[k];
         } else if (lower.includes('education')) {
             listing.educationReq = listing.educationReq || extracted[k];
+        } else if (lower.includes('closing date') || lower.includes('deadline')) {
+            listing.deadline = listing.deadline || parseDate(extracted[k]) || extracted[k];
         } else if (lower.includes('vacancy')) {
             // Can be useful context
         }

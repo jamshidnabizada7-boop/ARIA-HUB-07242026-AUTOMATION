@@ -157,7 +157,18 @@ function OpportunityCard({ opportunity, t, onOpen, phone }: { opportunity: Oppor
   const title = getLocalizedContent(opportunity.title, opportunity.titleI18n as any, lang);
   const description = getLocalizedContent(opportunity.description, opportunity.descriptionI18n as any, lang);
   
-  const deadline = opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : null;
+  let deadline = null;
+  if (opportunity.deadline) {
+    deadline = new Date(opportunity.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  } else if (opportunity.extractedData && typeof opportunity.extractedData === 'object') {
+    const ext = opportunity.extractedData as any;
+    const raw = ext['Closing Date'] || ext['Deadline'] || ext['deadline'] || ext['Closing date'];
+    if (raw) {
+      const d = new Date(raw);
+      deadline = !isNaN(d.getTime()) ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : String(raw);
+    }
+  }
+
   const plainDescription = description ? description.replace(/<[^>]*>?/gm, '') : '';
 
   const whatsappMessage = `Hello ARIA HUB! I am interested in applying for this opportunity:\n\nTitle: ${title}\nSource: ${opportunity.sourceName || 'ARIA HUB'}`;
@@ -279,7 +290,17 @@ function OpportunityDetail({ opportunity, t, phone }: { opportunity: Opportunity
     return defaultVal;
   };
   
-  const deadline = opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : null;
+  let deadline = null;
+  if (opportunity.deadline) {
+    deadline = new Date(opportunity.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  } else if (opportunity.extractedData && typeof opportunity.extractedData === 'object') {
+    const ext = opportunity.extractedData as any;
+    const raw = ext['Closing Date'] || ext['Deadline'] || ext['deadline'] || ext['Closing date'];
+    if (raw) {
+      const d = new Date(raw);
+      deadline = !isNaN(d.getTime()) ? d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : String(raw);
+    }
+  }
 
   const whatsappMessage = `Hello ARIA HUB! I am interested in applying for this opportunity:\n\nTitle: ${title}\nSource: ${opportunity.sourceName || 'ARIA HUB'}`;
   const applyLink = phone ? `https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}` : opportunity.applyUrl;

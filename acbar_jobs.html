@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+
+    <!-- Meta Tags -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>ACBAR: List Job</title>
+
+    <meta content="" name="description">
+
+    <meta content="" name="keywords">
+
+
+    <!-- Favicon and Touch Icons -->
+    <link href="https://www.acbar.org/web/logo/logo.png" rel="shortcut icon" type="image/png">
+    <link href="https://www.acbar.org/web/logo/logo.png" rel="apple-touch-icon">
+    <link href="https://www.acbar.org/web/logo/logo.png" rel="apple-touch-icon" sizes="72x72">
+    <link href="https://www.acbar.org/web/logo/logo.png" rel="apple-touch-icon" sizes="114x114">
+    <link href="https://www.acbar.org/web/logo/logo.png" rel="apple-touch-icon" sizes="144x144">
+
+
+
+
+
+    <!-- Stylesheet -->
+
+    <link href="https://www.acbar.org/front/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <link href="https://www.acbar.org/front/css/jquery-ui.min.css" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/front/css/animate.css" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/front/css/css-plugin-collections.css" rel="stylesheet" />
+    <link href="https://www.acbar.org/front/css/style-main.css" rel="stylesheet" type="text/css">
+
+
+    
+
+
+
+
+    <link href="https://www.acbar.org/front/css/preloader.css" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/front/css/custom-bootstrap-margin-padding.css" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/front/css/responsive.css" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/front/js/revolution-slider/css/settings.css" rel="stylesheet" type="text/css" />
+    <link href="https://www.acbar.org/front/js/revolution-slider/css/layers.css" rel="stylesheet" type="text/css" />
+    <link href="https://www.acbar.org/front/js/revolution-slider/css/navigation.css" rel="stylesheet" type="text/css" />
+
+    <!-- CSS | Theme Color -->
+    <link href="https://www.acbar.org/front/css/colors/theme-skin-green.css" rel="stylesheet" type="text/css">
+
+    <!-- external javascripts -->
+    <script src="https://www.acbar.org/front/js/jquery-2.2.4.min.js"></script>
+    <script src="https://www.acbar.org/front/js/jquery-ui.min.js"></script>
+    <script src="https://www.acbar.org/front/js/bootstrap.min.js"></script>
+    <script src="https://www.acbar.org/front/js/jquery-plugin-collection.js"></script>
+    <script src="https://www.acbar.org/front/js/revolution-slider/js/jquery.themepunch.tools.min.js"></script>
+    <script src="https://www.acbar.org/front/js/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+
+
+    <link href="https://www.acbar.org/front/css/style.css" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/Admin/css/acbar-tinymce.css" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/front/css/responsive-site.css?v=8" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/front/css/acbar-navigation.css?v=14" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/front/css/acbar-header-top.css?v=9" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/front/css/acbar-footer.css?v=14" rel="stylesheet" type="text/css">
+    <link href="https://www.acbar.org/front/css/jobs.css" rel="stylesheet" type="text/css">
+
+<style>
+     .member-stat__icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(39, 136, 59, 0.10);
+            flex: 0 0 auto;
+        }
+
+        .member-stat__icon img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            display: block;
+        }
+
+
+</style>
+
+    <style>
+        .floating-social {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 9997;
+            display: block;
+        }
+
+        .floating-social__pill {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 12px 16px 12px;
+            background: #f2f2f2;
+            border: 1px solid rgba(0, 0, 0, 0.16);
+            border-right: 0;
+            border-radius: 12px 0 0 12px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+        }
+
+        .floating-social__label {
+            color: #666;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.4px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            user-select: none;
+        }
+
+        .floating-social__stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .floating-social__link {
+            width: 28px;
+            height: 28px;
+            border-radius: 3px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #fff;
+            box-shadow: none;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            transition: transform 140ms ease, opacity 140ms ease;
+        }
+
+        .floating-social__link:hover,
+        .floating-social__link:focus {
+            transform: translateY(-2px);
+            opacity: 0.95;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .floating-social__link--facebook {
+            background: #000000;
+        }
+
+        .floating-social__link--x {
+            color: #000000;
+        }
+
+        .floating-social__link--x:hover {
+            color: green;
+        }
+
+        .floating-social__link--linkedin {
+            background: #000000;
+        }
+
+        .floating-social__link i,
+        .floating-social__x {
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .floating-social__x {
+            font-weight: 900;
+            font-family: Arial, sans-serif;
+        }
+
+        @media (min-width: 1200px) {
+            .alert-top-header-mobile {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .floating-social {
+                right: 0;
+            }
+
+            [dir="rtl"] .floating-social {
+                left: 0;
+                right: auto;
+            }
+
+            .alert-top-header-desktop {
+                display: none !important;
+            }
+        }
+
+
+        .pagination>li>a,
+        .pagination>li>span {
+            color: rgb(4, 94, 4);
+        }
+
+        .pagination>.active>span {
+            background-color: rgb(3, 88, 3);
+            border-color: rgb(3, 88, 3);
+        }
+
+        .icon-theme-colored.icon-dark a {
+            background-color: white;
+            color: green;
+        }
+
+        .hvr-underline-from-center::before {
+            background: green;
+        }
+
+        .post-description p,
+        .post_description p,
+        .job-details-card__text p {
+            text-align: justify !important;
+        }
+
+        .post-description ul,
+        .post-description ol,
+        .post_description ul,
+        .post_description ol {
+            list-style-position: outside !important;
+            padding-left: 2em !important;
+            margin: 0 0 1em !important;
+        }
+
+        .post-description ul,
+        .post_description ul {
+            list-style-type: disc !important;
+        }
+
+        .post-description ol,
+        .post_description ol {
+            list-style-type: decimal !important;
+        }
+
+        .post-description ul ul,
+        .post_description ul ul {
+            list-style-type: circle !important;
+            margin-top: 0.25em !important;
+        }
+
+        .post-description ul ul ul,
+        .post_description ul ul ul {
+            list-style-type: square !important;
+        }
+
+        .post-description ol ol,
+        .post_description ol ol {
+            list-style-type: lower-alpha !important;
+        }
+
+        .post-description li,
+        .post_description li {
+            display: list-item !important;
+        }
+
+        .job-details-card {
+            padding: 18px 40px 18px 40px;
+        }
+
+        /* .job-details-card ul li:before {
+        content: "\f101" !important;
+    font-family: fontawesome !important;
+    font-size: 12px !important;
+    color: green !important;
+    font-size: 18px !important;
+    margin: 0 4px !important;
+ } */
+ .job-pill  {
+    background: #e5f1e7 !important;
+    color: #074610 !important;
+ }
+ .job-pill i {
+    color: #050806 !important;
+ }
+
+        .pagination {
+            justify-content: center;
+            display: flex;
+        }
+
+        .scrolling-wrapper {
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .scrolling-text {
+            white-space: nowrap;
+            display: inline-block;
+            animation: scrollBasedOnWidth 10s linear infinite;
+        }
+
+        .scrolling-text span {
+            display: inline-block;
+        }
+        .cf-turnstile-wrap {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+                    @keyframes scrollBasedOnWidth {
+                0% {
+                    transform: translateX(0);
+                }
+
+                100% {
+                    transform: translateX(-50%);
+                }
+            }
+        
+    </style>
+
+
+</head>
+
+<body class="">
+    <div id="wrapper" class="clearfix">
+        <div class="floating-social" aria-label="Social media links">
+            <div class="floating-social__pill">
+                <div class="floating-social__stack">
+                    <div class="floating-social__label" aria-hidden="true">Follow</div>
+                    <a class="floating-social__link floating-social__link--linkedin"
+                        href="https://www.linkedin.com/company/agency-coordinating-body-for-afghan-relief-development-acbar/?viewAsMember=true"
+                        title="LinkedIn" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <i class="fa fa-linkedin" aria-hidden="true"
+                            style="transform: rotate(90deg);font-size: 20px"></i>
+                    </a>
+                    <a class=" floating-social__link--x" href="https://twitter.com/ACBAR_AFG" title="twitter"
+                        target="_blank" rel="noopener" aria-label="X">
+
+                        <svg style="transform: rotate(90deg);font-size: 20px" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 512 512" width="24" height="24" fill="currentColor">
+                            <path
+                                d="M389.2 48h70.6L307.6 224.2 480 464H344.5L238.7 318.6 106.5 464H35.8L199.3 282.4 32 48h139.6l96.2 132.6L389.2 48zm-24.8 373.6h39.1L150.4 86.4h-42l256 335.2z" />
+                        </svg>
+
+
+                    </a>
+                    <a class="floating-social__link floating-social__link--facebook"
+                        href="https://www.facebook.com/ACBAR-468616779884042/" target="_blank" rel="noopener"
+                        title="Facebook" aria-label="Facebook">
+                        <i class="fa fa-facebook" aria-hidden="true"
+                            style="transform: rotate(90deg);font-size: 20px"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- preloader -->
+        
+
+        <!-- Header -->
+        <header id="header" class="header">
+            <div class="header-top acbar-header-top border-top-theme-color-3px">
+    <div class="container-fluid header-wrap">
+        
+        <div class="acbar-header-top__bar">
+            <div class="acbar-header-top__start">
+                <ul class="acbar-header-top__quick-links">
+                    <li>
+                        <a href="https://www.acbar.org/en/donate" class="acbar-header-top__quick-link acbar-header-top__quick-link--donate">
+                            <i class="fa fa-heart-o" aria-hidden="true"></i>
+                            Donate
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            
+            <div class="acbar-header-top__end">
+                <div class="acbar-header-top__end-scroll">
+                    <div class="acbar-header-top__lang">
+                        <div class="acbar-lang-dropdown" data-acbar-lang-dropdown>
+    <button class="acbar-header-top__lang-btn acbar-lang-dropdown__toggle" type="button" id="languageMenu"
+        aria-haspopup="true" aria-expanded="false" aria-controls="languageMenuList">
+        <i class="fa fa-globe" aria-hidden="true"></i>
+        <span class="acbar-lang-dropdown__label selected-language">
+                            English
+                    </span>
+        <i class="fa fa-angle-down acbar-lang-dropdown__caret" aria-hidden="true"></i>
+    </button>
+    <ul class="acbar-lang-dropdown__menu" id="languageMenuList" role="menu" aria-labelledby="languageMenu" hidden>
+        <li role="none"><a role="menuitem" href="https://www.acbar.org/en/switch/da">دری</a></li>
+        <li role="none"><a role="menuitem" href="https://www.acbar.org/en/switch/pa">پشتو</a></li>
+        <li role="none"><a role="menuitem" href="https://www.acbar.org/en/switch/en">English</a></li>
+    </ul>
+</div>
+                    </div>
+
+                    <ul class="acbar-header-top__account">
+                                                    <li>
+                                <a href="https://www.acbar.org/en/login/front" class="acbar-header-top__account-link">
+                                    <i class="fa fa-sign-in" aria-hidden="true"></i>
+                                    <span>Sign in</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.acbar.org/en/registration" class="acbar-header-top__account-link acbar-header-top__account-link--register">
+                                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                    <span>Sign up</span>
+                                </a>
+                            </li>
+                        
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <div class="header-nav">
+    <div class="acbar-nav-sticky">
+        <nav class="acbar-nav" id="acbar-nav" aria-label="Menu">
+            <div class="acbar-nav__bar">
+                <div class="container-fluid acbar-nav__inner">
+                    <a class="acbar-nav__brand" href="https://www.acbar.org/en">
+                        <img src="https://www.acbar.org/Images/Logos/4vagqcuwk0MpbkEH34PKnwgzFMAb7uXkVn7JtyOp.png" alt="ACBAR" width="280"
+                            height="84" decoding="async">
+                    </a>
+
+                    <button type="button" class="acbar-nav__toggle" id="acbar-nav-toggle" aria-expanded="false"
+                        aria-controls="acbar-nav-panel">
+                        <span class="acbar-nav__toggle-bar"></span>
+                        <span class="acbar-nav__toggle-bar"></span>
+                        <span class="acbar-nav__toggle-bar"></span>
+                        <span class="acbar-nav__toggle-label">Menu</span>
+                    </button>
+                </div>
+
+                <div class="acbar-nav__backdrop" id="acbar-nav-backdrop" aria-hidden="true" tabindex="-1"></div>
+
+                <div class="acbar-nav__panel" id="acbar-nav-panel" aria-hidden="true">
+                        <div class="acbar-nav__panel-header">
+                            <p class="acbar-nav__panel-title">Menu</p>
+                            <button type="button" class="acbar-nav__close" id="acbar-nav-close"
+                                aria-label="Close menu">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                        </div>
+
+                        <ul class="acbar-nav__list" role="menubar">
+                                                            <li class="acbar-nav__item">
+                        <div class="acbar-nav__row">
+                <a class="acbar-nav__link" href="/en/">HOME</a>
+            </div>
+            </li>
+                                                            <li class="acbar-nav__item acbar-nav__item--has-children">
+            <div class="acbar-nav__row">
+            <a class="acbar-nav__link" href="#">ABOUT</a>
+            <button type="button" class="acbar-nav__expand" aria-expanded="false"
+                aria-label="Toggle submenu: ABOUT">
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+            </button>
+        </div>
+        <ul class="acbar-nav__submenu" role="group">
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-page/3?=Background">Background</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-page/1?=Strategic Plan">Strategic Plan</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-page/4?=Code of Conduct">Code of Conduct</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-page/24?=Regional Offices">ACBAR Regional Offices</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/acbarstatutes">ACBAR Statutes</a>
+            </li>
+                    </ul>
+    </li>
+                                                            <li class="acbar-nav__item acbar-nav__item--has-children">
+            <div class="acbar-nav__row">
+            <a class="acbar-nav__link" href="#">ACTIVITIES</a>
+            <button type="button" class="acbar-nav__expand" aria-expanded="false"
+                aria-label="Toggle submenu: ACTIVITIES">
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+            </button>
+        </div>
+        <ul class="acbar-nav__submenu" role="group">
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-page/5?=Coordination &amp; Information">Information Sharing &amp; Coordination</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-page/31?=Advocacy &amp; Enabling Environment">Advocacy, Inclusion and Enabling Environments</a>
+            </li>
+                            <li class="acbar-nav__item acbar-nav__item--has-children">
+            <div class="acbar-nav__row">
+            <a class="acbar-nav__link" href="/en/site-page/6?=Capacity Development">Capacity Strengthening and Organization Development</a>
+            <button type="button" class="acbar-nav__expand" aria-expanded="false"
+                aria-label="Toggle submenu: Capacity Strengthening and Organization Development">
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+            </button>
+        </div>
+        <ul class="acbar-nav__submenu" role="group">
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-page/7?=Humanitarian Twinning Program">Humanitarian Twinning Program</a>
+            </li>
+                    </ul>
+    </li>
+                    </ul>
+    </li>
+                                                            <li class="acbar-nav__item acbar-nav__item--has-children">
+            <div class="acbar-nav__row">
+            <a class="acbar-nav__link" href="#">MEMBERSHIP</a>
+            <button type="button" class="acbar-nav__expand" aria-expanded="false"
+                aria-label="Toggle submenu: MEMBERSHIP">
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+            </button>
+        </div>
+        <ul class="acbar-nav__submenu" role="group">
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-members">ACBAR Member NGOs List</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-page/10?=How to become a member">How to become a member?</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-category/7?=">Members Highlights</a>
+            </li>
+                    </ul>
+    </li>
+                                                            <li class="acbar-nav__item acbar-nav__item--has-children">
+            <div class="acbar-nav__row">
+            <a class="acbar-nav__link" href="#">RESOURCES</a>
+            <button type="button" class="acbar-nav__expand" aria-expanded="false"
+                aria-label="Toggle submenu: RESOURCES">
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+            </button>
+        </div>
+        <ul class="acbar-nav__submenu" role="group">
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-category/3?=">Latest Reports</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/protection/login">Mapping of ACBAR Members</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-category/8?=30 Years Anniversary ACBAR">38 Years Anniversary ACBAR</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-page/14?=National Holidays">National Holidays</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-page/38?=sustainable-development-goals---sdgs">Sustainable Development Goals - SDGs</a>
+            </li>
+                    </ul>
+    </li>
+                                                            <li class="acbar-nav__item acbar-nav__item--has-children">
+            <div class="acbar-nav__row">
+            <a class="acbar-nav__link" href="#">PUBLICATIONS</a>
+            <button type="button" class="acbar-nav__expand" aria-expanded="false"
+                aria-label="Toggle submenu: PUBLICATIONS">
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+            </button>
+        </div>
+        <ul class="acbar-nav__submenu" role="group">
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/publications">External Publications</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/law">Laws, Regulations &amp; Policies</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/acbar">All ACBAR Reports &amp; Briefing Papers</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/environment-center">Environment Center</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/localization-technical-working-group">Localization Technical Working Group</a>
+            </li>
+                    </ul>
+    </li>
+                                                            <li class="acbar-nav__item acbar-nav__item--has-children">
+            <div class="acbar-nav__row">
+            <a class="acbar-nav__link" href="/en/site-rfq">RFQs/RFPs</a>
+            <button type="button" class="acbar-nav__expand" aria-expanded="false"
+                aria-label="Toggle submenu: RFQs/RFPs">
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+            </button>
+        </div>
+        <ul class="acbar-nav__submenu" role="group">
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-rfq?r=Request for Quotation">Request for Quotations</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/site-rfq?r=Request for Proposal">Request for Proposals</a>
+            </li>
+                    </ul>
+    </li>
+                                                            <li class="acbar-nav__item acbar-nav__item--has-children is-active-branch">
+            <div class="acbar-nav__row">
+            <a class="acbar-nav__link" href="/en/jobs">JOBS</a>
+            <button type="button" class="acbar-nav__expand" aria-expanded="false"
+                aria-label="Toggle submenu: JOBS">
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+            </button>
+        </div>
+        <ul class="acbar-nav__submenu" role="group">
+                            <li class="acbar-nav__item is-active">
+                        <a class="acbar-nav__link" href="/en/jobs">Job Centre</a>
+            </li>
+                            <li class="acbar-nav__item">
+                        <a class="acbar-nav__link" href="/en/applicationform">Application Form</a>
+            </li>
+                    </ul>
+    </li>
+                                                            <li class="acbar-nav__item">
+                        <div class="acbar-nav__row">
+                <a class="acbar-nav__link" href="/en/site/contact">CONTACT</a>
+            </div>
+            </li>
+                            
+                            <li class="acbar-nav__item acbar-nav__item--search" role="none">
+                                <a class="acbar-nav__link search-trigger" href="#" role="menuitem"
+                                    aria-label="Search">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+        </header>
+
+
+        
+
+
+        <div id="search-backdrop" class="search-backdrop" aria-hidden="true"></div>
+
+        <div id="search-overlay" class="search-overlay" aria-hidden="true">
+            <div class="container">
+                <div class="search-overlay-inner">
+                    <form class="search-overlay-form" action="https://www.acbar.org/en/search/index" method="get"
+                        role="search">
+                        <div class="input-group">
+                            <span class="input-group-addon" aria-hidden="true"><i class="fa fa-search"></i></span>
+                            <input type="text" name="search" required class="form-control search-input"
+                                placeholder="Search" autocomplete="off">
+                            <span class="input-group-btn">
+                                <button type="submit"
+                                    class="btn btn-theme-colored search-submit-btn">SEARCH</button>
+                            </span>
+                        </div>
+                    </form>
+
+                    <button type="button" class="search-overlay-close" aria-label="Close (Esc)">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+
+<!-- Start main-content -->
+<div class="main-content">
+    
+<section class="jobs-hero">
+  <div class="container">
+    <div class="jobs-hero__content">
+      <h1 class="jobs-hero__title">Find Your Next Opportunity
+       
+    </h1>
+      <p class="jobs-hero__subtitle">
+
+         ACBAR is only responsible for announcing jobs, for more information regarding any specific job, please contact organizations.
+
+
+      </p>
+
+      <form class="jobs-hero__search" action="https://www.acbar.org/en/jobs" method="get" role="search">
+        <input type="hidden" name="category" value="">
+        <input type="hidden" name="location" value="">
+        <input type="hidden" name="tag" value="">
+        <div class="jobs-searchbar">
+          <div class="jobs-searchbar__group">
+            <i class="fa fa-search jobs-searchbar__icon" aria-hidden="true"></i>
+            <input type="text" name="search" value="" class="form-control jobs-searchbar__input" placeholder="Job title...">
+          </div>
+          <div class="jobs-searchbar__divider" aria-hidden="true"></div>
+          <div class="jobs-searchbar__group">
+            <i class="fa fa-map-marker jobs-searchbar__icon" aria-hidden="true"></i>
+            <input type="text" name="organization" value="" class="form-control jobs-searchbar__input" placeholder="Organization/Company...">
+          </div>
+          <div class="jobs-searchbar__btnwrap">
+            <button type="submit" class="btn btn-theme-colored jobs-searchbar__btn">
+              <i class="fa fa-search" aria-hidden="true"></i>
+              <span>
+                SEARCH
+              </span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="jobs-list">
+  <div class="container">
+    <form class="jobs-toolbar" action="https://www.acbar.org/en/jobs" method="get">
+      <input type="hidden" name="search" value="">
+      <input type="hidden" name="organization" value="">
+
+      <div class="jobs-toolbar__left" style="direction: ltr">
+        <div class="jobs-filter">
+          <i class="fa fa-th-large jobs-filter__icon" aria-hidden="true"></i>
+          <select class="form-control jobs-filter__control" name="category" onchange="this.form.submit()">
+            <option value="">Category</option>
+                          <option value="69" >
+                Accounting
+              </option>
+                          <option value="5" >
+                Admin-Clerical
+              </option>
+                          <option value="6" >
+                Agriculture
+              </option>
+                          <option value="7" >
+                Automotive
+              </option>
+                          <option value="8" >
+                Banking
+              </option>
+                          <option value="9" >
+                Biotech
+              </option>
+                          <option value="10" >
+                Business Development
+              </option>
+                          <option value="71" >
+                Capacity Building
+              </option>
+                          <option value="68" >
+                Communication
+              </option>
+                          <option value="11" >
+                Construction
+              </option>
+                          <option value="12" >
+                Consultant
+              </option>
+                          <option value="72" >
+                Coordination
+              </option>
+                          <option value="13" >
+                Customer Service
+              </option>
+                          <option value="14" >
+                Design
+              </option>
+                          <option value="15" >
+                Distribution-Shipping
+              </option>
+                          <option value="16" >
+                Education
+              </option>
+                          <option value="17" >
+                Engineering
+              </option>
+                          <option value="18" >
+                Entry Level
+              </option>
+                          <option value="19" >
+                Executive
+              </option>
+                          <option value="20" >
+                Facilities
+              </option>
+                          <option value="21" >
+                Finance
+              </option>
+                          <option value="22" >
+                Franchise
+              </option>
+                          <option value="23" >
+                General
+              </option>
+                          <option value="24" >
+                General Business
+              </option>
+                          <option value="25" >
+                General Labor
+              </option>
+                          <option value="26" >
+                Government
+              </option>
+                          <option value="27" >
+                Grocery
+              </option>
+                          <option value="28" >
+                Health Care
+              </option>
+                          <option value="29" >
+                Hospitality-Hotel
+              </option>
+                          <option value="30" >
+                Human Resources
+              </option>
+                          <option value="31" >
+                Information Technology
+              </option>
+                          <option value="32" >
+                Installation-Maint-Repair
+              </option>
+                          <option value="33" >
+                Insurance
+              </option>
+                          <option value="34" >
+                Inventory
+              </option>
+                          <option value="70" >
+                IT
+              </option>
+                          <option value="35" >
+                Legal
+              </option>
+                          <option value="36" >
+                Management
+              </option>
+                          <option value="37" >
+                Marketing
+              </option>
+                          <option value="38" >
+                Media-Journalism
+              </option>
+                          <option value="39" >
+                Monitoring and Evaluation
+              </option>
+                          <option value="65" >
+                Natural Resources Management
+              </option>
+                          <option value="40" >
+                Nonprofit-Social Services
+              </option>
+                          <option value="41" >
+                Nurse
+              </option>
+                          <option value="42" >
+                Other
+              </option>
+                          <option value="43" >
+                Pharmaceutical
+              </option>
+                          <option value="44" >
+                Professional Services
+              </option>
+                          <option value="45" >
+                Program
+              </option>
+                          <option value="46" >
+                Purchasing-Procurement
+              </option>
+                          <option value="47" >
+                QA-Quality Control
+              </option>
+                          <option value="48" >
+                Real Estate
+              </option>
+                          <option value="49" >
+                Research
+              </option>
+                          <option value="50" >
+                Restaurant-Food Service
+              </option>
+                          <option value="51" >
+                Retail
+              </option>
+                          <option value="52" >
+                Sales
+              </option>
+                          <option value="53" >
+                Science
+              </option>
+                          <option value="54" >
+                Security
+              </option>
+                          <option value="55" >
+                Skilled Labor
+              </option>
+                          <option value="56" >
+                Strategy-Planning
+              </option>
+                          <option value="57" >
+                Supply Chain
+              </option>
+                          <option value="67" >
+                Support
+              </option>
+                          <option value="64" >
+                Telecom
+              </option>
+                          <option value="58" >
+                Telecommunications
+              </option>
+                          <option value="59" >
+                Training
+              </option>
+                          <option value="60" >
+                Translator
+              </option>
+                          <option value="61" >
+                Transportation
+              </option>
+                          <option value="62" >
+                Veterinary Services
+              </option>
+                          <option value="63" >
+                Warehouse
+              </option>
+                      </select>
+        </div>
+        <div class="jobs-filter">
+          <i class="fa fa-map-marker jobs-filter__icon" aria-hidden="true"></i>
+          <select class="form-control jobs-filter__control" name="location" onchange="this.form.submit()">
+            <option value="">Location</option>
+                          <option value="1" >
+                Badakhshan
+              </option>
+                          <option value="2" >
+                Badghis
+              </option>
+                          <option value="3" >
+                Baghlan
+              </option>
+                          <option value="4" >
+                Balkh
+              </option>
+                          <option value="5" >
+                Bamian
+              </option>
+                          <option value="6" >
+                Daikondi
+              </option>
+                          <option value="7" >
+                Farah
+              </option>
+                          <option value="8" >
+                Faryab
+              </option>
+                          <option value="9" >
+                Ghazni
+              </option>
+                          <option value="10" >
+                Ghowr
+              </option>
+                          <option value="11" >
+                Helmand
+              </option>
+                          <option value="12" >
+                Herat
+              </option>
+                          <option value="13" >
+                Jawzjan
+              </option>
+                          <option value="14" >
+                Kabul
+              </option>
+                          <option value="15" >
+                Kandahar
+              </option>
+                          <option value="16" >
+                Kapisa
+              </option>
+                          <option value="17" >
+                Khost
+              </option>
+                          <option value="18" >
+                Kunar
+              </option>
+                          <option value="19" >
+                Kunduz
+              </option>
+                          <option value="20" >
+                Laghman
+              </option>
+                          <option value="21" >
+                Logar
+              </option>
+                          <option value="32" >
+                Maidan Wardak
+              </option>
+                          <option value="22" >
+                Nangarhar
+              </option>
+                          <option value="23" >
+                Nimruz
+              </option>
+                          <option value="24" >
+                Nuristan
+              </option>
+                          <option value="25" >
+                Oruzgan
+              </option>
+                          <option value="26" >
+                Paktia
+              </option>
+                          <option value="34" >
+                Paktika
+              </option>
+                          <option value="27" >
+                Panjshir
+              </option>
+                          <option value="28" >
+                Parwan
+              </option>
+                          <option value="29" >
+                Samangan
+              </option>
+                          <option value="30" >
+                Sar-e Pol
+              </option>
+                          <option value="31" >
+                Takhar
+              </option>
+                          <option value="33" >
+                Zabul
+              </option>
+                      </select>
+        </div>
+      </div>
+
+      <div class="jobs-toolbar__right" style="direction: ltr">
+        <div class="jobs-toolbar__count">261 jobs found</div>
+        <div class="jobs-filter jobs-filter--sort">
+          <select class="form-control jobs-filter__control" name="tag" onchange="this.form.submit()">
+            <option value="">Newest First</option>
+            <option value="latest" >Latest Jobs</option>
+            <option value="expiry-today" >language.expiring_today</option>
+          </select>
+        </div>
+      </div>
+    </form>
+
+
+       <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/ProfilePhotos/3g5tYSHmmgxAcUrNY4OYvY7sLvwZcmnJEONB7wiB.jpg" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144516/senior-mining-extraction-engineer" class="job-card__title">
+                Senior Mining Extraction Engineer
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Mudasir Ashna and Bakhtar Union Mining &amp; Processing Company <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Baghlan</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-08 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/5558348673.png" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144515/community-engagement-officer" class="job-card__title">
+                Community Engagement Officer
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Danish Refugee Council <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kandahar</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-10 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/5558348673.png" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144514/community-engagement-team-leader" class="job-card__title">
+                Community Engagement Team Leader
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Danish Refugee Council <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kandahar</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-10 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/3930478469.png" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144513/audit-officer" class="job-card__title">
+                Audit Officer
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Naqdina Payment Services <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-20 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/160057987310.jpg" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144512/civil-engineer-new-pharmaceutical-plant-construction" class="job-card__title">
+                Civil Engineer – New Pharmaceutical Plant Construction
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Khair Khwa Pharma Private Ltd <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-15 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/1995655385.jpg" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144511/finance-assistant" class="job-card__title">
+                Finance Assistant
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >ERIELL KAM <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-10 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/5370435494.jpg" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144510/x-ray-technician" class="job-card__title">
+                X-Ray Technician
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >MAGNA <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kunduz</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-08 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+            
+        <span>
+
+            <i class="fa fa-building" style="font-size: 24px"></i>
+        </span>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144509/gastroenterology-endoscopy-nurse" class="job-card__title">
+                Gastroenterology &amp; Endoscopy Nurse
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >AAHO/Afshar Hospital <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-03 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/6802196172.PNG" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144508/rmnch-program-supervisor-re-announced" class="job-card__title">
+                RMNCH Program Supervisor (Re Announced)
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Action Against Hunger <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Helmand</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-05 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/7133570292.jpg" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144507/gynecologist-re-announced" class="job-card__title">
+                Gynecologist (Re Announced)
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >INTERSOS <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Zabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-06 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/4568832467.png" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144506/programme-development-manager" class="job-card__title">
+                Programme Development Manager
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Save the Children International <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-12 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+            
+        <span>
+
+            <i class="fa fa-building" style="font-size: 24px"></i>
+        </span>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144505/deputy-medical-coordinator" class="job-card__title">
+                Deputy Medical Coordinator
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Medecins du Monde - France <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-13 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/4467219575.png" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144504/district-teacher-educator-maimay-re-announced" class="job-card__title">
+                District Teacher Educator ( Maimay) (Re Announced)
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Shining Star Educational Organization of Afghanistan <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Badakhshan</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-06 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+            
+        <span>
+
+            <i class="fa fa-building" style="font-size: 24px"></i>
+        </span>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144503/security-associate" class="job-card__title">
+                Security Associate
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >UNICEF <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kandahar</span>
+
+                                                            
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Nangarhar</span>
+
+                                                                                  <a href="https://www.acbar.org/en/jobs/details/144503/security-associate" class="toggle-more" style="color:#28883b" aria-label="More locations" title="More locations">&hellip;</a>
+                    
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-06 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/2719904825.jpg" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144502/fundraising-and-resource-mobilization-director" class="job-card__title">
+                Fundraising and Resource Mobilization Director
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Afghanistan Social and Legal Organization (ASLO) <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-31 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/4568832467.png" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144501/partnership-coordinator-maternity-cover" class="job-card__title">
+                Partnership Coordinator (Maternity Cover)
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Save The Children International <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 1 day ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-03 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/2719904825.jpg" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144500/treasury-officer" class="job-card__title">
+                Treasury Officer
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Afghanistan Social and Legal Organization (ASLO) <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 2 days ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-31 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+            
+        <span>
+
+            <i class="fa fa-building" style="font-size: 24px"></i>
+        </span>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144499/d-khsosy-sktor-khh-d-arny-ao-arzony-karshnas" class="job-card__title">
+                د خصوصی سکتور څخه د څارنی او ارزونی کارشناس
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >له خصوصی سکتورونو څخه د څارنی عمومی  ریاست <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 2 days ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-30 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/1482120621607.jpg" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144498/male-duty-doctors" class="job-card__title">
+                Male Duty Doctors
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >AKHS-A (Aga Khan Health Services-Afghanistan) <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Bamian</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 2 days ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-13 </span>
+      </div>
+      
+    </div>
+        <div class="job-card">
+      <div class="job-card__accent" aria-hidden="true"></div>
+      <div class="job-card__logo">
+
+                           <div class="member-stat__icon">
+                  <img src="https://download.acbar.org/images/images/2719904825.jpg" alt="">
+                 </div>
+
+            
+      </div>
+      <div class="job-card__main">
+        <div class="job-card__top">
+          <div class="job-card__titlewrap">
+            <a href="https://www.acbar.org/en/jobs/details/144497/transport-officer" class="job-card__title">
+                Transport Officer
+            </a>
+              
+                
+          </div>
+        </div>
+
+        <div class="job-card__company " >Afghanistan Social and Legal Organization (ASLO) <span class="job-dot">•</span> <span class="job-pill">Full Time </span></div>
+      </div>
+      <div class="job-card__meta">
+                             
+                      <span class="job-pill"><i class="fa fa-map-marker" aria-hidden="true"></i> Kabul</span>
+
+                                                            
+        <span class="job-pill" style="direction: ltr"><i class="fa fa-clock-o" aria-hidden="true"></i> 2 days ago</span>
+        <span class="job-pill"><i class="fa fa-calendar" aria-hidden="true"></i> 2026-08-31 </span>
+      </div>
+      
+    </div>
+    
+
+    <div style="margin-top: 20px;">
+      <nav>
+        <ul class="pagination">
+            
+                            <li class="page-item disabled" aria-disabled="true" aria-label="&laquo; Previous">
+                    <span class="page-link" aria-hidden="true">&lsaquo;</span>
+                </li>
+            
+            
+                            
+                
+                
+                                                                                        <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                                                                                                <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=2">2</a></li>
+                                                                                                <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=3">3</a></li>
+                                                                                                <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=4">4</a></li>
+                                                                                                <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=5">5</a></li>
+                                                                                                <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=6">6</a></li>
+                                                                                                <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=7">7</a></li>
+                                                                                                <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=8">8</a></li>
+                                                                                                <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=9">9</a></li>
+                                                                                                <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=10">10</a></li>
+                                                                                        
+                                    <li class="page-item disabled" aria-disabled="true"><span class="page-link">...</span></li>
+                
+                
+                                            
+                
+                
+                                                                                        <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=13">13</a></li>
+                                                                                                <li class="page-item"><a class="page-link" href="https://www.acbar.org/en/jobs?page=14">14</a></li>
+                                                                        
+            
+                            <li class="page-item">
+                    <a class="page-link" href="https://www.acbar.org/en/jobs?page=2" rel="next" aria-label="Next &raquo;">&rsaquo;</a>
+                </li>
+                    </ul>
+    </nav>
+
+    </div>
+
+
+  </div>
+</section>
+
+</div>
+<!-- end main-content -->
+<footer id="footer" class="footer acbar-footer">
+    <div class="acbar-footer__main">
+        <div class="container-fluid">
+            <div class="acbar-footer__grid">
+                <div class="acbar-footer__col acbar-footer__col--logo">
+                    <a href="https://www.acbar.org/en" class="acbar-footer__logo">
+                        <img src="https://www.acbar.org/Images/Logos/yGGljDn6i8bUGTNVvbjJ7pGBVSbSUUmoC43PWc5F.png" alt="ACBAR">
+                    </a>
+                </div>
+
+                
+                <div class="acbar-footer__col">
+                    <h2 class="acbar-footer__title">ACBAR Highlights</h2>
+                    <ul class="acbar-footer__links">
+                                                    <li>
+                                <a href="https://www.acbar.org/en/site-highlight/localization-in-action-showcasing-best-practices-from-afghanistan/51"
+                                    class="acbar-footer__link">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    <span>Localization in Action: Showcasing Best Practices from Afghanistan</span>
+                                </a>
+                            </li>
+                                                    <li>
+                                <a href="https://www.acbar.org/en/site-highlight/strengthening-strategic-coordination-for-development-and-humanitarian-action/50"
+                                    class="acbar-footer__link">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    <span>Strengthening Strategic Coordination for Development and Humanitarian Ac...</span>
+                                </a>
+                            </li>
+                                                    <li>
+                                <a href="https://www.acbar.org/en/site-highlight/acbar-facilitates-ngo-orientation-on-revised-tax-exemption-procedure/49"
+                                    class="acbar-footer__link">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    <span>ACBAR Facilitates NGO Orientation on Revised Tax Exemption Procedure</span>
+                                </a>
+                            </li>
+                                                    <li>
+                                <a href="https://www.acbar.org/en/site-highlight/enhancing-staff-capabilities-in-project-management/36"
+                                    class="acbar-footer__link">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    <span>Enhancing staff capabilities in project management.</span>
+                                </a>
+                            </li>
+                                            </ul>
+                </div>
+
+                
+                <div class="acbar-footer__col">
+                    <h2 class="acbar-footer__title">Member Highlights</h2>
+                    <ul class="acbar-footer__links">
+                                                    <li>
+                                <a href="https://www.acbar.org/en/site-highlight/together-for-change/48"
+                                    class="acbar-footer__link">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    <span>Together for Change</span>
+                                </a>
+                            </li>
+                                                    <li>
+                                <a href="https://www.acbar.org/en/site-highlight/classrooms-of-hope/47"
+                                    class="acbar-footer__link">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    <span>Classrooms of Hope</span>
+                                </a>
+                            </li>
+                                                    <li>
+                                <a href="https://www.acbar.org/en/site-highlight/world-vision-international-participation-in-the-2026-fragility-forum/46"
+                                    class="acbar-footer__link">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    <span>World Vision International Participation in the 2026 Fragility Forum</span>
+                                </a>
+                            </li>
+                                                    <li>
+                                <a href="https://www.acbar.org/en/site-highlight/how-intersos-is-reaching-remote-villages-of-afghanistan-for-immunisation/45"
+                                    class="acbar-footer__link">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    <span>How INTERSOS is reaching remote villages of Afghanistan for immunisation</span>
+                                </a>
+                            </li>
+                                            </ul>
+                </div>
+
+                
+                <div class="acbar-footer__col">
+                    <h2 class="acbar-footer__title">Contact Us</h2>
+                    <ul class="acbar-footer__contact-list">
+                        <li>
+                            <span class="acbar-footer__contact-icon" aria-hidden="true">
+                                <i class="fa fa-map-marker"></i>
+                            </span>
+                            <span>ACBAR-MAIN OFFICE: East of Shahr-e-Naw Park, ATOMA Road, Street # 2, House # 23, District 4, Kabul, Afghanistan.</span>
+                        </li>
+                        <li>
+                            <span class="acbar-footer__contact-icon" aria-hidden="true">
+                                <i class="fa fa-phone"></i>
+                            </span>
+                            <a href="tel:+93775934920" dir="ltr">+93775934920</a>
+                        </li>
+                        <li>
+                            <span class="acbar-footer__contact-icon" aria-hidden="true">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                            <a href="mailto:webinfo@acbar.org">webinfo@acbar.org</a>
+                        </li>
+                    </ul>
+                </div>
+
+                
+                <div class="acbar-footer__col">
+                    <h2 class="acbar-footer__title">Useful Links</h2>
+                    <ul class="acbar-footer__links">
+                        <li>
+                            <a href="https://www.acbar.org/en/site-page/3?=Background" class="acbar-footer__link">
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                <span>About Us</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.acbar.org/en/jobs" class="acbar-footer__link">
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                <span>Jobs</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.acbar.org/en/site-page/10" class="acbar-footer__link">
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                <span>Become a member</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.acbar.org/en/site/contact" class="acbar-footer__link">
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                <span>Contact Us</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.acbar.org/en/donate" class="acbar-footer__link">
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                <span>Donate</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="acbar-footer__bottom">
+        <div class="container-fluid">
+            <p class="acbar-footer__copyright">
+                Copyright &copy; 2026 ACBAR.
+                All Rights Reserved
+            </p>
+        </div>
+    </div>
+</footer>
+
+<a class="scrollToTop" href="#"><i class="fa fa-angle-up"></i></a>
+</div>
+<!-- end wrapper -->
+
+<!-- START Formbricks Surveys -->
+<script type="text/javascript">
+!function(){
+    var appUrl = "https://forms.aryanict.net";
+    var workspaceId = "cmrh8blsp000301oc1v870eqg";
+var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src=appUrl+"/js/formbricks.umd.cjs";var e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(t,e),setTimeout(function(){window.formbricks.setup({workspaceId: workspaceId, appUrl: appUrl})},500)}();
+</script>
+<!-- END Formbricks Surveys -->
+
+<!-- Footer Scripts -->
+<script src="https://www.acbar.org/front/js/custom.js"></script>
+<script src="https://www.acbar.org/front/js/acbar-navigation.js?v=6" defer></script>
+
+<script type="text/javascript"
+    src="https://www.acbar.org/front/js/revolution-slider/js/extensions/revolution.extension.actions.min.js"></script>
+<script type="text/javascript"
+    src="https://www.acbar.org/front/js/revolution-slider/js/extensions/revolution.extension.carousel.min.js"></script>
+<script type="text/javascript"
+    src="https://www.acbar.org/front/js/revolution-slider/js/extensions/revolution.extension.kenburn.min.js"></script>
+<script type="text/javascript"
+    src="https://www.acbar.org/front/js/revolution-slider/js/extensions/revolution.extension.layeranimation.min.js"></script>
+<script type="text/javascript"
+    src="https://www.acbar.org/front/js/revolution-slider/js/extensions/revolution.extension.migration.min.js"></script>
+<script type="text/javascript"
+    src="https://www.acbar.org/front/js/revolution-slider/js/extensions/revolution.extension.navigation.min.js"></script>
+<script type="text/javascript"
+    src="https://www.acbar.org/front/js/revolution-slider/js/extensions/revolution.extension.parallax.min.js"></script>
+<script type="text/javascript"
+    src="https://www.acbar.org/front/js/revolution-slider/js/extensions/revolution.extension.slideanims.min.js"></script>
+<script type="text/javascript"
+    src="https://www.acbar.org/front/js/revolution-slider/js/extensions/revolution.extension.video.min.js"></script>
+<script type="text/javascript" src="https://www.acbar.org/front/js/app.js?v=7"></script>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+
+</body>
+
+</html>

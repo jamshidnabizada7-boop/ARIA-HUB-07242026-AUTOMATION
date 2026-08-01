@@ -1,5 +1,8 @@
 'use client';
 
+import { useLangStore } from '@/lib/lang-store';
+import { useT } from '@/hooks/use-t';
+
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -15,6 +18,9 @@ function VisaSessionContent() {
   const categoryId = searchParams.get('categoryId');
   const difficulty = searchParams.get('difficulty') || 'medium';
   const mode = searchParams.get('mode') || 'mock'; // 'mock' or 'video'
+
+  const { code } = useLangStore();
+  const t = useT();
   
   const [questions, setQuestions] = useState<any[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState("Loading your first personalized visa question...");
@@ -116,7 +122,7 @@ function VisaSessionContent() {
         recognitionRef.current = new SpeechRecognition();
         recognitionRef.current.continuous = true;
         recognitionRef.current.interimResults = true;
-        recognitionRef.current.lang = 'en-US';
+        recognitionRef.current.lang = code === 'fa' ? 'fa-IR' : (code === 'ps' ? 'ps-AF' : 'en-US');
         
         recognitionRef.current.onresult = (event: any) => {
           setSpeechError(null);
@@ -305,7 +311,7 @@ function VisaSessionContent() {
           <Card className="shadow-sm border-t-4 border-t-emerald-500">
             <CardHeader>
               <CardTitle className="flex items-center justify-between text-lg">
-                Your Answer
+                {code === 'fa' ? 'پاسخ شما' : code === 'ps' ? 'ستاسو ځواب' : 'Your Answer'}
                 <div className="flex items-center gap-3">
                     {isRecording && (
                         <div className="flex gap-1 items-center h-4">
@@ -339,22 +345,25 @@ function VisaSessionContent() {
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center text-muted-foreground italic gap-4">
                     <Mic className="h-10 w-10 opacity-20" />
-                    <p>{isRecording ? 'Listening carefully...' : 'Click the microphone to start speaking...'}</p>
+                    <p>{isRecording ? 
+                      (code === 'fa' ? 'در حال گوش دادن...' : code === 'ps' ? 'اوریدل کیږي...' : 'Listening carefully...') : 
+                      (code === 'fa' ? 'برای شروع صحبت روی میکروفون کلیک کنید...' : code === 'ps' ? 'د خبرو پیل کولو لپاره په مایکروفون کلیک وکړئ...' : 'Click the microphone to start speaking...')
+                    }</p>
                   </div>
                 )}
               </div>
             </CardContent>
             <CardFooter className="flex justify-between border-t bg-muted/10 pt-4">
               <Button variant="ghost" onClick={() => setTranscript('')} disabled={!transcript || isEvaluating || isRecording}>
-                <RefreshCcw className="mr-2 h-4 w-4" /> Reset
+                <RefreshCcw className="mr-2 h-4 w-4" /> {code === 'fa' ? 'بازنشانی' : 'Reset'}
               </Button>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={nextQuestion} disabled={isEvaluating || isRecording}>
-                    Skip
+                    {code === 'fa' ? 'رد شدن' : 'Skip'}
                 </Button>
                 <Button onClick={submitAnswer} disabled={!transcript || isEvaluating || isRecording} className="shadow-sm">
                     {isEvaluating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    {isEvaluating ? 'Evaluating...' : 'Submit Answer'}
+                    {isEvaluating ? (code === 'fa' ? 'در حال ارزیابی...' : 'Evaluating...') : (code === 'fa' ? 'ارسال پاسخ' : 'Submit Answer')}
                 </Button>
               </div>
             </CardFooter>
