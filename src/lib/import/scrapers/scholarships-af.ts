@@ -56,8 +56,11 @@ export class ScholarshipsAfScraper extends BaseScraper {
         $('loc').each(function () {
           const url = $(this).text().trim();
           if (url && url.includes('/opportunity/')) {
+            // Use the URL as the initial title so the pre-detail hash is stable and
+            // unique. 'Unknown Title' would change to the real title on every re-run,
+            // causing spurious "updated" counts on every scheduled scrape.
             listings.push({
-              title: 'Unknown Title', // Will be populated in parseDetail
+              title: url,
               sourceUrl: url,
               originalUrl: url,
               sourceName: 'Scholarships.af',

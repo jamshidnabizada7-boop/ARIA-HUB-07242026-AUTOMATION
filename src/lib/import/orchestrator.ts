@@ -232,14 +232,16 @@ async function processListing(
   // Dedupe
   const dedupe = await findExisting(db, listing, hash);
   if (dedupe.action === 'skip') {
+    // True content-hash duplicate — identical content already exists.
+    // Count as both skipped (no work done) and duplicate (content collision).
     counters.skipped++;
     counters.duplicates++;
     return;
   }
   if (dedupe.action === 'update' && !dedupe.changed) {
-    // Exists, content unchanged → just refresh lastChecked
+    // URL-matched record but content is unchanged — just refresh lastChecked.
+    // This is NOT a duplicate (it's the same known record), just unchanged.
     counters.skipped++;
-    counters.duplicates++;
     await db.opportunity.update({
       where: { id: dedupe.existing.id },
       data: { lastChecked: new Date() },
@@ -247,8 +249,11 @@ async function processListing(
     return;
   }
 
-  // Fetch detail page now that we know we need to create/update it
-  if (scraper && typeof scraper.parseDetail === 'function' && source.config?.detailFetch !== false) {
+  // Fetch detail page now that we know we need to create/update it.
+  // source.config is a raw JSON string from the DB; parse it before property access.
+  let parsedConfig: Record<string, unknown> = {};
+  try { parsedConfig = source.config ? JSON.parse(source.config) : {}; } catch { /* ignore */ }
+  if (scraper && typeof scraper.parseDetail === 'function' && parsedConfig?.detailFetch !== false) {
     try {
       const enriched = await scraper.parseDetail(listing);
       Object.assign(listing, enriched);

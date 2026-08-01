@@ -73,13 +73,19 @@ export async function findExisting(
   }
 
   // 3. Fuzzy title + organization match
+  // Query at the DB level using title contains so this scales to any table size.
+  // A take:50 limit here was the original bug — with 261+ rows most matches were invisible.
   const normTitle = normalizeForCompare(listing.title);
   const normOrg = normalizeForCompare(listing.organization);
   if (normTitle) {
     const candidates = await db.opportunity.findMany({
-      where: { status: { in: ['published', 'draft'] } },
+      where: {
+        status: { in: ['published', 'draft'] },
+        // Use a broad DB-side filter: title contains the first significant word
+        title: { contains: listing.title.split(' ').slice(0, 3).join(' '), mode: 'insensitive' },
+      },
       select: { id: true, title: true, organization: true, contentHash: true },
-      take: 50,
+      take: 200, // reasonable upper bound after DB-side filter narrows results
     });
     for (const c of candidates) {
       if (normalizeForCompare(c.title) === normTitle) {

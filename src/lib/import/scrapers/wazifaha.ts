@@ -153,7 +153,8 @@ export class WazifahaScraper extends BaseScraper {
 
         if (!isExtracted) {
           // If the section is generic like "Job Description", duties or requirements might be buried inside as <strong> or <p><strong>
-          const innerDesc = require('cheerio').load(`<div>${body}</div>`);
+          // Use the already-imported cheerio (ESM) — require() is not available in ESM context.
+          const innerDesc = cheerio.load(`<div>${body}</div>`);
           innerDesc('strong, b, h2, h3, h4').each(function (this: any) {
             const subHeading = innerDesc(this).text().trim().toLowerCase();
             if (!subHeading || subHeading.length > 60) return;

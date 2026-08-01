@@ -56,10 +56,10 @@ export abstract class BaseScraper {
     };
     if (cached?.etag) headers['If-None-Match'] = cached.etag;
     
-    // ScraperAPI integration
-    const apiKey = process.env.SCRAPER_API_KEY || '1fbecd6f0cc065e86a9de62dd3b87291';
-    // If we use ScraperAPI, we send the request to their endpoint instead
-    const targetUrl = apiKey 
+    // ScraperAPI integration — only activated when SCRAPER_API_KEY env var is explicitly set.
+    // Never fall back to a hardcoded key: an expired/rate-limited key causes 100% fetch failures.
+    const apiKey = process.env.SCRAPER_API_KEY || '';
+    const targetUrl = apiKey
       ? `http://api.scraperapi.com/?api_key=${apiKey}&url=${encodeURIComponent(url)}`
       : url;
 
