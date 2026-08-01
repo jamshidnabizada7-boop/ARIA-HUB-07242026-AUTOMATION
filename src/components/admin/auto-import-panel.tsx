@@ -62,13 +62,13 @@ export function AutoImportPanel() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const runImport = async (sourceId?: string, type?: string) => {
+  const runImport = async (sourceId?: string, type?: string, force?: boolean) => {
     setRunning(true);
     try {
       const res = await fetch('/api/admin/import/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sourceId, type }),
+        body: JSON.stringify({ sourceId, type, force }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed');
@@ -143,6 +143,9 @@ export function AutoImportPanel() {
           <Button onClick={() => runImport()} disabled={running}>
             {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
             {running ? t('import.running') : t('import.runAll')}
+          </Button>
+          <Button variant="outline" onClick={() => runImport(undefined, undefined, true)} disabled={running}>
+            <RefreshCw className="h-4 w-4 mr-1" /> Force Import All (Ignore Cache)
           </Button>
           <Button variant="outline" onClick={retryFailed} disabled={running}>
             <RefreshCw className="h-4 w-4 mr-1" /> {t('import.retryFailed')}

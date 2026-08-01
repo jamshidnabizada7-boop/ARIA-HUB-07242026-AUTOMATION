@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Too many import requests. Please wait a moment.' }, { status: 429 });
   }
 
-  let body: { sourceId?: string; type?: string };
+  let body: { sourceId?: string; type?: string; force?: boolean };
   try {
     body = await req.json();
   } catch {
@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
       sourceId: body.sourceId || null,
       type: body.type || null,
       triggeredBy: `manual:${admin.email}`,
+      force: body.force === true,
     });
 
     await logAction({

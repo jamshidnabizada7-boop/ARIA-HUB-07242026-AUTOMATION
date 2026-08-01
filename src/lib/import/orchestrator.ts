@@ -37,6 +37,7 @@ export interface RunImportOptions {
   sourceId?: string | null;
   type?: string | null;
   triggeredBy?: string;
+  force?: boolean;
 }
 
 export interface RunSummary {
@@ -83,7 +84,7 @@ function toHandle(s: { id: string; name: string; type: string; scraperKey: strin
  * source).
  */
 export async function runImport(opts: RunImportOptions = {}): Promise<RunSummary> {
-  const { sourceId = null, type = null, triggeredBy = 'manual' } = opts;
+  const { sourceId = null, type = null, triggeredBy = 'manual', force = false } = opts;
   const startedAt = Date.now();
 
   let source: any;
@@ -118,7 +119,7 @@ export async function runImport(opts: RunImportOptions = {}): Promise<RunSummary
 
   inFlight.add(source.id);
   try {
-    return await runOneSource(db, source, triggeredBy);
+    return await runOneSource(db, source, triggeredBy, force);
   } finally {
     inFlight.delete(source.id);
   }
@@ -129,6 +130,7 @@ async function runOneSource(
   db: PrismaClient,
   source: { id: string; name: string; type: string; scraperKey: string; baseUrl: string; config: string | null; defaultCategory: string | null; autoPublish: boolean },
   triggeredBy: string,
+  force: boolean,
 ): Promise<RunSummary> {
   const startedAt = Date.now();
   const handle = toHandle(source);
@@ -163,7 +165,7 @@ async function runOneSource(
       }
       try {
         // eslint-disable-next-line no-await-in-loop
-        await processListing(db, scraper, listing, source, categories, knownSlugs, counters);
+        await processListing(db, scraper, listing, source, categories, knownSlugs, counters, force);
       } catch (e) {
         counters.failed++;
         errors.push({ url: listing.sourceUrl, message: sanitizeError(e), ts: new Date().toISOString() });
@@ -235,6 +237,7 @@ async function processListing(
   categories: Array<{ id: string; slug: string; name: string }>,
   knownSlugs: string[],
   counters: { found: number; imported: number; updated: number; skipped: number; duplicates: number; failed: number },
+  force: boolean,
 ): Promise<void> {
   // Compute content hash
   const hash = await computeHash(listing);
@@ -248,7 +251,7 @@ async function processListing(
     counters.duplicates++;
     return;
   }
-  if (dedupe.action === 'update' && !dedupe.changed) {
+  if (dedupe.action === 'update' && !dedupe.changed && !force) {
     // URL-matched record but content is unchanged — just refresh lastChecked.
     // This is NOT a duplicate (it's the same known record), just unchanged.
     counters.skipped++;
