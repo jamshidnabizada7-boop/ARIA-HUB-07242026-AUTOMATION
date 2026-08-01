@@ -16,6 +16,7 @@ import { useLangStore } from '@/lib/lang-store';
 import { getLocalizedContent } from '@/lib/i18n-content';
 import type { Opportunity, OpportunityCategory } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { OpportunityFilters } from './components/OpportunityFilters';
 
 export function OpportunitiesClient({
   opportunities,
@@ -30,6 +31,7 @@ export function OpportunitiesClient({
   currentPage: number;
   totalPages: number;
   currentCategory: string;
+  locations: string[];
   phone?: string | null;
 }) {
   const t = useT();
@@ -74,6 +76,13 @@ export function OpportunitiesClient({
               {tab.name}
             </button>
           ))}
+        </div>
+
+        <div className="mt-8">
+          <OpportunityFilters 
+            locations={locations}
+            currentCategory={currentCategory}
+          />
         </div>
 
         {/* Grid */}

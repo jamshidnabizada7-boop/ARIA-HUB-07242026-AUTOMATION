@@ -22,6 +22,9 @@ export default async function OpportunitiesPage({
   
   const page = typeof sp.page === 'string' ? parseInt(sp.page, 10) : 1;
   const categoryParam = typeof sp.category === 'string' ? sp.category : 'all';
+  const q = typeof sp.q === 'string' ? sp.q : '';
+  const location = typeof sp.location === 'string' ? sp.location : 'all';
+  const sortParam = typeof sp.sort === 'string' ? sp.sort : 'newest';
   
   const take = 12;
   const skip = (Math.max(1, page) - 1) * take;
@@ -33,17 +36,40 @@ export default async function OpportunitiesPage({
   if (categoryParam !== 'all') {
     where.category = { slug: categoryParam };
   }
+  if (location !== 'all') {
+    where.country = location;
+  }
+  if (q) {
+    where.OR = [
+      { title: { contains: q, mode: 'insensitive' } },
+      { organization: { contains: q, mode: 'insensitive' } }
+    ];
+  }
 
-  const [opportunities, total] = await Promise.all([
+  let orderBy: any = [{ sort: 'asc' }, { createdAt: 'desc' }];
+  if (sortParam === 'deadline') {
+    orderBy = [{ deadline: 'asc' }];
+  } else if (sortParam === 'newest') {
+    orderBy = [{ createdAt: 'desc' }];
+  }
+
+  const [opportunities, total, distinctLocations] = await Promise.all([
     db.opportunity.findMany({
       where,
-      orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }],
+      orderBy,
       take,
       skip,
       include: { category: true },
     }),
-    db.opportunity.count({ where })
+    db.opportunity.count({ where }),
+    db.opportunity.findMany({
+      where: { status: 'published', country: { not: null } },
+      distinct: ['country'],
+      select: { country: true }
+    })
   ]);
+
+  const locations = distinctLocations.map(d => d.country as string).filter(Boolean).sort();
 
   const totalPages = Math.max(1, Math.ceil(total / take));
 
@@ -62,6 +88,7 @@ export default async function OpportunitiesPage({
           currentPage={page}
           totalPages={totalPages}
           currentCategory={categoryParam}
+          locations={locations}
           phone={data.settings?.phone}
         />
       </main>

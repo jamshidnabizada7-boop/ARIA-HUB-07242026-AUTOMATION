@@ -197,7 +197,7 @@ model Opportunity {
   slug            String               @unique
   organization    String?
   country         String?
-  deadline        String?
+  deadline        DateTime?
   description     String
   descriptionI18n Json?
   eligibility     String?
