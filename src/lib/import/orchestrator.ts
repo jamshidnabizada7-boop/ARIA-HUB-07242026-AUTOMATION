@@ -26,6 +26,13 @@ import { runAIPipeline, ensureUniqueSlug, makeSlug } from '@/lib/ai/pipeline';
 import { sanitizeError, slugify } from './utils';
 import type { RawListing, SourceHandle } from './types';
 
+/** Safely convert a date string (ISO or parseable) to a Date object, or null. */
+function safeDate(input: string | null | undefined): Date | null {
+  if (!input) return null;
+  const d = new Date(input);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 export interface RunImportOptions {
   sourceId?: string | null;
   type?: string | null;
@@ -292,13 +299,13 @@ async function processListing(
     educationReq: listing.educationReq || null,
     experience: listing.experience || null,
     country: listing.country || listing.location || null,
-    deadline: listing.deadline || null,
+    deadline: safeDate(listing.deadline),
     organization: listing.organization || null,
     website: listing.website || null,
     applyUrl: listing.applyUrl || null,
     image: featured.path,
     logoUrl: logo.path || null,
-    publishedDate: listing.publishedDate || null,
+    publishedDate: listing.publishedDate || null,  // String field in schema, no conversion needed
     canonicalUrl: listing.sourceUrl,
     status: source.autoPublish ? 'published' : 'draft',
     extractedData: listing.extractedData || {},

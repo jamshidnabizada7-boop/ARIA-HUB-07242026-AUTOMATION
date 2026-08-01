@@ -143,7 +143,7 @@ export class AcbarScraper extends BaseScraper {
 
       // ── Deadline ───────────────────────────────────────────────────────────
       const deadlineText = $('.acbar-jd__deadline-value').first().text().trim();
-      if (deadlineText) listing.deadline = parseDate(deadlineText) || deadlineText;
+      if (deadlineText) listing.deadline = parseDate(deadlineText) || null;
 
       // ── Article sections ───────────────────────────────────────────────────
       // Each content block is an <article class="acbar-jd__card"> with:

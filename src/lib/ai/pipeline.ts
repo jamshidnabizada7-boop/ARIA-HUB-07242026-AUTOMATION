@@ -36,7 +36,7 @@ export async function runAIPipeline(
 
   const data: Record<string, unknown> = {
     title: listing.title,
-    description: listing.description || plainDescription,
+    description: listing.description || plainDescription || listing.title || 'No description available',
     language: originalLang,
     jobType: listing.jobType || null,
     salary: listing.salary || null,

@@ -32,12 +32,32 @@ import { resolveUrl, stripHtml, parseDate, cleanHtmlWhitespace } from '../utils'
 import type { RawListing, ScrapePage } from '../types';
 
 export class ScholarshipsAfScraper extends BaseScraper {
+  private fallbackUrl: string;
+
   constructor(source: any) {
     super(source);
-    // Automatically upgrade the old URL to the sitemap URL
+    // Store the original HTML listing URL as a fallback
+    this.fallbackUrl = 'https://scholarships.af/opportunities/?job_type=scholarship';
+    // Prefer the sitemap for broader coverage
     if (this.source.baseUrl.includes('opportunities/?job_type=scholarship')) {
       this.source.baseUrl = 'https://scholarships.af/job-sitemap1.xml';
     }
+  }
+
+  /**
+   * Override scrapeAll to fall back to HTML listing page if the sitemap
+   * is unreachable (the site may block XML or be temporarily down).
+   */
+  async scrapeAll(): Promise<RawListing[]> {
+    try {
+      const results = await super.scrapeAll();
+      if (results.length > 0) return results;
+    } catch (e) {
+      console.warn(`[scholarships.af] sitemap failed, falling back to HTML listing:`, e);
+    }
+    // Fallback: try the HTML listing page
+    this.source.baseUrl = this.fallbackUrl;
+    return super.scrapeAll();
   }
 
   /**
