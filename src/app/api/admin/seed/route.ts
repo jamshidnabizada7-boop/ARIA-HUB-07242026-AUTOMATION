@@ -25,7 +25,7 @@ export async function GET() {
 
     await db.adminUser.upsert({
       where: { email },
-      update: { password: hash },
+      update: {}, // Preserve custom password if user already exists
       create: {
         email,
         name: 'Super Admin',
