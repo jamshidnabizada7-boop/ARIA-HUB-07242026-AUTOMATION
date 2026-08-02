@@ -11,7 +11,7 @@ const MODELS: Record<string, { delegate: any; fields: string[]; label: string; s
   news: { label: 'News', delegate: db.news, fields: ['title', 'titleI18n', 'slug', 'excerpt', 'excerptI18n', 'content', 'contentI18n', 'image', 'author', 'tags', 'featured', 'status', 'publishedAt', 'categoryId', 'seoTitle', 'seoDescription'], statusOptions: ['published', 'draft', 'archived'] },
   testimonial: { label: 'Testimonials', delegate: db.testimonial, fields: ['name', 'nameI18n', 'role', 'roleI18n', 'company', 'companyI18n', 'avatar', 'rating', 'content', 'contentI18n', 'featured', 'status', 'order'], statusOptions: ['published', 'draft', 'archived'] },
   partner: { label: 'Partners', delegate: db.partner, fields: ['name', 'logo', 'website', 'status', 'order'], statusOptions: ['active', 'inactive'] },
-  counter: { label: 'Counters', delegate: db.counter, fields: ['label', 'value', 'suffix', 'icon', 'order'] },
+  counter: { label: 'Counters', delegate: db.counter, fields: ['label', 'labelI18n', 'value', 'suffix', 'suffixI18n', 'icon', 'order'] },
   faq: { label: 'FAQs', delegate: db.faq, fields: ['question', 'questionI18n', 'answer', 'answerI18n', 'category', 'order', 'status'], statusOptions: ['published', 'draft', 'archived'] },
   galleryItem: { label: 'Gallery', delegate: db.galleryItem, fields: ['title', 'type', 'url', 'thumbnail', 'caption', 'category', 'albumId', 'order'] },
   paymentMethod: { label: 'Payments', delegate: db.paymentMethod, fields: ['name', 'slug', 'logo', 'qrCode', 'accountNumber', 'iban', 'accountTitle', 'description', 'instructions', 'status', 'order'], statusOptions: ['active', 'inactive'] },
