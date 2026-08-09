@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, MapPin, Phone, Mail, Loader2, Shield, Award, Globe2, MessageCircle, Facebook, Instagram, Linkedin, Youtube, CheckCircle2, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -233,11 +234,15 @@ export function Footer({
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
           <p>© {new Date().getFullYear()} {settings?.siteName || 'ARIA HUB'}. {t('footer.rights')}</p>
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <a href="#privacy" className="p-2 transition-colors hover:text-foreground">{t('footer.privacy')}</a>
+            <Link href="/privacy-policy" className="p-2 transition-colors hover:text-foreground">{t('footer.privacy')}</Link>
             <span className="text-border">·</span>
-            <a href="#terms" className="p-2 transition-colors hover:text-foreground">{t('footer.terms')}</a>
+            <Link href="/terms-of-service" className="p-2 transition-colors hover:text-foreground">{t('footer.terms')}</Link>
             <span className="text-border">·</span>
-            <a href="#cookies" className="p-2 transition-colors hover:text-foreground">{t('footer.cookies')}</a>
+            <Link href="/about" className="p-2 transition-colors hover:text-foreground">About Us</Link>
+            <span className="text-border">·</span>
+            <Link href="/contact" className="p-2 transition-colors hover:text-foreground">Contact Us</Link>
+            <span className="text-border">·</span>
+            <Link href="/blog" className="p-2 transition-colors hover:text-foreground">Blog</Link>
           </div>
         </div>
       </div>
