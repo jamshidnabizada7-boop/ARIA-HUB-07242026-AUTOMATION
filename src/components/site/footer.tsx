@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -234,15 +234,28 @@ export function Footer({
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
           <p>© {new Date().getFullYear()} {settings?.siteName || 'ARIA HUB'}. {t('footer.rights')}</p>
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <Link href="/privacy-policy" className="p-2 transition-colors hover:text-foreground">{t('footer.privacy')}</Link>
-            <span className="text-border">·</span>
-            <Link href="/terms-of-service" className="p-2 transition-colors hover:text-foreground">{t('footer.terms')}</Link>
-            <span className="text-border">·</span>
-            <Link href="/about" className="p-2 transition-colors hover:text-foreground">About Us</Link>
-            <span className="text-border">·</span>
-            <Link href="/contact" className="p-2 transition-colors hover:text-foreground">Contact Us</Link>
-            <span className="text-border">·</span>
-            <Link href="/blog" className="p-2 transition-colors hover:text-foreground">Blog</Link>
+            {footer['legal'] && footer['legal'].length > 0 ? (
+              footer['legal'].map((link, idx, arr) => (
+                <React.Fragment key={link.id}>
+                  <Link href={link.url} className="p-2 transition-colors hover:text-foreground">
+                    {t(link.label) !== link.label ? t(link.label) : link.label}
+                  </Link>
+                  {idx < arr.length - 1 && <span className="text-border">·</span>}
+                </React.Fragment>
+              ))
+            ) : (
+              <>
+                <Link href="/privacy-policy" className="p-2 transition-colors hover:text-foreground">{t('footer.privacy')}</Link>
+                <span className="text-border">·</span>
+                <Link href="/terms-of-service" className="p-2 transition-colors hover:text-foreground">{t('footer.terms')}</Link>
+                <span className="text-border">·</span>
+                <Link href="/about" className="p-2 transition-colors hover:text-foreground">About Us</Link>
+                <span className="text-border">·</span>
+                <Link href="/contact" className="p-2 transition-colors hover:text-foreground">Contact Us</Link>
+                <span className="text-border">·</span>
+                <Link href="/blog" className="p-2 transition-colors hover:text-foreground">Blog</Link>
+              </>
+            )}
           </div>
         </div>
       </div>

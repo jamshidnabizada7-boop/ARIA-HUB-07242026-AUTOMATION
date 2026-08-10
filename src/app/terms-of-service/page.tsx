@@ -7,13 +7,13 @@ export const metadata: Metadata = {
 
 export default function TermsOfServicePage() {
   return (
-    <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8" dir="auto">
       <div className="rounded-2xl border border-border/60 bg-card/40 p-8 shadow-sm backdrop-blur-sm md:p-12">
-        <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+        <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground md:text-4xl text-start">
           Terms of Service
         </h1>
         
-        <div className="prose prose-sm dark:prose-invert sm:prose-base max-w-none space-y-6 text-muted-foreground">
+        <div className="prose prose-sm dark:prose-invert sm:prose-base max-w-none space-y-6 text-muted-foreground text-start">
           <p>Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
           
           <section>
@@ -35,7 +35,7 @@ export default function TermsOfServicePage() {
             <p>
               You agree to use our services only for lawful purposes. You are prohibited from violating or attempting to violate the security of the website, including, without limitation:
             </p>
-            <ul className="list-disc pl-5 mt-2">
+            <ul className="list-disc ps-5 mt-2">
               <li>Accessing data not intended for you or logging into a server or account which you are not authorized to access.</li>
               <li>Attempting to probe, scan or test the vulnerability of a system or network or to breach security or authentication measures without proper authorization.</li>
               <li>Attempting to interfere with service to any user, host or network.</li>

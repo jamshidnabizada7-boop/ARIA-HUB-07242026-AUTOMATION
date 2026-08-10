@@ -8,16 +8,16 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="rounded-2xl border border-border/60 bg-card/40 p-8 shadow-sm backdrop-blur-sm md:p-12">
-        <h1 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+    <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8" dir="auto">
+      <div className="rounded-2xl border border-border/60 bg-card/40 p-8 shadow-sm backdrop-blur-sm md:p-12 text-start">
+        <h1 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl text-start">
           Contact Us
         </h1>
-        <p className="mb-8 text-muted-foreground">
+        <p className="mb-8 text-muted-foreground text-start">
           Have a question or need assistance? We're here to help. Reach out to our team using the contact information below.
         </p>
         
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-2 text-start">
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-foreground">Our Office</h2>
             <div className="space-y-4">

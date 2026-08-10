@@ -7,13 +7,13 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8" dir="auto">
       <div className="rounded-2xl border border-border/60 bg-card/40 p-8 shadow-sm backdrop-blur-sm md:p-12">
-        <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+        <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground md:text-4xl text-start">
           Privacy Policy
         </h1>
         
-        <div className="prose prose-sm dark:prose-invert sm:prose-base max-w-none space-y-6 text-muted-foreground">
+        <div className="prose prose-sm dark:prose-invert sm:prose-base max-w-none space-y-6 text-muted-foreground text-start">
           <p>Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
           
           <section>
@@ -27,7 +27,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-xl font-semibold text-foreground">2. The Data We Collect About You</h2>
             <p>We may collect, use, store and transfer different kinds of personal data about you which we have grouped together as follows:</p>
-            <ul className="list-disc pl-5">
+            <ul className="list-disc ps-5">
               <li><strong>Identity Data</strong> includes first name, last name, username or similar identifier.</li>
               <li><strong>Contact Data</strong> includes billing address, delivery address, email address and telephone numbers.</li>
               <li><strong>Technical Data</strong> includes internet protocol (IP) address, your login data, browser type and version, time zone setting and location, browser plug-in types and versions, operating system and platform, and other technology on the devices you use to access this website.</li>
@@ -40,7 +40,7 @@ export default function PrivacyPolicyPage() {
             <p>
               We use Google AdSense to publish ads on this site. When you view or click on an ad, a cookie will be set to help better provide advertisements that may be of interest to you on this and other websites. 
             </p>
-            <ul className="list-disc pl-5 mt-2">
+            <ul className="list-disc ps-5 mt-2">
               <li>Third party vendors, including Google, use cookies to serve ads based on a user's prior visits to your website or other websites.</li>
               <li>Google's use of advertising cookies enables it and its partners to serve ads to your users based on their visit to your sites and/or other sites on the Internet.</li>
               <li>Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Ads Settings</a>.</li>

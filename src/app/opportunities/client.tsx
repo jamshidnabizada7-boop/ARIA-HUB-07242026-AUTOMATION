@@ -237,7 +237,7 @@ function OpportunityCard({ opportunity, t, onOpen, phone }: { opportunity: Oppor
 const FormattedContent = ({ content }: { content: string }) => {
   if (!content) return null;
   return (
-    <div dir="auto" className="prose prose-sm max-w-none text-foreground/80 prose-p:leading-relaxed">
+    <div dir="auto" className="prose prose-sm max-w-none text-foreground/80 prose-p:leading-relaxed text-start [&_ul]:!ps-6 [&_ul]:!pe-0 [&_ol]:!ps-6 [&_ol]:!pe-0">
       <ReactMarkdown rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
     </div>
   );

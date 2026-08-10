@@ -285,6 +285,13 @@ export class ScholarshipsAfScraper extends BaseScraper {
     // Assemble the main description from non-extracted parts
     if (mainDescParts.length) {
       listing.description = cleanHtmlWhitespace(mainDescParts.join('\n\n'));
+    } else if (!listing.description && !listing.requirements && !listing.eligibility && !listing.benefits) {
+      // If we couldn't parse ANY sections successfully, just use the entire clean body as the description
+      // to prevent "short details" bug.
+      const rawText = descEl.text().trim();
+      if (rawText.length > 50) {
+        listing.description = cleanHtmlWhitespace(descHtml);
+      }
     }
   }
 

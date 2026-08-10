@@ -9,19 +9,19 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   return (
-    <main className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mb-12 text-center">
-        <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+    <main className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8" dir="auto">
+      <div className="mb-12 text-center text-start md:text-center">
+        <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl text-start md:text-center">
           Blog & Resources
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-lg text-muted-foreground text-start md:text-center">
           Original insights, guides, and tips to help you succeed globally.
         </p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {blogPosts.map((post) => (
-          <article key={post.slug} className="group relative flex flex-col items-start justify-between rounded-2xl border border-border/60 bg-card/40 p-6 shadow-sm transition-all hover:shadow-md hover:border-primary/50">
+          <article key={post.slug} className="group relative flex flex-col items-start justify-between rounded-2xl border border-border/60 bg-card/40 p-6 shadow-sm transition-all hover:shadow-md hover:border-primary/50 text-start">
             <div className="flex items-center gap-x-4 text-xs">
               <time dateTime={post.date} className="text-muted-foreground">
                 {post.date}
@@ -31,18 +31,18 @@ export default function BlogPage() {
               </span>
             </div>
             <div className="group relative">
-              <h3 className="mt-3 text-lg font-semibold leading-6 text-foreground group-hover:text-primary transition-colors">
+              <h3 className="mt-3 text-lg font-semibold leading-6 text-foreground group-hover:text-primary transition-colors text-start">
                 <Link href={`/blog/${post.slug}`}>
                   <span className="absolute inset-0" />
                   {post.title}
                 </Link>
               </h3>
-              <p className="mt-5 line-clamp-3 text-sm leading-6 text-muted-foreground">
+              <p className="mt-5 line-clamp-3 text-sm leading-6 text-muted-foreground text-start">
                 {post.excerpt}
               </p>
             </div>
             <div className="relative mt-8 flex items-center gap-x-4">
-              <div className="text-sm leading-6">
+              <div className="text-sm leading-6 text-start">
                 <p className="font-semibold text-foreground">
                   <span className="absolute inset-0" />
                   {post.author}
@@ -53,7 +53,7 @@ export default function BlogPage() {
         ))}
       </div>
       
-      <div className="mt-12 text-center text-sm text-muted-foreground">
+      <div className="mt-12 text-center text-sm text-muted-foreground text-start md:text-center">
         More articles coming soon. We regularly update our blog with valuable resources.
       </div>
     </main>

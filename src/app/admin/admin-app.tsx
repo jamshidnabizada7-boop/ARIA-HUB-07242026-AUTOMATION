@@ -282,9 +282,10 @@ function CrudTable({ model }: { model: string }) {
   const { toast } = useToast();
   const [reloadKey, setReloadKey] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [filterCategory, setFilterCategory] = useState<string>('all');
 
   // Reset search when switching models so stale filters don't carry over.
-  useEffect(() => { setSearch(''); setSelectedIds([]); }, [model]);
+  useEffect(() => { setSearch(''); setSelectedIds([]); setFilterCategory('all'); }, [model]);
 
   useEffect(() => {
     let cancelled = false;
@@ -325,9 +326,17 @@ function CrudTable({ model }: { model: string }) {
     else toast({ title: t('admin.toast.failedDelete'), variant: 'destructive' });
   };
 
-  const filtered = items.filter((item) =>
-    !search || JSON.stringify(item).toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = items.filter((item) => {
+    const matchesSearch = !search || JSON.stringify(item).toLowerCase().includes(search.toLowerCase());
+    
+    let matchesCategory = true;
+    if (model === 'opportunity' && filterCategory !== 'all') {
+      const catSlug = item.category?.slug || '';
+      matchesCategory = catSlug === filterCategory;
+    }
+    
+    return matchesSearch && matchesCategory;
+  });
 
   // Pick display columns: always show status/featured if present, plus first few text fields.
   const priority = ['title', 'name', 'country', 'question', 'label', 'company', 'platform', 'column', 'code'];
@@ -340,9 +349,21 @@ function CrudTable({ model }: { model: string }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`${t('admin.button.search')} ${label}...`} className="w-64 ps-9" />
+        <div className="flex gap-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={`${t('admin.button.search')} ${t(NAV.find((n) => n.key === model)?.labelKey || label)}...`} className="w-64 ps-9" />
+          </div>
+          {model === 'opportunity' && (
+            <Select value={filterCategory} onValueChange={setFilterCategory}>
+              <SelectTrigger className="w-40"><SelectValue placeholder="Category" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('common.all') || 'All Categories'}</SelectItem>
+                <SelectItem value="job">{t('opportunities.jobs') || 'Jobs'}</SelectItem>
+                <SelectItem value="scholarship">{t('opportunities.scholarships') || 'Scholarships'}</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
         </div>
         <div className="flex gap-2">
           {selectedIds.length > 0 && (

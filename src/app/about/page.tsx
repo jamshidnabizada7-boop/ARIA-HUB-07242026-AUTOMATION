@@ -7,13 +7,13 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8" dir="auto">
       <div className="rounded-2xl border border-border/60 bg-card/40 p-8 shadow-sm backdrop-blur-sm md:p-12">
-        <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+        <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground md:text-4xl text-start">
           About ARIA HUB
         </h1>
         
-        <div className="prose prose-sm dark:prose-invert sm:prose-base max-w-none space-y-6 text-muted-foreground">
+        <div className="prose prose-sm dark:prose-invert sm:prose-base max-w-none space-y-6 text-muted-foreground text-start">
           <section>
             <h2 className="text-2xl font-semibold text-foreground">Our Mission</h2>
             <p>
@@ -26,7 +26,7 @@ export default function AboutPage() {
             <p>
               We curate and provide high-quality resources, actionable advice, and professional services across several domains:
             </p>
-            <ul className="list-disc pl-5 mt-2 space-y-2">
+            <ul className="list-disc ps-5 mt-2 space-y-2">
               <li><strong>Opportunities & Scholarships:</strong> We aggregate and analyze the best global opportunities to help students and professionals advance their careers.</li>
               <li><strong>Visa Preparation:</strong> Expert guidance on navigating complex immigration and visa processes.</li>
               <li><strong>Business Services:</strong> Comprehensive consulting for businesses looking to expand internationally.</li>
