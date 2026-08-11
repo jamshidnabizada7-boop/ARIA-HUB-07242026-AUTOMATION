@@ -190,7 +190,7 @@ export class ScholarshipsAfScraper extends BaseScraper {
 
       // ── Description body — the main content area ───────────────────────────
       // All rich content is inside .jobsearch-description as h2-delimited sections
-      const descEl = $('.jobsearch-description').first().clone();
+      const descEl = $('.jobsearch-description').not('.text-content').first().clone();
       // Remove ads, scripts, sponsored blocks
       descEl.find('script, ins.adsbygoogle, .code-block, .code-block-label').remove();
 
