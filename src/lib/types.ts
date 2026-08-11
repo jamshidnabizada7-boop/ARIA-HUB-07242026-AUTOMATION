@@ -3,8 +3,11 @@
 export interface SiteSettings {
   id: string;
   siteName: string;
+  siteNameI18n?: Record<string, string> | null;
   tagline: string;
+  taglineI18n?: Record<string, string> | null;
   description: string;
+  descriptionI18n?: Record<string, string> | null;
   logoUrl: string | null;
   logoDarkUrl: string | null;
   faviconUrl: string | null;
@@ -16,6 +19,7 @@ export interface SiteSettings {
   email: string | null;
   phone: string | null;
   address: string | null;
+  addressI18n?: Record<string, string> | null;
   currency: string;
   timezone: string;
   dateFormat: string;

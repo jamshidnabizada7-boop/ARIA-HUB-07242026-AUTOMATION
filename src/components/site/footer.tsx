@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useT } from '@/hooks/use-t';
 import { useToast } from '@/hooks/use-toast';
+import { useLangStore } from '@/lib/lang-store';
+import { getLocalizedContent } from '@/lib/i18n-content';
 import type { SiteSettings, SocialLink, FooterLink } from '@/lib/types';
 import { Confetti } from './confetti';
 
@@ -22,6 +24,7 @@ export function Footer({
   socialLinks: SocialLink[];
 }) {
   const t = useT();
+  const lang = useLangStore((s) => s.code);
   const { toast } = useToast();
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -164,11 +167,11 @@ export function Footer({
               </span>
             </button>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              {settings?.description || t('footer.aboutDesc')}
+              {getLocalizedContent(settings?.description, settings?.descriptionI18n, lang) || t('footer.aboutDesc')}
             </p>
             <div className="mt-5 space-y-2 text-sm text-muted-foreground">
               {settings?.address && (
-                <p className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> <span dir="auto">{settings.address}</span></p>
+                <p className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> <span dir="auto">{getLocalizedContent(settings.address, settings.addressI18n, lang)}</span></p>
               )}
               {settings?.phone && (
                 <a href={`tel:${settings.phone}`} className="flex items-center gap-2 py-1 transition-colors hover:text-foreground"><Phone className="h-4 w-4 shrink-0 text-primary" /> <span dir="auto">{settings.phone}</span></a>
