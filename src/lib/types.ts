@@ -30,6 +30,8 @@ export interface SiteSettings {
   mapEmbed: string | null;
   socialPosition: string;
   socialHideOnScroll: boolean;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export interface Language {
@@ -42,6 +44,8 @@ export interface Language {
   isDefault: boolean;
   flag: string | null;
   order: number;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export interface MenuItem {
@@ -209,22 +213,25 @@ export interface Faq {
   questionI18n?: Record<string, string> | null;
   answerI18n?: Record<string, string> | null;
 }
+export interface NewsCategory { id: string; name: string; slug: string; }
 export interface News { 
   id: string; title: string; slug: string; excerpt: string; content: string; image: string | null; 
   author: string | null; tags: string | null; featured: boolean; status: string; publishedAt: string; 
-  categoryId: string | null; category?: { id: string; name: string; slug: string } | null;
+  categoryId: string | null; category?: NewsCategory | null;
   // i18n fields
   titleI18n?: Record<string, string> | null;
   excerptI18n?: Record<string, string> | null;
   contentI18n?: Record<string, string> | null;
 }
-export interface SocialLink { id: string; platform: string; label: string; url: string; icon: string | null; color: string | null; enabled: boolean; order: number; }
+export interface SocialLink { id: string; platform: string; label?: string; url: string; icon: string | null; color?: string | null; enabled?: boolean; order: number; createdAt?: any; updatedAt?: any; }
 export interface FooterLink { 
   id: string; column: string; label: string; url: string; order: number;
   labelI18n?: Record<string, string> | null;
+  category?: string;
+  createdAt?: any; updatedAt?: any;
 }
-export interface Department { id: string; name: string; email: string | null; phone: string | null; description: string | null; order: number; }
-export interface Branch { id: string; name: string; address: string; phone: string | null; email: string | null; hours: string | null; isMain: boolean; mapEmbed: string | null; order: number; }
+export interface Department { id: string; name: string; email: string | null; phone: string | null; description: string | null; order: number; createdAt?: any; updatedAt?: any; }
+export interface Branch { id: string; name: string; address: string; phone: string | null; email: string | null; hours: string | null; isMain: boolean; mapEmbed: string | null; mapUrl?: string | null; order: number; createdAt?: any; updatedAt?: any; }
 export interface WhyChooseUsFeature {
   id: string;
   key?: string | null;
