@@ -217,15 +217,71 @@ export async function GET(req: NextRequest) {
   if (['visaQuestion', 'visaDocument', 'visaExperience'].includes(model)) include.country = true;
 
   const sortField = fields.includes('order') ? 'order' : fields.includes('sort') ? 'sort' : 'createdAt';
-  // Pagination: default 100 rows, max 500 to protect memory
+  // Pagination: default 100 rows, max 10000
   const page = Math.max(1, parseInt(req.nextUrl.searchParams.get('page') || '1', 10));
-  const pageSize = Math.min(500, Math.max(1, parseInt(req.nextUrl.searchParams.get('pageSize') || '100', 10)));
+  const pageSize = Math.min(10000, Math.max(1, parseInt(req.nextUrl.searchParams.get('pageSize') || '100', 10)));
+  const search = req.nextUrl.searchParams.get('search')?.trim();
+  const category = req.nextUrl.searchParams.get('category')?.trim();
+
+  const where: any = {};
+
+  if (model === 'opportunity' && category && category !== 'all') {
+    if (category === 'scholarship') {
+      where.OR = [
+        { category: { slug: 'scholarship' } },
+        { jobType: 'scholarship' },
+        { sourceName: { contains: 'scholarships.af' } },
+      ];
+    } else if (category === 'job') {
+      where.OR = [
+        { category: { slug: 'job' } },
+        { jobType: 'job' },
+        { sourceName: { contains: 'acbar' } },
+        { sourceName: { contains: 'wazifaha' } },
+      ];
+    } else {
+      where.category = { slug: category };
+    }
+  }
+
+  if (search) {
+    const searchConditions: any[] = [];
+    if (fields.includes('title')) searchConditions.push({ title: { contains: search } });
+    if (fields.includes('name')) searchConditions.push({ name: { contains: search } });
+    if (fields.includes('organization')) searchConditions.push({ organization: { contains: search } });
+    if (fields.includes('country')) searchConditions.push({ country: { contains: search } });
+    if (fields.includes('slug')) searchConditions.push({ slug: { contains: search } });
+
+    if (searchConditions.length > 0) {
+      if (where.OR) {
+        where.AND = [{ OR: where.OR }, { OR: searchConditions }];
+        delete where.OR;
+      } else {
+        where.OR = searchConditions;
+      }
+    }
+  }
+
   try {
     const [items, total] = await Promise.all([
-      delegate.findMany({ orderBy: { [sortField]: 'asc' }, include: Object.keys(include).length ? include : undefined, skip: (page - 1) * pageSize, take: pageSize }),
-      delegate.count(),
+      delegate.findMany({
+        where: Object.keys(where).length ? where : undefined,
+        orderBy: { [sortField]: 'asc' },
+        include: Object.keys(include).length ? include : undefined,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      delegate.count({ where: Object.keys(where).length ? where : undefined }),
     ]);
-    return NextResponse.json({ items, fields: MODELS[model].fields, label: MODELS[model].label, statusOptions: MODELS[model].statusOptions, total, page, pageSize });
+    return NextResponse.json({
+      items,
+      fields: MODELS[model].fields,
+      label: MODELS[model].label,
+      statusOptions: MODELS[model].statusOptions,
+      total,
+      page,
+      pageSize,
+    });
   } catch (e: any) {
     return handleError(e);
   }

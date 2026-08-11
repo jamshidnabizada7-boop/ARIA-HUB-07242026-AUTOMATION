@@ -8,6 +8,7 @@ import {
   Building, MapPin, ListChecks, Tag, Users, GitCompare, Megaphone,
   Menu as MenuIcon, Settings, LogOut, Plus, Pencil, Trash2, X, Search,
   TrendingUp, Mail, UserPlus, Eye, Loader2, Globe, Layers, Download, KeyRound, FileText,
+  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -277,23 +278,27 @@ function CrudTable({ model }: { model: string }) {
   const [statusOptions, setStatusOptions] = useState<string[] | undefined>();
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [editing, setEditing] = useState<any | null>(null);
-  const [showForm, setShowForm] = useState(false);
-  const { toast } = useToast();
-  const [reloadKey, setReloadKey] = useState(0);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(100);
 
-  // Reset search when switching models so stale filters don't carry over.
-  useEffect(() => { setSearch(''); setSelectedIds([]); setFilterCategory('all'); }, [model]);
+  // Reset search & page when switching models or filters so stale filters don't carry over.
+  useEffect(() => { setSearch(''); setSelectedIds([]); setFilterCategory('all'); setPage(1); }, [model]);
+  useEffect(() => { setPage(1); }, [search, filterCategory]);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     const doFetch = async () => {
       try {
-        const r = await fetch(`/api/admin/crud?model=${model}&pageSize=200`);
+        const params = new URLSearchParams({
+          model,
+          page: String(page),
+          pageSize: String(pageSize),
+        });
+        if (search) params.set('search', search);
+        if (model === 'opportunity' && filterCategory !== 'all') params.set('category', filterCategory);
+
+        const r = await fetch(`/api/admin/crud?${params.toString()}`);
         const data = await r.json();
         if (cancelled) return;
         setItems(data.items || []);
@@ -309,7 +314,7 @@ function CrudTable({ model }: { model: string }) {
     };
     doFetch();
     return () => { cancelled = true; };
-  }, [model, reloadKey]);
+  }, [model, page, pageSize, search, filterCategory, reloadKey]);
 
   const reload = () => setReloadKey((k) => k + 1);
 
@@ -327,26 +332,8 @@ function CrudTable({ model }: { model: string }) {
     else toast({ title: t('admin.toast.failedDelete'), variant: 'destructive' });
   };
 
-  const filtered = items.filter((item) => {
-    const matchesSearch = !search || JSON.stringify(item).toLowerCase().includes(search.toLowerCase());
-    
-    let matchesCategory = true;
-    if (model === 'opportunity' && filterCategory !== 'all') {
-      const catSlug = (item.category?.slug || '').toLowerCase();
-      const type = (item.jobType || '').toLowerCase();
-      const source = (item.sourceName || '').toLowerCase();
-      
-      if (filterCategory === 'scholarship') {
-        matchesCategory = catSlug === 'scholarship' || type === 'scholarship' || source.includes('scholarships.af');
-      } else if (filterCategory === 'job') {
-        matchesCategory = catSlug === 'job' || type === 'job' || source.includes('acbar') || source.includes('wazifaha');
-      } else {
-        matchesCategory = catSlug === filterCategory;
-      }
-    }
-    
-    return matchesSearch && matchesCategory;
-  });
+  // Items are already filtered on server side
+  const filtered = items;
 
   // Pick display columns: always show status/featured if present, plus first few text fields.
   const priority = ['title', 'name', 'country', 'question', 'label', 'company', 'platform', 'column', 'code'];
@@ -446,6 +433,80 @@ function CrudTable({ model }: { model: string }) {
 
       {showForm && (
         <CrudForm model={model} fields={fields} item={editing} label={label} statusOptions={statusOptions} onClose={() => setShowForm(false)} onSaved={() => { setShowForm(false); reload(); }} />
+      )}
+
+      {/* Pagination Controls */}
+      {!loading && total > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <span>{t('admin.table.rowsPerPage') || 'Rows per page:'}</span>
+            <Select
+              value={String(pageSize)}
+              onValueChange={(val) => {
+                setPageSize(Number(val));
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="h-8 w-28">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+                <SelectItem value="200">200</SelectItem>
+                <SelectItem value="500">500</SelectItem>
+                <SelectItem value="1000">1000</SelectItem>
+                <SelectItem value="10000">All (Max 10k)</SelectItem>
+              </SelectContent>
+            </Select>
+            <span className="text-xs">
+              Showing {Math.min((page - 1) * pageSize + 1, total)} - {Math.min(page * pageSize, total)} of {total}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              disabled={page <= 1}
+              onClick={() => setPage(1)}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="px-3 text-xs font-medium">
+              Page {page} of {Math.max(1, Math.ceil(total / pageSize))}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              disabled={page >= Math.ceil(total / pageSize)}
+              onClick={() => setPage((p) => Math.min(Math.ceil(total / pageSize), p + 1))}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              disabled={page >= Math.ceil(total / pageSize)}
+              onClick={() => setPage(Math.ceil(total / pageSize))}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );
