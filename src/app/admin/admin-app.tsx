@@ -36,6 +36,7 @@ const NAV = [
   { key: 'service', labelKey: 'admin.nav.services', icon: Briefcase },
   { key: 'visa', labelKey: 'admin.nav.visas', icon: Plane },
   { key: 'opportunity', labelKey: 'admin.nav.opportunities', icon: GraduationCap },
+  { key: 'page', labelKey: 'admin.nav.pages', icon: FileText },
   { key: 'news', labelKey: 'admin.nav.news', icon: Newspaper },
   { key: 'testimonial', labelKey: 'admin.nav.testimonials', icon: Star },
   { key: 'partner', labelKey: 'admin.nav.partners', icon: Building2 },
