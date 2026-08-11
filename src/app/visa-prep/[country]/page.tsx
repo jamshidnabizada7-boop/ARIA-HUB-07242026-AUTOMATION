@@ -3,7 +3,7 @@ import { db as prisma } from '@/lib/db';
 import { getLang } from '@/lib/i18n-server';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, FileText, Globe, Info, Play, FileQuestion, Users, Briefcase, GraduationCap, Tent } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2, FileText, Globe, Info, Play, FileQuestion, Users, Briefcase, GraduationCap, Tent } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

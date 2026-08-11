@@ -218,7 +218,7 @@ export interface News {
   excerptI18n?: Record<string, string> | null;
   contentI18n?: Record<string, string> | null;
 }
-export interface SocialLink { id: string; platform: string; url: string; icon: string | null; order: number; status: string; }
+export interface SocialLink { id: string; platform: string; label: string; url: string; icon: string | null; color: string | null; enabled: boolean; order: number; }
 export interface FooterLink { 
   id: string; column: string; label: string; url: string; order: number;
   labelI18n?: Record<string, string> | null;
