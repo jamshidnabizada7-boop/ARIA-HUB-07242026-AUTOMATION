@@ -154,7 +154,12 @@ export class AcbarScraper extends BaseScraper {
       $('.acbar-jd__card').each(function () {
         const sectionTitle = $(this).find('.acbar-jd__card-title').first().text().trim().toLowerCase();
         const bodyEl = $(this).find('.acbar-jd__rich').first();
-        const bodyHtml = bodyEl.html() || '';
+        let bodyHtml = bodyEl.html() || '';
+        // Sanitize to prevent layout breakage on frontend
+        bodyHtml = bodyHtml.replace(/style="[^"]*"/gi, '');
+        bodyHtml = bodyHtml.replace(/width="[^"]*"/gi, '');
+        bodyHtml = bodyHtml.replace(/height="[^"]*"/gi, '');
+        
         const bodyText = stripHtml(bodyHtml);
         if (!bodyText.trim()) return;
 

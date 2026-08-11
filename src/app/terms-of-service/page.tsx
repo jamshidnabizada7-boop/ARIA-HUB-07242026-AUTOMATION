@@ -1,21 +1,41 @@
 import { Metadata } from 'next';
+import { db } from '@/lib/db';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | ARIA HUB',
   description: 'Terms of Service for ARIA HUB.',
 };
 
-export default function TermsOfServicePage() {
+export default async function TermsOfServicePage() {
+  let contentHtml = '';
+  let title = 'Terms of Service';
+  let dateText = `Last updated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+  
+  try {
+    const page = await db.page.findUnique({ where: { slug: 'terms-of-service' } });
+    if (page && page.status === 'published') {
+      contentHtml = page.content;
+      title = page.title;
+      dateText = `Last updated: ${new Date(page.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+    }
+  } catch (error) {
+    // DB or table might not exist yet
+  }
+
   return (
     <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8" dir="auto">
       <div className="rounded-2xl border border-border/60 bg-card/40 p-8 shadow-sm backdrop-blur-sm md:p-12">
         <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground md:text-4xl text-start">
-          Terms of Service
+          {title}
         </h1>
         
         <div className="prose prose-sm dark:prose-invert sm:prose-base max-w-none space-y-6 text-muted-foreground text-start">
-          <p>Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p>{dateText}</p>
           
+          {contentHtml ? (
+            <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+          ) : (
+            <>
           <section>
             <h2 className="text-xl font-semibold text-foreground">1. Acceptance of Terms</h2>
             <p>
@@ -55,6 +75,8 @@ export default function TermsOfServicePage() {
               ARIA HUB reserves the right to modify these terms at any time. We will do our best to notify users of any significant changes, but it is your responsibility to review these terms periodically.
             </p>
           </section>
+          </>
+          )}
         </div>
       </div>
     </main>

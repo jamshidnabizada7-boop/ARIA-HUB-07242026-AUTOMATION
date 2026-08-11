@@ -1,19 +1,37 @@
 import { Metadata } from 'next';
+import { db } from '@/lib/db';
 
 export const metadata: Metadata = {
   title: 'About Us | ARIA HUB',
   description: 'Learn about ARIA HUB, our mission, and our team.',
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  let contentHtml = '';
+  let title = 'About ARIA HUB';
+  
+  try {
+    const page = await db.page.findUnique({ where: { slug: 'about' } });
+    if (page && page.status === 'published') {
+      contentHtml = page.content;
+      title = page.title;
+    }
+  } catch (error) {
+    // DB or table might not exist yet
+  }
+
   return (
     <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8" dir="auto">
       <div className="rounded-2xl border border-border/60 bg-card/40 p-8 shadow-sm backdrop-blur-sm md:p-12">
         <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground md:text-4xl text-start">
-          About ARIA HUB
+          {title}
         </h1>
         
         <div className="prose prose-sm dark:prose-invert sm:prose-base max-w-none space-y-6 text-muted-foreground text-start">
+          {contentHtml ? (
+            <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+          ) : (
+            <>
           <section>
             <h2 className="text-2xl font-semibold text-foreground">Our Mission</h2>
             <p>
@@ -39,6 +57,8 @@ export default function AboutPage() {
               Unlike standard opportunity aggregators, we provide deep insights, customized resources (such as CV builders and interview prep tools), and personalized consulting to ensure our users don't just find an opportunity, but successfully secure it.
             </p>
           </section>
+          </>
+          )}
         </div>
       </div>
     </main>

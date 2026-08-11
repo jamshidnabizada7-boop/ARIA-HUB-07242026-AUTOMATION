@@ -1,21 +1,41 @@
 import { Metadata } from 'next';
 import { Mail, MapPin, Phone } from 'lucide-react';
 
+import { db } from '@/lib/db';
+
 export const metadata: Metadata = {
   title: 'Contact Us | ARIA HUB',
   description: 'Get in touch with the ARIA HUB team.',
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  let contentHtml = '';
+  let title = 'Contact Us';
+  
+  try {
+    const page = await db.page.findUnique({ where: { slug: 'contact' } });
+    if (page && page.status === 'published') {
+      contentHtml = page.content;
+      title = page.title;
+    }
+  } catch (error) {
+    // DB or table might not exist yet
+  }
+
   return (
     <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8" dir="auto">
       <div className="rounded-2xl border border-border/60 bg-card/40 p-8 shadow-sm backdrop-blur-sm md:p-12 text-start">
         <h1 className="mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl text-start">
-          Contact Us
+          {title}
         </h1>
-        <p className="mb-8 text-muted-foreground text-start">
-          Have a question or need assistance? We're here to help. Reach out to our team using the contact information below.
-        </p>
+        
+        {contentHtml ? (
+          <div className="prose prose-sm dark:prose-invert sm:prose-base max-w-none space-y-6 text-muted-foreground text-start mb-8" dangerouslySetInnerHTML={{ __html: contentHtml }} />
+        ) : (
+          <p className="mb-8 text-muted-foreground text-start">
+            Have a question or need assistance? We're here to help. Reach out to our team using the contact information below.
+          </p>
+        )}
         
         <div className="grid gap-8 md:grid-cols-2 text-start">
           <div className="space-y-6">

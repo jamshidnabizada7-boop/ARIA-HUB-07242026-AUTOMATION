@@ -36,13 +36,42 @@ export default async function OpportunitiesPage({
 
   if (categoryParam !== 'all') {
     const singularCat = categoryParam.replace(/s$/, '');
-    AND.push({
-      OR: [
-        { category: { slug: categoryParam } },
-        { jobType: { contains: singularCat, mode: 'insensitive' } },
-        { jobType: { equals: categoryParam, mode: 'insensitive' } }
-      ]
-    });
+    
+    if (categoryParam.toLowerCase().includes('job')) {
+      AND.push({
+        OR: [
+          { sourceName: { in: ['ACBAR', 'Wazifaha'] } },
+          { category: { slug: categoryParam } },
+          { jobType: { contains: singularCat, mode: 'insensitive' } },
+          { jobType: { equals: categoryParam, mode: 'insensitive' } }
+        ]
+      });
+      // Ensure scholarships don't leak into jobs
+      AND.push({
+        sourceName: { not: 'Scholarships.af' }
+      });
+    } else if (categoryParam.toLowerCase().includes('scholarship')) {
+      AND.push({
+        OR: [
+          { sourceName: 'Scholarships.af' },
+          { category: { slug: categoryParam } },
+          { jobType: { contains: singularCat, mode: 'insensitive' } },
+          { jobType: { equals: categoryParam, mode: 'insensitive' } }
+        ]
+      });
+      // Ensure jobs don't leak into scholarships
+      AND.push({
+        sourceName: { notIn: ['ACBAR', 'Wazifaha'] }
+      });
+    } else {
+      AND.push({
+        OR: [
+          { category: { slug: categoryParam } },
+          { jobType: { contains: singularCat, mode: 'insensitive' } },
+          { jobType: { equals: categoryParam, mode: 'insensitive' } }
+        ]
+      });
+    }
   }
   if (location !== 'all') {
     where.country = location;

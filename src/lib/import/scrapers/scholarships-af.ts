@@ -188,10 +188,11 @@ export class ScholarshipsAfScraper extends BaseScraper {
         if (!listing.logoUrl) listing.logoUrl = url;
       }
 
-      // ── Description body — the main content area ───────────────────────────
-      // All rich content is inside .jobsearch-description as h2-delimited sections
-      const descEl = $('.jobsearch-description').not('.text-content').first().clone();
-      // Remove ads, scripts, sponsored blocks
+      // All rich content is usually inside .jobsearch-description
+      let descEl = $('.jobsearch-description').first().clone();
+      if (!descEl.length || descEl.text().length < 100) {
+        descEl = $('.text-content, .entry-content, .post-content').first().clone();
+      }
       descEl.find('script, ins.adsbygoogle, .code-block, .code-block-label').remove();
 
       // Parse h2-delimited sections from the description

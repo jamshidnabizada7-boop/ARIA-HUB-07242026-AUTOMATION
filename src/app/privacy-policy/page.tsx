@@ -1,20 +1,43 @@
 import { Metadata } from 'next';
 
+import { db } from '@/lib/db';
+import { getLocalizedContent } from '@/lib/i18n-content';
+
 export const metadata: Metadata = {
   title: 'Privacy Policy | ARIA HUB',
   description: 'Privacy Policy for ARIA HUB services.',
 };
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage() {
+  let contentHtml = '';
+  let title = 'Privacy Policy';
+  let dateText = `Last updated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+  
+  try {
+    const page = await db.page.findUnique({ where: { slug: 'privacy-policy' } });
+    if (page && page.status === 'published') {
+      contentHtml = page.content;
+      title = page.title;
+      dateText = `Last updated: ${new Date(page.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+    }
+  } catch (error) {
+    // DB or table might not exist yet
+  }
+
   return (
     <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8" dir="auto">
       <div className="rounded-2xl border border-border/60 bg-card/40 p-8 shadow-sm backdrop-blur-sm md:p-12">
         <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground md:text-4xl text-start">
-          Privacy Policy
+          {title}
         </h1>
         
         <div className="prose prose-sm dark:prose-invert sm:prose-base max-w-none space-y-6 text-muted-foreground text-start">
-          <p>Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p>{dateText}</p>
+          
+          {contentHtml ? (
+            <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+          ) : (
+            <>
           
           <section>
             <h2 className="text-xl font-semibold text-foreground">1. Introduction</h2>
@@ -63,6 +86,8 @@ export default function PrivacyPolicyPage() {
               If you have any questions about this privacy policy or our privacy practices, please contact us.
             </p>
           </section>
+          </>
+          )}
         </div>
       </div>
     </main>

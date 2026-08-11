@@ -8,7 +8,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 // ─── Site-wide settings (single row, key/value style + structured) ───────────
@@ -1069,5 +1069,20 @@ model SuccessStory {
 
   @@index([country, visaType])
   @@index([createdAt])
+}
+
+// ─── Static Pages (CMS) ────────────────────────────────────────────────────────
+model Page {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  titleI18n       Json?
+  content         String   @db.Text
+  contentI18n     Json?
+  status          String   @default("published")
+  seoTitle        String?
+  seoDescription  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
