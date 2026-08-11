@@ -53,6 +53,7 @@ const NAV = [
   { key: 'ctaBanner', labelKey: 'admin.nav.ctaBanners', icon: Megaphone },
   { key: 'menuItem', labelKey: 'admin.nav.menuItems', icon: MenuIcon },
   { key: 'section', labelKey: 'admin.nav.sections', icon: Layers },
+  { key: 'whyChooseUsFeature', labelKey: 'Why ARIA HUB', icon: Layers },
   { key: 'language', labelKey: 'admin.nav.languages', icon: Globe },
   { key: 'serviceCategory', labelKey: 'admin.nav.serviceCategories', icon: Briefcase },
   { key: 'opportunityCategory', labelKey: 'admin.nav.opportunityCategories', icon: Briefcase },
@@ -331,8 +332,17 @@ function CrudTable({ model }: { model: string }) {
     
     let matchesCategory = true;
     if (model === 'opportunity' && filterCategory !== 'all') {
-      const catSlug = item.category?.slug || '';
-      matchesCategory = catSlug === filterCategory;
+      const catSlug = (item.category?.slug || '').toLowerCase();
+      const type = (item.jobType || '').toLowerCase();
+      const source = (item.sourceName || '').toLowerCase();
+      
+      if (filterCategory === 'scholarship') {
+        matchesCategory = catSlug === 'scholarship' || type === 'scholarship' || source.includes('scholarships.af');
+      } else if (filterCategory === 'job') {
+        matchesCategory = catSlug === 'job' || type === 'job' || source.includes('acbar') || source.includes('wazifaha');
+      } else {
+        matchesCategory = catSlug === filterCategory;
+      }
     }
     
     return matchesSearch && matchesCategory;
@@ -603,6 +613,7 @@ function FieldInput({ field, value, item, model, statusOptions, onChange }: { fi
       paymentMethod: ['name', 'slug', 'status', 'order'],
       socialLink: ['platform', 'label', 'url', 'enabled', 'order'],
       footerLink: ['column', 'label', 'url', 'order'],
+      whyChooseUsFeature: ['title', 'description', 'icon', 'color', 'glow', 'enabled', 'order'],
       department: ['name', 'order'],
       branch: ['name', 'address', 'isMain', 'order'],
       processStep: ['title', 'description', 'order', 'status'],

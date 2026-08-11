@@ -218,10 +218,26 @@ export interface News {
   excerptI18n?: Record<string, string> | null;
   contentI18n?: Record<string, string> | null;
 }
-export interface SocialLink { id: string; platform: string; label: string; url: string; icon: string | null; color: string | null; enabled: boolean; order: number; }
-export interface FooterLink { id: string; column: string; label: string; url: string; order: number; }
+export interface SocialLink { id: string; platform: string; url: string; icon: string | null; order: number; status: string; }
+export interface FooterLink { 
+  id: string; column: string; label: string; url: string; order: number;
+  labelI18n?: Record<string, string> | null;
+}
 export interface Department { id: string; name: string; email: string | null; phone: string | null; description: string | null; order: number; }
 export interface Branch { id: string; name: string; address: string; phone: string | null; email: string | null; hours: string | null; isMain: boolean; mapEmbed: string | null; order: number; }
+export interface WhyChooseUsFeature {
+  id: string;
+  key?: string | null;
+  title: string;
+  titleI18n?: Record<string, string> | null;
+  description: string;
+  descriptionI18n?: Record<string, string> | null;
+  icon: string;
+  color: string;
+  glow: string;
+  order: number;
+  enabled: boolean;
+}
 export interface ProcessStep { 
   id: string; title: string; description: string; icon: string | null; order: number; status: string;
   // i18n fields
@@ -282,4 +298,5 @@ export interface SiteData {
   teamMembers: TeamMember[];
   comparisonRows: ComparisonRow[];
   ctaBanners: CtaBanner[];
+  whyFeatures: WhyChooseUsFeature[];
 }

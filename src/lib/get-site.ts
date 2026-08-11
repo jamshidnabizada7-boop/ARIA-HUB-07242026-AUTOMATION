@@ -29,6 +29,7 @@ export async function getSiteData(): Promise<SiteData> {
       teamMembers,
       comparisonRows,
       ctaBanners,
+      whyFeatures,
     ] = await Promise.all([
       db.siteSetting.findFirst().catch(() => null),
       db.language.findMany({ where: { enabled: true }, orderBy: { order: 'asc' } }).catch(() => []),
@@ -55,6 +56,7 @@ export async function getSiteData(): Promise<SiteData> {
       db.teamMember.findMany({ where: { status: 'published' }, orderBy: { order: 'asc' } }).catch(() => []),
       db.comparisonRow.findMany({ where: { status: 'published' }, orderBy: { order: 'asc' } }).catch(() => []),
       db.ctaBanner.findMany({ where: { status: 'published' }, orderBy: { order: 'asc' } }).catch(() => []),
+      db.whyChooseUsFeature.findMany({ where: { enabled: true }, orderBy: { order: 'asc' } }).catch(() => []),
     ]);
 
     const menuTree = buildMenuTree(menuItems as any) as MenuItem[];
@@ -89,6 +91,7 @@ export async function getSiteData(): Promise<SiteData> {
       teamMembers: teamMembers as any,
       comparisonRows: comparisonRows as any,
       ctaBanners: ctaBanners as any,
+      whyFeatures: whyFeatures as any,
     };
   } catch (error) {
     console.error('Error fetching site data:', error);
@@ -119,6 +122,7 @@ export async function getSiteData(): Promise<SiteData> {
       teamMembers: [],
       comparisonRows: [],
       ctaBanners: [],
+      whyFeatures: [],
     };
   }
 }

@@ -3,20 +3,27 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Globe2, Zap, ShieldCheck, BadgeDollarSign, Users2, Award, ArrowUpRight } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import { SectionHeading } from '../section-heading';
 import { useT } from '@/hooks/use-t';
+import { useLangStore } from '@/lib/lang-store';
+import { getLocalizedContent } from '@/lib/i18n-content';
 import { cn } from '@/lib/utils';
+import type { WhyChooseUsFeature } from '@/lib/types';
 
-export function WhyChooseUsSection() {
+export function WhyChooseUsSection({ features = [] }: { features?: WhyChooseUsFeature[] }) {
   const t = useT();
-  const features = [
-    { icon: Globe2, key: 'f1', color: 'from-primary to-chart-2', glow: 'bg-primary/20' },
-    { icon: Zap, key: 'f2', color: 'from-chart-2 to-chart-3', glow: 'bg-chart-2/20' },
-    { icon: ShieldCheck, key: 'f3', color: 'from-chart-3 to-chart-4', glow: 'bg-chart-3/20' },
-    { icon: BadgeDollarSign, key: 'f4', color: 'from-chart-4 to-primary', glow: 'bg-chart-4/20' },
-    { icon: Users2, key: 'f5', color: 'from-primary to-chart-4', glow: 'bg-primary/20' },
-    { icon: Award, key: 'f6', color: 'from-chart-2 to-primary', glow: 'bg-chart-2/20' },
+  const lang = useLangStore((s) => s.code);
+  const defaultFeatures = [
+    { icon: 'Globe2', key: 'f1', color: 'from-primary to-chart-2', glow: 'bg-primary/20', title: '', description: '' },
+    { icon: 'Zap', key: 'f2', color: 'from-chart-2 to-chart-3', glow: 'bg-chart-2/20', title: '', description: '' },
+    { icon: 'ShieldCheck', key: 'f3', color: 'from-chart-3 to-chart-4', glow: 'bg-chart-3/20', title: '', description: '' },
+    { icon: 'BadgeDollarSign', key: 'f4', color: 'from-chart-4 to-primary', glow: 'bg-chart-4/20', title: '', description: '' },
+    { icon: 'Users2', key: 'f5', color: 'from-primary to-chart-4', glow: 'bg-primary/20', title: '', description: '' },
+    { icon: 'Award', key: 'f6', color: 'from-chart-2 to-primary', glow: 'bg-chart-2/20', title: '', description: '' },
   ];
+
+  const displayFeatures = features && features.length > 0 ? features : defaultFeatures;
 
   return (
     <section id="why-choose-us" className="relative overflow-hidden py-24 sm:py-32">
@@ -32,7 +39,7 @@ export function WhyChooseUsSection() {
           subtitle={t('why.subtitle')}
         />
         <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f, i) => (
+          {displayFeatures.map((f, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 30 }}
@@ -40,7 +47,7 @@ export function WhyChooseUsSection() {
               viewport={{ once: true, margin: '0px' }}
               transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
             >
-              <FeatureCard feature={f} index={i} t={t} />
+              <FeatureCard feature={f} index={i} t={t} lang={lang} />
             </motion.div>
           ))}
         </div>
@@ -49,7 +56,7 @@ export function WhyChooseUsSection() {
   );
 }
 
-function FeatureCard({ feature, index, t }: { feature: any; index: number; t: (k: string) => string }) {
+function FeatureCard({ feature, index, t, lang }: { feature: any; index: number; t: (k: string) => string; lang: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [spotlight, setSpotlight] = useState({ x: 50, y: 50, on: false });
 
@@ -63,6 +70,13 @@ function FeatureCard({ feature, index, t }: { feature: any; index: number; t: (k
       on: true,
     });
   };
+
+  const IconComponent = (LucideIcons as any)[feature.icon] || Award;
+  
+  // Resolve localized text. If the feature came from DB, it has title/titleI18n.
+  // If it came from default fallback, we use translation keys.
+  const title = getLocalizedContent(feature.title, feature.titleI18n, lang) || (feature.key ? t(`why.${feature.key}.title`) : feature.title);
+  const desc = getLocalizedContent(feature.description, feature.descriptionI18n, lang) || (feature.key ? t(`why.${feature.key}.desc`) : feature.description);
 
   return (
     <div
@@ -91,7 +105,7 @@ function FeatureCard({ feature, index, t }: { feature: any; index: number; t: (k
         {/* Pulsing ring */}
         <span className={cn('absolute inset-0 rounded-2xl blur-md transition-opacity duration-500 group-hover:opacity-100', feature.glow)} />
         <div className={cn('relative grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br text-white shadow-float transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6', feature.color)}>
-          <feature.icon className="h-5 w-5 transition-transform duration-500 group-hover:scale-110" />
+          <IconComponent className="h-5 w-5 transition-transform duration-500 group-hover:scale-110" />
         </div>
         {/* Rotating ring on hover */}
         <motion.span
@@ -101,8 +115,8 @@ function FeatureCard({ feature, index, t }: { feature: any; index: number; t: (k
         />
       </div>
 
-      <h3 className="relative text-lg font-bold">{t(`why.${feature.key}.title`)}</h3>
-      <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">{t(`why.${feature.key}.desc`)}</p>
+      <h3 className="relative text-lg font-bold">{title}</h3>
+      <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
 
       {/* Arrow that appears on hover */}
       <ArrowUpRight className="absolute bottom-5 right-5 h-5 w-5 text-primary opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 rtl-flip" style={{ transform: 'translateX(-8px)' }} />

@@ -190,7 +190,7 @@ export function Footer({
                 {footer[c.key]?.map((link) => (
                   <li key={link.id}>
                     <a href={link.url} className="text-sm text-muted-foreground transition-colors hover:text-primary">
-                      {link.label}
+                      {getLocalizedContent(link.label, link.labelI18n, lang)}
                     </a>
                   </li>
                 ))}
@@ -241,7 +241,7 @@ export function Footer({
               footer['legal'].map((link, idx, arr) => (
                 <React.Fragment key={link.id}>
                   <Link href={link.url} className="p-2 transition-colors hover:text-foreground">
-                    {t(link.label) !== link.label ? t(link.label) : link.label}
+                    {getLocalizedContent(link.label, link.labelI18n, lang)}
                   </Link>
                   {idx < arr.length - 1 && <span className="text-border">·</span>}
                 </React.Fragment>

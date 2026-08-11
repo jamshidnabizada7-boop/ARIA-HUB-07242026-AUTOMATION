@@ -51,7 +51,7 @@ export function Home({ data }: { data: SiteData }) {
   const sectionMap: Record<string, React.ReactNode> = {
     hero: <Hero counters={data.counters} />,
     services: <ServicesSection services={data.services} />,
-    whyChooseUs: <WhyChooseUsSection />,
+    whyChooseUs: <WhyChooseUsSection features={data.whyFeatures} />,
     process: <ProcessSection steps={data.processSteps} />,
     visas: <VisasSection visas={data.visas} />,
     opportunities: <OpportunitiesSection opportunities={data.opportunities} categories={data.opportunityCategories} phone={data.settings?.phone} />,

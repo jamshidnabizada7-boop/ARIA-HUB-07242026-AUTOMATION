@@ -482,12 +482,32 @@ model FooterLink {
   id        String   @id @default(cuid())
   column    String // quickLinks, services, contact, etc.
   label     String
+  labelI18n Json?
   url       String
   order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([column])
+}
+
+// -------------------------------------------------------------------------------------------------
+// Why Choose Us Features
+// -------------------------------------------------------------------------------------------------
+model WhyChooseUsFeature {
+  id              String   @id @default(cuid())
+  key             String?  @unique
+  title           String
+  titleI18n       Json?
+  description     String
+  descriptionI18n Json?
+  icon            String   @default("Check")
+  color           String   @default("from-primary to-chart-2")
+  glow            String   @default("bg-primary/20")
+  order           Int      @default(0)
+  enabled         Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 // ─── Contact submissions ─────────────────────────────────────────────────────
