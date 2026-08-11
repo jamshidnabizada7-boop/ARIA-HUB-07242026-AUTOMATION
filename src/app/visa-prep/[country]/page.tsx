@@ -26,9 +26,6 @@ export default async function VisaCountryPage({ params }: { params: { country: s
   const country = await prisma.visaCountry.findUnique({
     where: { code: params.country.toUpperCase() },
     include: {
-      categories: {
-        where: { status: 'published' }
-      },
       documents: {
         where: { status: 'published' },
         orderBy: { order: 'asc' }
@@ -38,6 +35,10 @@ export default async function VisaCountryPage({ params }: { params: { country: s
         take: 5 // preview
       }
     }
+  });
+
+  const categories = await prisma.visaCategory.findMany({
+    orderBy: { order: 'asc' }
   });
 
   if (!country || country.status !== 'published') {
@@ -88,7 +89,7 @@ export default async function VisaCountryPage({ params }: { params: { country: s
 
           <TabsContent value="overview" className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {country.categories.map(category => {
+              {categories.map(category => {
                 const catName = typeof category.nameI18n === 'object' && category.nameI18n !== null && (category.nameI18n as any)[lang] ? (category.nameI18n as any)[lang] : category.name;
                 return (
                   <Card key={category.id} className="overflow-hidden">

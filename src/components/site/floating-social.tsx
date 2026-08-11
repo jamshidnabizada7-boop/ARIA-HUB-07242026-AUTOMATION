@@ -51,7 +51,7 @@ export function FloatingSocial({ socials, settings }: { socials: SocialLink[]; s
                     style={{ backgroundColor: s.color || 'var(--primary)' }}
                   >
                     <SocialIcon platform={s.platform} />
-                    <Tooltip label={s.label} position={position} />
+                    <Tooltip label={s.label || ''} position={position} />
                   </motion.a>
                 ))}
               </>
@@ -70,7 +70,7 @@ export function FloatingSocial({ socials, settings }: { socials: SocialLink[]; s
           >
             <span className="absolute inset-0 rounded-full" style={{ backgroundColor: primary.color || 'var(--primary)', animation: 'pulse-ring 2s ease-out infinite' }} />
             <SocialIcon platform={primary.platform} className="relative h-6 w-6" />
-            <Tooltip label={primary.label} position={position} />
+            <Tooltip label={primary.label || ''} position={position} />
           </motion.a>
 
           {/* Toggle button */}

@@ -10,7 +10,7 @@ import { TranslatedText } from '@/components/ui/translated-text';
 import { ArrowLeft, Play } from 'lucide-react';
 import Link from 'next/link';
 
-export default function VisaPracticeSetup({ countries, lang }: { countries: any[], lang: string }) {
+export default function VisaPracticeSetup({ countries, categories, lang }: { countries: any[], categories: any[], lang: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialCountry = searchParams.get('country');
@@ -22,7 +22,6 @@ export default function VisaPracticeSetup({ countries, lang }: { countries: any[
   const [difficulty, setDifficulty] = useState('medium');
 
   const selectedCountry = countries.find(c => c.id === countryId);
-  const categories = selectedCountry?.categories || [];
 
   // Reset category if country changes
   useEffect(() => {

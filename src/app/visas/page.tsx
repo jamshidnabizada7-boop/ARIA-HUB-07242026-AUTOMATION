@@ -27,7 +27,7 @@ export default async function VisasPage({
 
   const [visas, total] = await Promise.all([
     db.visa.findMany({
-      orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+      orderBy: [{ sort: 'asc' }, { createdAt: 'desc' }],
       take,
       skip,
     }),

@@ -236,7 +236,7 @@ function VisaDetail({ visa, t }: { visa: Visa; t: (k: string) => string }) {
                   <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-background text-chart-3 shadow-sm"><DollarSign className="h-5 w-5" /></div>
                   <div><p className="text-[10px] uppercase text-muted-foreground">{t('visas.fee')}</p><p className="text-sm font-bold">{visa.fee || '—'}</p></div>
                 </div>
-                {visa.embassyRequired && (
+                {(visa as any).embassyRequired && (
                   <div className="flex items-center gap-3">
                     <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-background text-chart-4 shadow-sm"><MapPin className="h-5 w-5" /></div>
                     <div><p className="text-[10px] uppercase text-muted-foreground">{t('common.embassy')}</p><p className="text-sm font-bold">{t('visas.visitRequired')}</p></div>

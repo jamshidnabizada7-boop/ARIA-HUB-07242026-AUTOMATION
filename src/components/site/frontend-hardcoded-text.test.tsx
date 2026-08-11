@@ -91,11 +91,11 @@ vi.mock('./detail-modal', () => ({
 
 // Mock data
 const mockCounters: Counter[] = [
-  { id: '1', value: '500', suffix: '+', label: 'Happy Clients', order: 0, createdAt: new Date(), updatedAt: new Date() },
-  { id: '2', value: '1000', suffix: '+', label: 'Projects Completed', order: 1, createdAt: new Date(), updatedAt: new Date() },
+  { id: '1', value: 500, suffix: '+', label: 'Happy Clients', order: 0, createdAt: new Date(), updatedAt: new Date() } as unknown as Counter,
+  { id: '2', value: 1000, suffix: '+', label: 'Projects Completed', order: 1, createdAt: new Date(), updatedAt: new Date() } as unknown as Counter,
 ];
 
-const mockSettings: SiteSettings = {
+const mockSettings = {
   id: '1',
   siteName: 'ARIA HUB',
   description: 'Your trusted partner',
@@ -109,44 +109,44 @@ const mockSettings: SiteSettings = {
   accentColor: '#f59e0b',
   createdAt: new Date(),
   updatedAt: new Date(),
-};
+} as unknown as SiteSettings;
 
 const mockFooterLinks: Record<string, FooterLink[]> = {
   quickLinks: [
-    { id: '1', label: 'About Us', url: '#about', category: 'quickLinks', order: 0, createdAt: new Date(), updatedAt: new Date() },
-    { id: '2', label: 'Contact', url: '#contact', category: 'quickLinks', order: 1, createdAt: new Date(), updatedAt: new Date() },
+    { id: '1', label: 'About Us', url: '#about', column: 'quickLinks', order: 0, createdAt: new Date(), updatedAt: new Date() } as unknown as FooterLink,
+    { id: '2', label: 'Contact', url: '#contact', column: 'quickLinks', order: 1, createdAt: new Date(), updatedAt: new Date() } as unknown as FooterLink,
   ],
   services: [
-    { id: '3', label: 'Visa Services', url: '#visas', category: 'services', order: 0, createdAt: new Date(), updatedAt: new Date() },
+    { id: '3', label: 'Visa Services', url: '#visas', column: 'services', order: 0, createdAt: new Date(), updatedAt: new Date() } as unknown as FooterLink,
   ],
   opportunities: [],
 };
 
 const mockSocialLinks: SocialLink[] = [
-  { id: '1', platform: 'facebook', url: 'https://facebook.com', label: 'Facebook', color: null, order: 0, createdAt: new Date(), updatedAt: new Date() },
-  { id: '2', platform: 'instagram', url: 'https://instagram.com', label: 'Instagram', color: null, order: 1, createdAt: new Date(), updatedAt: new Date() },
+  { id: '1', platform: 'facebook', url: 'https://facebook.com', label: 'Facebook', color: null, order: 0, createdAt: new Date(), updatedAt: new Date() } as unknown as SocialLink,
+  { id: '2', platform: 'instagram', url: 'https://instagram.com', label: 'Instagram', color: null, order: 1, createdAt: new Date(), updatedAt: new Date() } as unknown as SocialLink,
 ];
 
 const mockDepartments: Department[] = [
-  { id: '1', name: 'Sales', description: null, email: null, order: 0, createdAt: new Date(), updatedAt: new Date() },
-  { id: '2', name: 'Support', description: null, email: null, order: 1, createdAt: new Date(), updatedAt: new Date() },
+  { id: '1', name: 'Sales', description: null, email: null, order: 0, createdAt: new Date(), updatedAt: new Date() } as unknown as Department,
+  { id: '2', name: 'Support', description: null, email: null, order: 1, createdAt: new Date(), updatedAt: new Date() } as unknown as Department,
 ];
 
 const mockBranches: Branch[] = [
-  { id: '1', name: 'Main Office', address: '123 Main St', phone: '+1234567890', email: null, hours: '9AM-5PM', mapUrl: null, isMain: true, order: 0, createdAt: new Date(), updatedAt: new Date() },
-  { id: '2', name: 'Branch Office', address: '456 Branch St', phone: '+0987654321', email: null, hours: '10AM-6PM', mapUrl: null, isMain: false, order: 1, createdAt: new Date(), updatedAt: new Date() },
+  { id: '1', name: 'Main Office', address: '123 Main St', phone: '+1234567890', email: null, hours: '9AM-5PM', mapUrl: null, isMain: true, order: 0, createdAt: new Date(), updatedAt: new Date() } as unknown as Branch,
+  { id: '2', name: 'Branch Office', address: '456 Branch St', phone: '+0987654321', email: null, hours: '10AM-6PM', mapUrl: null, isMain: false, order: 1, createdAt: new Date(), updatedAt: new Date() } as unknown as Branch,
 ];
 
-const mockNewsCategory: NewsCategory = {
+const mockNewsCategory = {
   id: '1',
   name: 'Updates',
   slug: 'updates',
   order: 0,
   createdAt: new Date(),
   updatedAt: new Date(),
-};
+} as unknown as NewsCategory;
 
-const mockNews: News[] = [
+const mockNews = [
   {
     id: '1',
     title: 'Breaking News',
@@ -155,7 +155,7 @@ const mockNews: News[] = [
     content: 'This is the full news content with many words to test reading time calculation.',
     image: '/images/news/n1.png',
     author: 'John Doe',
-    publishedAt: new Date('2024-01-15'),
+    publishedAt: new Date('2024-01-15').toISOString(),
     tags: '["immigration", "visa"]',
     categoryId: '1',
     category: mockNewsCategory,
@@ -172,7 +172,7 @@ const mockNews: News[] = [
     content: 'More content here.',
     image: '/images/news/n2.png',
     author: 'Jane Smith',
-    publishedAt: new Date('2024-01-20'),
+    publishedAt: new Date('2024-01-20').toISOString(),
     tags: null,
     categoryId: '1',
     category: mockNewsCategory,
@@ -181,7 +181,7 @@ const mockNews: News[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
-];
+] as unknown as News[];
 
 describe('Frontend Components - Zero Hardcoded Text Verification', () => {
   beforeEach(() => {
@@ -191,10 +191,10 @@ describe('Frontend Components - Zero Hardcoded Text Verification', () => {
         code: 'fa',
         dir: 'rtl',
         languages: [
-          { id: '1', code: 'fa', name: 'Persian', nativeName: 'فارسی', direction: 'rtl', enabled: true, isDefault: true, order: 0, createdAt: new Date(), updatedAt: new Date() },
-          { id: '2', code: 'en', name: 'English', nativeName: 'English', direction: 'ltr', enabled: true, isDefault: false, order: 1, createdAt: new Date(), updatedAt: new Date() },
-          { id: '3', code: 'ps', name: 'Pashto', nativeName: 'پښتو', direction: 'rtl', enabled: true, isDefault: false, order: 2, createdAt: new Date(), updatedAt: new Date() },
-        ],
+          { id: '1', code: 'fa', name: 'Persian', nativeName: 'فارسی', direction: 'rtl', enabled: true, isDefault: true, order: 0, flag: null, createdAt: new Date(), updatedAt: new Date() },
+          { id: '2', code: 'en', name: 'English', nativeName: 'English', direction: 'ltr', enabled: true, isDefault: false, order: 1, flag: null, createdAt: new Date(), updatedAt: new Date() },
+          { id: '3', code: 'ps', name: 'Pashto', nativeName: 'پښتو', direction: 'rtl', enabled: true, isDefault: false, order: 2, flag: null, createdAt: new Date(), updatedAt: new Date() },
+        ] as unknown as Language[],
       });
     });
   });

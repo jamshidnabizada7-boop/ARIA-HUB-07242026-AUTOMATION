@@ -152,7 +152,7 @@ export function AutoImportPanel() {
           </Button>
           <Button variant="outline" size="sm" onClick={retranslateOld} disabled={running}>
             {running ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCcw className="mr-2 h-4 w-4" />}
-            {t('admin.import.fixTranslations', 'Fix Translations (100 jobs)')}
+            {t('admin.import.fixTranslations') || 'Fix Translations (100 jobs)'}
           </Button>
         </div>
       </div>

@@ -14,19 +14,19 @@ export default async function VisaPracticePage() {
 
   const countries = await prisma.visaCountry.findMany({
     where: { status: 'published' },
-    orderBy: { order: 'asc' },
-    include: {
-      categories: {
-        where: { status: 'published' }
-      }
-    }
+    orderBy: { order: 'asc' }
+  });
+
+  const categories = await prisma.visaCategory.findMany({
+    where: { status: 'published' },
+    orderBy: { order: 'asc' }
   });
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12">
       <div className="mx-auto max-w-3xl px-4">
         <Suspense fallback={<div>Loading setup...</div>}>
-          <VisaPracticeSetup countries={countries} lang={lang} />
+          <VisaPracticeSetup countries={countries} categories={categories} lang={lang} />
         </Suspense>
       </div>
     </div>
