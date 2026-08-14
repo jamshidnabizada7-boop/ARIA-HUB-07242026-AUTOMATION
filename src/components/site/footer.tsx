@@ -252,11 +252,11 @@ export function Footer({
                 <span className="text-border">·</span>
                 <Link href="/terms-of-service" className="p-2 transition-colors hover:text-foreground">{t('footer.terms')}</Link>
                 <span className="text-border">·</span>
-                <Link href="/about" className="p-2 transition-colors hover:text-foreground">About Us</Link>
+                <Link href="/about" className="p-2 transition-colors hover:text-foreground">{t('footer.aboutUs')}</Link>
                 <span className="text-border">·</span>
-                <Link href="/contact" className="p-2 transition-colors hover:text-foreground">Contact Us</Link>
+                <Link href="/contact" className="p-2 transition-colors hover:text-foreground">{t('footer.contactUs')}</Link>
                 <span className="text-border">·</span>
-                <Link href="/blog" className="p-2 transition-colors hover:text-foreground">Blog</Link>
+                <Link href="/blog" className="p-2 transition-colors hover:text-foreground">{t('footer.blog')}</Link>
               </>
             )}
           </div>

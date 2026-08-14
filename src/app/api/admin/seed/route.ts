@@ -86,6 +86,61 @@ export async function GET() {
       logs.push('Tools menu already exists.');
     }
 
+    // ── Legal Footer Links ───────────────────────────────────────
+    const legalLinks = [
+      { label: 'Privacy Policy', labelI18n: { en: 'Privacy Policy', fa: 'حریم خصوصی', ps: 'د محرمیت تګلاره' }, url: '/privacy-policy', group: 'legal', order: 1 },
+      { label: 'Terms of Service', labelI18n: { en: 'Terms of Service', fa: 'شرایط خدمات', ps: 'د خدماتو شرایط' }, url: '/terms-of-service', group: 'legal', order: 2 },
+      { label: 'About Us', labelI18n: { en: 'About Us', fa: 'درباره ما', ps: 'زموږ په اړه' }, url: '/about', group: 'legal', order: 3 },
+      { label: 'Contact Us', labelI18n: { en: 'Contact Us', fa: 'تماس با ما', ps: 'موږ سره اړیکه' }, url: '/contact', group: 'legal', order: 4 },
+      { label: 'Blog', labelI18n: { en: 'Blog', fa: 'بلاگ', ps: 'بلاګ' }, url: '/blog', group: 'legal', order: 5 },
+    ];
+    let legalSeeded = 0;
+    for (const link of legalLinks) {
+      const existing = await db.footerLink.findFirst({ where: { url: link.url, group: link.group } });
+      if (!existing) {
+        await db.footerLink.create({ data: link });
+        legalSeeded++;
+      }
+    }
+    logs.push(`Legal footer links: ${legalSeeded} seeded, ${legalLinks.length - legalSeeded} already exist.`);
+
+    // ── Static Pages ─────────────────────────────────────────────
+    const pages = [
+      {
+        slug: 'privacy-policy',
+        title: 'Privacy Policy',
+        titleI18n: { en: 'Privacy Policy', fa: 'حریم خصوصی', ps: 'د محرمیت تګلاره' },
+        content: '<h2>1. Introduction</h2><p>Welcome to ARIA HUB. We respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and protect your information.</p><h2>2. Data We Collect</h2><p>We may collect your name, email address, and usage data when you interact with our services.</p><h2>3. Google AdSense &amp; Cookies</h2><p>We use Google AdSense to display ads. Third-party vendors may use cookies to serve ads based on prior visits. You may opt out via <a href="https://www.google.com/settings/ads" target="_blank">Google Ads Settings</a>.</p><h2>4. Data Security</h2><p>We use appropriate security measures to protect your personal data from unauthorized access or disclosure.</p><h2>5. Contact</h2><p>For privacy questions, please contact us at info@myariahub.com.</p>',
+        contentI18n: { en: '', fa: '', ps: '' },
+        status: 'published' as const,
+      },
+      {
+        slug: 'terms-of-service',
+        title: 'Terms of Service',
+        titleI18n: { en: 'Terms of Service', fa: 'شرایط خدمات', ps: 'د خدماتو شرایط' },
+        content: '<h2>1. Acceptance of Terms</h2><p>By using ARIA HUB, you agree to these terms. If you do not agree, please do not use our services.</p><h2>2. Description of Service</h2><p>ARIA HUB provides business consulting, visa services, and aggregation of global opportunities including jobs and scholarships. We strive for accuracy but do not guarantee the completeness of external listings.</p><h2>3. User Conduct</h2><p>You agree to use our services only for lawful purposes. You must not attempt to violate the security of our website or misuse any features.</p><h2>4. External Links</h2><p>Our website may contain links to third-party sites. We are not responsible for their content or practices.</p><h2>5. Modifications</h2><p>We reserve the right to modify these terms at any time. Continued use of our services constitutes acceptance of the updated terms.</p>',
+        contentI18n: { en: '', fa: '', ps: '' },
+        status: 'published' as const,
+      },
+      {
+        slug: 'about',
+        title: 'About ARIA HUB',
+        titleI18n: { en: 'About ARIA HUB', fa: 'درباره آریا هاب', ps: 'د آریا هب په اړه' },
+        content: '<h2>Our Mission</h2><p>At ARIA HUB, our mission is to empower individuals and businesses by connecting them with premium global opportunities. We believe that access to the right information and professional guidance is the key to international success.</p><h2>What We Do</h2><ul><li><strong>Opportunities &amp; Scholarships:</strong> We aggregate and analyze the best global opportunities to help students and professionals advance their careers.</li><li><strong>Visa Preparation:</strong> Expert guidance on navigating complex immigration and visa processes.</li><li><strong>Business Services:</strong> Comprehensive consulting for businesses looking to expand internationally.</li><li><strong>CV Builder &amp; Interview Prep:</strong> Tools to help you succeed in your applications.</li></ul><h2>Why Choose Us?</h2><p>Unlike standard aggregators, we provide deep insights, customized resources, and personalized consulting to ensure our users don\'t just find an opportunity — they successfully secure it. We serve the Afghan and Persian-speaking community with multilingual support in Dari, Pashto, and English.</p>',
+        contentI18n: { en: '', fa: '', ps: '' },
+        status: 'published' as const,
+      },
+    ];
+    let pagesSeeded = 0;
+    for (const p of pages) {
+      const existing = await db.page.findUnique({ where: { slug: p.slug } });
+      if (!existing) {
+        await db.page.create({ data: p });
+        pagesSeeded++;
+      }
+    }
+    logs.push(`Static pages: ${pagesSeeded} seeded, ${pages.length - pagesSeeded} already exist.`);
+
     return NextResponse.json({ success: true, logs });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message, stack: error.stack });
