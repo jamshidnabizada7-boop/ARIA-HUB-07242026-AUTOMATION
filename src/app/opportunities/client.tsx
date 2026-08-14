@@ -39,9 +39,15 @@ export function OpportunitiesClient({
   const router = useRouter();
   const [selected, setSelected] = useState<Opportunity | null>(null);
   const lang = useLangStore((s) => s.code);
-  const isRtl = lang === 'fa' || lang === 'ps';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  void categories; // kept for API compatibility
 
-  const tabs = [{ id: 'all', name: t('common.all') || 'All' }, ...categories.map((c) => ({ id: c.slug, name: c.name }))];
+  // Main type filter tabs — always visible, source-driven
+  const mainTabs = [
+    { id: 'all', nameKey: 'common.all', fallback: 'All' },
+    { id: 'job', nameKey: 'opportunities.jobs', fallback: 'Jobs' },
+    { id: 'scholarship', nameKey: 'opportunities.scholarships', fallback: 'Scholarships' },
+  ];
 
   const handleTabClick = (tabId: string) => {
     router.push(`/opportunities?category=${tabId}&page=1`);
@@ -50,6 +56,21 @@ export function OpportunitiesClient({
   const handlePageChange = (newPage: number) => {
     if (newPage < 1 || newPage > totalPages) return;
     router.push(`/opportunities?category=${currentCategory}&page=${newPage}`);
+  };
+
+  // Build pagination page numbers
+  const getPageNumbers = () => {
+    const pages: (number | '...')[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('...');
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pages.push(i);
+      if (currentPage < totalPages - 2) pages.push('...');
+      pages.push(totalPages);
+    }
+    return pages;
   };
 
   return (
@@ -61,20 +82,20 @@ export function OpportunitiesClient({
           subtitle={t('opportunities.subtitle') || 'Browse all available jobs, scholarships, and programs.'}
         />
 
-        {/* Tabs */}
+        {/* Main Type Tabs */}
         <div className="mt-10 flex flex-wrap justify-center gap-2">
-          {tabs.map((tab) => (
+          {mainTabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => handleTabClick(tab.id)}
               className={cn(
-                'rounded-full border px-4 py-1.5 text-sm font-medium transition-all',
+                'rounded-full border px-5 py-2 text-sm font-semibold transition-all',
                 currentCategory === tab.id
                   ? 'border-primary bg-primary text-primary-foreground shadow-float'
                   : 'border-border bg-card/50 text-muted-foreground hover:border-primary/40 hover:text-foreground'
               )}
             >
-              {tab.name}
+              {t(tab.nameKey) || tab.fallback}
             </button>
           ))}
         </div>
@@ -110,34 +131,50 @@ export function OpportunitiesClient({
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="mt-12 flex items-center justify-center gap-2" dir="ltr">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="h-10 w-10 rounded-full"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            
-            <div className="flex items-center gap-1 px-4 text-sm font-medium">
-              <span>Page</span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-                {currentPage}
-              </span>
-              <span>of {totalPages}</span>
-            </div>
+          <div className="mt-12 flex flex-col items-center gap-3" dir="ltr">
+            <p className="text-xs text-muted-foreground">
+              Page {currentPage} of {totalPages}
+            </p>
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="h-9 w-9 rounded-full"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
 
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="h-10 w-10 rounded-full"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+              {getPageNumbers().map((p, idx) =>
+                p === '...' ? (
+                  <span key={`ellipsis-${idx}`} className="flex h-9 w-9 items-center justify-center text-xs text-muted-foreground">…</span>
+                ) : (
+                  <button
+                    key={p}
+                    onClick={() => handlePageChange(p as number)}
+                    className={cn(
+                      'flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium transition-all',
+                      currentPage === p
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                    )}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="h-9 w-9 rounded-full"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         )}
       </div>
@@ -146,7 +183,6 @@ export function OpportunitiesClient({
         {selected && <OpportunityDetail opportunity={selected} t={t} phone={phone} />}
       </DetailModal>
     </section>
-  );
 }
 
 // Below are copied from the original opportunities section
