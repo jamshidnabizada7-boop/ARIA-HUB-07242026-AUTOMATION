@@ -71,12 +71,6 @@ export default function RootLayout({
     <html lang="fa" dir="rtl" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable}`}>
       <head>
         <meta name="google-adsense-account" content="ca-pub-5960471686203476" />
-        <Script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5960471686203476`}
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -102,6 +96,13 @@ export default function RootLayout({
         suppressHydrationWarning
         className="font-sans antialiased bg-background text-foreground"
       >
+        {/* Google AdSense - must be outside <head> when using Next.js Script component */}
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5960471686203476`}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <Providers>
           {children}
           <Toaster />

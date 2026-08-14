@@ -273,6 +273,7 @@ function Dashboard() {
 // ─── CRUD Table ────────────────────────────────────────────────
 function CrudTable({ model }: { model: string }) {
   const t = useT();
+  const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
   const [fields, setFields] = useState<string[]>([]);
   const [label, setLabel] = useState('');
@@ -281,6 +282,12 @@ function CrudTable({ model }: { model: string }) {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(100);
+  const [search, setSearch] = useState('');
+  const [reloadKey, setReloadKey] = useState(0);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState<any>(null);
 
   // Reset search & page when switching models or filters so stale filters don't carry over.
   useEffect(() => { setSearch(''); setSelectedIds([]); setFilterCategory('all'); setPage(1); }, [model]);
